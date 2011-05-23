@@ -1064,6 +1064,7 @@
         <geoplatform-version>1.2-SNAPSHOT</geoplatform-version>
         <cxf-version>2.4.0</cxf-version>
         <spring-version>3.0.5.RELEASE</spring-version>
+		<spring-security-version>3.0.5.RELEASE</spring-security-version>
         <velocity-version>1.6.2</velocity-version>
         <javax-mail-version>1.4</javax-mail-version>
         <jaxws-version>2.2.3</jaxws-version>
@@ -1089,8 +1090,7 @@
 
         <xbean-version>3.1.0.2-fuse</xbean-version>
 
-        <spring-support>2.0.8</spring-support>
-        <spring-security-version>3.0.3.RELEASE</spring-security-version>
+        <spring-support>2.0.8</spring-support>        
         <spring-ws-version>1.0.1</spring-ws-version>
         <aspectj-version>1.5.4</aspectj-version>
         <ubl-version>2.0</ubl-version>
