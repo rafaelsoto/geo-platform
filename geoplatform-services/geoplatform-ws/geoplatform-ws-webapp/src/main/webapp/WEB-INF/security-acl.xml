@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+            http://www.springframework.org/schema/jdbc
+            http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/security
+            http://www.springframework.org/schema/security/spring-security-3.0.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+            
+    <!-- ACL Voter -->
+    <bean id="aclDecisionManager"
+          class="org.springframework.security.access.vote.AffirmativeBased">
+        <property name="decisionVoters">
+            <list>
+                <ref bean="folderReadVoter"/>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- ACL Entry Voter -->
+    <bean id="folderReadVoter"
+          class="org.springframework.security.acls.AclEntryVoter">
+        <constructor-arg ref="mutableAclService"/>
+        <!-- This matches the @Secured annotation on the method that we'll be protecting with ACL -->
+        <constructor-arg value="VOTE_FOLDER_READ"/>
+        <constructor-arg>
+            <array>
+                <util:constant static-field="org.springframework.security.acls.domain.BasePermission.READ"/>
+            </array>
+        </constructor-arg>
+        <property name="processDomainObjectClass" value="org.geosdi.geoplatform.core.model.GPFolder"/>
+    </bean>
+    
+    <!-- ACL Service -->
+    <!-- Translating information about the object being secured by ACLs into expected ACEs -->
+    <bean id="mutableAclService"
+          class="org.springframework.security.acls.jdbc.JdbcMutableAclService">
+        <constructor-arg ref="dataSource"/>
+        <constructor-arg ref="lookupStrategy"/>
+        <constructor-arg ref="aclCache"/>
+    </bean>    
+    
+    <!-- Responsible for actually making database queries and resolving requests for ACLs -->
+    <!-- Translate a list of ObjectIdentitys to be protected into the actual, 
+         applicable ACE list from the database -->
+    <bean id="lookupStrategy"
+          class="org.springframework.security.acls.jdbc.BasicLookupStrategy">
+        <constructor-arg ref="dataSource"/>   
+        <constructor-arg ref="ehCacheAclCache"/>
+        <constructor-arg ref="aclAuditLogger"/>
+        <constructor-arg ref="aclAuthzStrategy"/>
+    </bean>
+    
+	<!-- ACL Caching -->
+    <!-- For a caching ObjectIdentity to Acl mappings, 
+         to prevent redundant (and expensive) database lookups -->	
+    <bean id="ehCacheManagerBean"
+          class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+    <bean id="ehCacheFactoryBean"
+          class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager" ref="ehCacheManagerBean"/>
+        <!-- Segregate the Ehcache instance for Hibernate purposes-->
+        <property name="cacheName" value="springAclCacheRegion"/>
+    </bean>
+    <bean id="ehCacheAclCache"
+          class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
+        <constructor-arg ref="ehCacheFactoryBean"/>
+    </bean>
+    
+    <!-- Audit ACL and ACE lookups: logs to the console -->
+    <bean id="aclAuditLogger"
+          class="org.springframework.security.acls.domain.ConsoleAuditLogger"/>
+
+    <!-- Responsible for determining whether a runtime change to an ACL or ACE is allowed, 
+         based on the type of change -->
+    <bean id="aclAuthzStrategy"
+          class="org.springframework.security.acls.domain.AclAuthorizationStrategyImpl">
+        <constructor-arg>
+            <array>
+                <ref local="aclAdminAuthority"/>
+                <ref local="aclAdminAuthority"/>
+                <ref local="aclAdminAuthority"/>
+            </array>
+        </constructor-arg>
+    </bean>    
+    <bean id="aclAdminAuthority"
+          class="org.springframework.security.core.authority.GrantedAuthorityImpl">
+        <constructor-arg value="ROLE_ADMIN"/>
+    </bean>        
+        
+</beans>            
