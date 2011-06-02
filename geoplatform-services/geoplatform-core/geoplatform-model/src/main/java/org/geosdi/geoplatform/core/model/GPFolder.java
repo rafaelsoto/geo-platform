@@ -81,7 +81,7 @@ public class GPFolder implements Serializable {
     private int position;
 
     @Column(name = "shared")
-    private boolean shared = false;    
+    private boolean shared = false;
 
     @ManyToOne(optional = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -92,7 +92,10 @@ public class GPFolder implements Serializable {
     private GPUser owner;
     
     @Column(name = "checked")
-    private boolean checked = false;    
+    private boolean checked = false;
+
+    @Column(name = "number_of_descendants")
+    private int numberOfDescendants = -1;
 
     //<editor-fold defaultstate="collapsed" desc="Getter and setter methods">
     /**
@@ -193,15 +196,32 @@ public class GPFolder implements Serializable {
     /**
      * @param checked
      *            the checked to set
-     */    
+     */
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    /**
+     * 
+     * @return the numberOfDescendant
+     */
+    public int getNumberOfDescendants() {
+        return numberOfDescendants;
+    }
+
+    /**
+     * @param numberOfDescendant
+     *            the numberOfDescendant to set
+     */
+    public void setNumberOfDescendants(int numberOfDescendants) {
+        this.numberOfDescendants = numberOfDescendants;
     }
     //</editor-fold>
 
     @Override
     public String toString() {
-        return "GPFolder{" + "id=" + id + "name=" + name + "position=" + position
-                + "shared=" + shared + "parent=" + parent + "owner=" + owner + '}';
+        return "GPFolder{" + " id=" + id + ", name=" + name + ", position=" + position
+                + ", shared=" + shared + ", parent=" + parent + ", owner=" + owner
+                + ", numberOfDescendants=" + numberOfDescendants + '}';
     }
 }
