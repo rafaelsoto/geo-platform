@@ -1,0 +1,128 @@
+/*
+ *  geo-platform
+ *  Rich webgis framework
+ *  http://geo-plartform.org
+ * ====================================================================
+ *
+ * Copyright (C) 2008-2011 geoSDI Group (CNR IMAA - Potenza - ITALY).
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details. You should have received a copy of the GNU General
+ * Public License along with this program. If not, see http://www.gnu.org/licenses/
+ *
+ * ====================================================================
+ *
+ * Linking this library statically or dynamically with other modules is
+ * making a combined work based on this library. Thus, the terms and
+ * conditions of the GNU General Public License cover the whole combination.
+ *
+ * As a special exception, the copyright holders of this library give you permission
+ * to link this library with independent modules to produce an executable, regardless
+ * of the license terms of these independent modules, and to copy and distribute
+ * the resulting executable under terms of your choice, provided that you also meet,
+ * for each linked independent module, the terms and conditions of the license of
+ * that module. An independent module is a module which is not derived from or
+ * based on this library. If you modify this library, you may extend this exception
+ * to your version of the library, but you are not obligated to do so. If you do not
+ * wish to do so, delete this exception statement from your version.
+ *
+ */
+package org.geosdi.geoplatform.gui.client.action.toolbar.responsibility;
+
+import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
+import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.geosdi.geoplatform.gui.client.model.memento.GPLayerSaveCache;
+import org.geosdi.geoplatform.gui.client.model.memento.MementoSaveRemove;
+import org.geosdi.geoplatform.gui.client.model.memento.puregwt.event.PeekCacheEvent;
+import org.geosdi.geoplatform.gui.client.service.LayerRemote;
+import org.geosdi.geoplatform.gui.client.widget.SearchStatus.EnumSearchStatus;
+import org.geosdi.geoplatform.gui.configuration.message.GeoPlatformMessage;
+import org.geosdi.geoplatform.gui.impl.view.LayoutManager;
+import org.geosdi.geoplatform.gui.model.tree.GPBeanTreeModel;
+import org.geosdi.geoplatform.gui.model.tree.GPLayerTreeModel;
+import org.geosdi.geoplatform.gui.puregwt.layers.LayerHandlerManager;
+import org.geosdi.geoplatform.gui.puregwt.progressbar.layers.event.DisplayLayersProgressBarEvent;
+
+/**
+ *
+ * @author Giuseppe La Scaleia - CNR IMAA geoSDI Group
+ * @email  giuseppe.lascaleia@geosdi.org
+ */
+public class DeleteLayerHandler extends DeleteRequestHandler {
+
+    private PeekCacheEvent peekCacheEvent = new PeekCacheEvent();
+
+    public DeleteLayerHandler(TreePanel theTree) {
+        super(theTree);
+    }
+
+    @Override
+    public void deleteRequest(GPBeanTreeModel model) {
+        if (model instanceof GPLayerTreeModel) {
+            GeoPlatformMessage.confirmMessage("Delete Layer",
+                    "Are you sure you sure you want to delete the Layer "
+                    + ((GPBeanTreeModel) tree.getSelectionModel().getSelectedItem()).getLabel()
+                    + " ?",
+                    new Listener<MessageBoxEvent>() {
+
+                        @Override
+                        public void handleEvent(MessageBoxEvent be) {
+                            if (be.getButtonClicked().getText().equalsIgnoreCase(
+                                    "yes")
+                                    || be.getButtonClicked().getText().equalsIgnoreCase(
+                                    "si")) {
+                                processRequest();
+                            }
+                        }
+                    });
+        } else {
+            forwardDeleteRequest(model);
+        }
+    }
+
+    @Override
+    public void processRequest() {
+        super.delete();
+    }
+
+    @Override
+    public void displayMessage() {
+        LayoutManager.get().getStatusMap().setStatus(
+                "The selected layer was deleted succesfully",
+                EnumSearchStatus.STATUS_SEARCH.toString());
+    }
+
+    @Override
+    public void executeSave(final MementoSaveRemove memento) {
+        //Warning: The following conversion is absolutely necessary!
+        memento.convertMementoToWs();
+        LayerRemote.Util.getInstance().saveDeletedLayerAndTreeModifications(
+                memento, new AsyncCallback<Boolean>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                LayerHandlerManager.fireEvent(new DisplayLayersProgressBarEvent(
+                        false));
+                GeoPlatformMessage.errorMessage("Save Delete Operation Error",
+                        "Problems on saving the new tree state after deleting layer");
+            }
+
+            @Override
+            public void onSuccess(Boolean result) {
+                GPLayerSaveCache.getInstance().remove(memento);
+                LayoutManager.get().getStatusMap().setStatus(
+                        "Layer deleted successfully.",
+                        EnumSearchStatus.STATUS_SEARCH.toString());
+                LayerHandlerManager.fireEvent(peekCacheEvent);
+            }
+        });
+    }
+}
