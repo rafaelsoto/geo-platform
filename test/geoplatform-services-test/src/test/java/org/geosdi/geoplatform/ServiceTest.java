@@ -104,7 +104,7 @@ public abstract class ServiceTest implements InitializingBean {
 
         gpJettyServer.start();
 
-        geoPlatformService = gpWSClient.create();
+//        geoPlatformService = gpWSClient.create();
     }
 
     @Before

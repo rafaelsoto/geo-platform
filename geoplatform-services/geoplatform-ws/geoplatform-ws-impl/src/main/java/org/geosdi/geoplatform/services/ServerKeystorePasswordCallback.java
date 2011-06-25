@@ -54,10 +54,14 @@ public class ServerKeystorePasswordCallback implements CallbackHandler {
     private Map<String, String> passwords = new HashMap<String, String>();
 
     public ServerKeystorePasswordCallback() {
-        passwords.put("client", "clientstorepwd");
-        passwords.put("server", "serverpwd");
-//        passwords.put("alice", "password");
-//        passwords.put("bob", "password");
+        passwords.put("Alice", "ecilA");
+        passwords.put("abcd", "dcba");
+        passwords.put("clientx509v1", "storepassword");
+        passwords.put("serverx509v1", "storepassword");
+//        passwords.put("client", "clientstorepwd");
+//        passwords.put("server", "serverpwd");
+////        passwords.put("alice", "password");
+////        passwords.put("bob", "password");
     }
 
     /**
@@ -69,10 +73,10 @@ public class ServerKeystorePasswordCallback implements CallbackHandler {
         for (int i = 0; i < callbacks.length; i++) {
             WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
 
-//            logger.info("########### Alias server: " + pc.getIdentifier());
+            logger.info("########### Alias server: " + pc.getIdentifier());
             logger.info("########### pc.getUsage(): " + pc.getUsage());
 
-            logger.info("########### WSPasswordCallback.SECRET_KEY: " + WSPasswordCallback.SECRET_KEY);
+//            logger.info("########### WSPasswordCallback.SECRET_KEY: " + WSPasswordCallback.SECRET_KEY);
             logger.info("########### WSPasswordCallback.CUSTOM_TOKEN: " + WSPasswordCallback.CUSTOM_TOKEN);
             logger.info("########### WSPasswordCallback.SECURITY_CONTEXT_TOKEN: " + WSPasswordCallback.SECURITY_CONTEXT_TOKEN);
             logger.info("########### WSPasswordCallback.SIGNATURE: " + WSPasswordCallback.SIGNATURE);

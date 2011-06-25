@@ -38,6 +38,7 @@
     	implementorClass="org.geosdi.geoplatform.services.GeoPlatformServiceImpl"
     	implementor="#geoplatformService"
     	address="/soap">
+
         <jaxws:serviceFactory>
             <bean class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean">
                 <property name="serviceConfigurations">
@@ -52,11 +53,11 @@
         <!--<jaxws:outInterceptors>
             <bean class="org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor"/>
             <ref bean="TimestampSignEncrypt_Response"/>
-        </jaxws:outInterceptors>
+        </jaxws:outInterceptors>-->
         <jaxws:inInterceptors>
             <ref bean="TimestampSignEncrypt_Request"/>
             <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/>
-        </jaxws:inInterceptors>-->
+        </jaxws:inInterceptors>
     </jaxws:endpoint>
 
     <!-- ====================================================================-->
@@ -71,15 +72,18 @@
         <constructor-arg>
             <map>
                 <!-- Use this action order for local clients -->
-                <entry key="action" value="Timestamp Signature Encrypt"/>
+                <!--<entry key="action" value="Timestamp Signature Encrypt"/>-->
+                <entry key="action" value="Signature"/>
                 <!-- Use this action spec for WCF clients 
                 <entry key="action" value="Signature Encrypt Timestamp"/>
                 -->
-                <entry key="signaturePropFile" value="/client.properties"/>
-                <entry key="decryptionPropFile" value="/server.properties"/>
+                <!--<entry key="signaturePropFile" value="/client.properties"/>
+                <entry key="decryptionPropFile" value="/server.properties"/>-->
                 
-                <!--<entry key="signaturePropFile" value="/alice.properties"/>
-                <entry key="decryptionPropFile" value="/bob.properties"/>-->
+                <!--<entry key="signaturePropFile" value="/alice.properties"/>-->
+                <entry key="signaturePropFile" value="/Server_SignVerf.properties"/>
+                <!--<entry key="signatureKeyIdentifier" value="DirectReference"/>-->
+                <!--<entry key="decryptionPropFile" value="/bob.properties"/>-->
                 <entry key="passwordCallbackClass" value="org.geosdi.geoplatform.services.ServerKeystorePasswordCallback"/>
             </map>
         </constructor-arg>
@@ -94,9 +98,10 @@
         >
         <constructor-arg>
             <map>
-                <entry key="action" value="Timestamp Signature Encrypt"/>
+                <!--<entry key="action" value="Timestamp Signature Encrypt"/>-->
+                <entry key="action" value="Encrypt"/>
                 <entry key="user" value="server"/>
-                <entry key="signaturePropFile" value="/server.properties"/>
+                <!--<entry key="signaturePropFile" value="/server.properties"/>-->
                 <entry key="encryptionPropFile" value="/client.properties"/>
                 <entry key="encryptionUser" value="client"/>
                 
@@ -104,13 +109,14 @@
                 <entry key="signaturePropFile" value="bob.properties"/>
                 <entry key="encryptionPropFile" value="alice.properties"/>
                 <entry key="encryptionUser" value="Alice"/>-->
-                <entry key="signatureKeyIdentifier" value="DirectReference"/>
+                <!--<entry key="signatureKeyIdentifier" value="DirectReference"/>-->
                 <entry key="passwordCallbackClass" value="org.geosdi.geoplatform.services.ServerKeystorePasswordCallback"/>
-                <entry key="signatureParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+                <!--<entry key="signatureParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>-->
                 <!--    
                      Recommendation: signatures should be encrypted    
                 -->
-                <entry key="encryptionParts" value="{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+                <!--<entry key="encryptionParts" value="{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>-->
+                <entry key="encryptionParts" value="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
                 <!-- <entry key="encryptionKeyTransportAlgorithm" value="RSA15"/> -->
                 <entry key="encryptionSymAlgorithm" value="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/>
             </map>

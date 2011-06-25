@@ -303,7 +303,6 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
             if (user == null) {
                 throw new ResourceNotFoundFault("User with specified username was not found");
             }
-            System.out.println("### user: " + user.toString());
             if (!user.verify(password)) {
                 throw new SoapFault("Specified password was incorrect", null);
             }

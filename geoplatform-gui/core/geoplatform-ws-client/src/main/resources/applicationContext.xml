@@ -9,7 +9,7 @@
 
     <context:annotation-config />
 
-    <bean id="geoPlatformServiceClient" class="org.geosdi.geoplatform.services.GeoPlatformService"
+    <!--<bean id="geoPlatformServiceClient" class="org.geosdi.geoplatform.services.GeoPlatformService"
 		factory-bean="geoPlatformProxyFactory" factory-method="create" />
 
     <bean id="geoPlatformProxyFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
@@ -17,6 +17,16 @@
 			value="org.geosdi.geoplatform.services.GeoPlatformService" />
         <property name="address"
 			value="http://localhost:8080/geoplatform-service/soap" />
+    </bean>-->
+
+    <bean id="greeter" class="org.geosdi.geoplatform.services.Greeter"
+		factory-bean="geoPlatformProxyFactory" factory-method="create" />
+
+    <bean id="geoPlatformProxyFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+        <property name="serviceClass"
+			value="org.geosdi.geoplatform.services.Greeter" />
+        <property name="address"
+			value="http://localhost:9000/SoapContext/GreeterPort" />
     </bean>
 
 </beans>
