@@ -39,51 +39,37 @@ package org.geosdi.geoplatform.core.dao;
 
 import com.googlecode.genericdao.search.ISearch;
 import java.util.List;
-import java.util.Map;
-
-import org.geosdi.geoplatform.core.model.GPFolder;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
+import org.geosdi.geoplatform.core.model.UserFolderPk;
 
 /**
- * @author Francesco Izzi - geoSDI
+ * @author Vincenzo Monteverde
+ * @email vincenzo.monteverde@geosdi.org - OpenPGP key ID 0xB25F4B38
  *
  */
-public interface GPFolderDAO {
+public interface GPUserFoldersDAO {
 
-    public List<GPFolder> findAll();
+    public List<GPUserFolders> findAll();
 
-    public GPFolder find(Long id);
+    public GPUserFolders find(UserFolderPk userFoldersId);
 
-    public GPFolder[] find(Long[] ids);
+    public void persist(GPUserFolders... usersFolders);
 
-    public void persist(GPFolder... folders);
+    public GPUserFolders merge(GPUserFolders userFolders);
 
-    public GPFolder merge(GPFolder folder);
+    public GPUserFolders[] merge(GPUserFolders... usersFolders);
 
-    public GPFolder[] merge(GPFolder... folder);
+    public boolean remove(GPUserFolders userFolders);
 
-    public boolean remove(GPFolder folder);
+    public boolean removeById(UserFolderPk userFoldersId);
 
-    public boolean removeById(Long folderId);
-
-    public List<GPFolder> search(ISearch search);
+    public List<GPUserFolders> search(ISearch search);
 
     public int count(ISearch search);
 
-    public GPFolder findByFolderName(String folderName);
+    public List<GPUserFolders> findByUserId(long userId);
 
-//    public boolean updatePositionsRangeInOppositeWay(int beginPositionFirstRange, int endPositionFirstRange,
-//            int beginPositionSecondRange, int endPositionSecondRange,
-//            int deltaValueFirstRange, int deltaValueSecondRange);
-//
-//    public boolean updatePositionsRange(int beginPosition, int endPosition,
-//            int deltaValue);
-//
-//    public boolean updatePositionsLowerBound(int lowerBoundPosition,
-//            int deltaValue);
-//
-//    public boolean updateAncestorsDescendants(Map<Long, Integer> descendantsMap);
-//
-//    public boolean persistCheckStatusFolder(long idFolder, boolean isChecked);
-//
-//    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders);
+    public List<GPUserFolders> findByFolderId(long folderId);
+
+    public GPUserFolders find(long userId, long folderId);
 }

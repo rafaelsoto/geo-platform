@@ -66,9 +66,9 @@ public class GPRasterLayer extends GPLayer {
     @Embedded
     private GPLayerInfo layerInfo;
     //
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true) // TODO ? optional = false ?
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private GPFolder folder;
+    private GPUserFolders parent;
 
     /**
      * @return the layerInfo
@@ -86,21 +86,22 @@ public class GPRasterLayer extends GPLayer {
     }
 
     /**
-     * @return the folder
+     * @return the userFolder
      */
     @Override
-    public GPFolder getFolder() {
-        return folder;
+    public GPUserFolders getUserFolders() {
+        return parent;
     }
 
     /**
-     * @param folder
-     *            the bbox to folder
+     * @param userFolder
+     *          the userFolder to set
      */
     @Override
-    public void setFolder(GPFolder folder) {
-        this.folder = folder;
+    public void setUserFolders(GPUserFolders userFolder) {
+        this.parent = userFolder;
     }
+
 
     /*
      * (non-Javadoc)
@@ -109,9 +110,9 @@ public class GPRasterLayer extends GPLayer {
      */
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("GPRasterLayer {");
+        StringBuilder str = new StringBuilder(this.getClass().getSimpleName()).append(" {");
         str.append(super.toString());
-        str.append(", layerInfo=").append(layerInfo).append("}");
-        return str.toString();
+        str.append(", layerInfo=").append(layerInfo);
+        return str.append("}").toString();
     }
 }

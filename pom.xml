@@ -6,7 +6,7 @@
     <artifactId>geo-platform</artifactId>
     <version>1.3-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Geo-Platform :: == GeoSDI Framework</name>
+    <name>[1.3-SNAPSHOT] Geo-Platform :: == GeoSDI Framework</name>
 
 
     <scm>
@@ -1108,10 +1108,13 @@
         <postgis-jdbc-version>1.1.6</postgis-jdbc-version>
 
         <persistence-version>1.0</persistence-version>
-        <hibernate-version>3.3.2.GA</hibernate-version>
-        <hibernate-spatial-version>1.0</hibernate-spatial-version>
+        <!--hibernate-version>3.4.0.GA</hibernate-version>        
+        <hibernate-annotations-version>3.4.0.GA</hibernate-annotations-version>
+        <hibernate-commons-annotations-version>3.1.0.GA</hibernate-commons-annotations-version-->        
+        <hibernate-version>3.3.2.GA</hibernate-version>        
         <hibernate-annotations-version>3.3.1.GA</hibernate-annotations-version>
-        <hibernate-commons-annotations-version>3.3.0.ga</hibernate-commons-annotations-version>
+        <hibernate-commons-annotations-version>3.3.0.ga</hibernate-commons-annotations-version>        
+        <hibernate-spatial-version>1.0</hibernate-spatial-version>
         <hibernate-generic-dao-version>1.0.0</hibernate-generic-dao-version>
         <asm-version>3.3</asm-version>
         <cglib-version>2.1_3</cglib-version>

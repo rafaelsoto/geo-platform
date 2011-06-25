@@ -38,7 +38,6 @@
 package org.geosdi.geoplatform.core.model;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -46,7 +45,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
@@ -75,7 +73,7 @@ public class GPVectorLayer extends GPLayer {
     //
     @ManyToOne(optional = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private GPFolder folder;
+    private GPUserFolders parent;
 
     /**
      * @return the geometry
@@ -94,20 +92,20 @@ public class GPVectorLayer extends GPLayer {
     }
 
     /**
-     * @return the folder
+     * @return the userFolder
      */
     @Override
-    public GPFolder getFolder() {
-        return folder;
+    public GPUserFolders getUserFolders() {
+        return parent;
     }
 
     /**
-     * @param folder
-     *            the bbox to folder
+     * @param userFolder
+     *          the userFolder to set
      */
     @Override
-    public void setFolder(GPFolder folder) {
-        this.folder = folder;
+    public void setUserFolders(GPUserFolders userFolder) {
+        this.parent = userFolder;
     }
 
     /*
@@ -117,9 +115,9 @@ public class GPVectorLayer extends GPLayer {
      */
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("GPVectorLayer {");
+        StringBuilder str = new StringBuilder(this.getClass().getSimpleName()).append(" {");
         str.append(super.toString());
-        str.append(", geometry=").append(geometry).append("}");
-        return str.toString();
+        str.append(", geometry=").append(geometry);
+        return str.append("}").toString();
     }
 }

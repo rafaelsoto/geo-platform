@@ -38,21 +38,23 @@
 package org.geosdi.geoplatform.core.model;
 
 import java.io.Serializable;
-
+import java.util.LinkedList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Cascade;
 
 /**
  * @author Francesco Izzi - geoSDI
@@ -77,27 +79,49 @@ public class GPFolder implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
     //
-    @ManyToOne(optional = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private GPFolder parent;
-    //
-    @ManyToOne(optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private GPUser owner;
-    //
-    @Column(name = "position")
-    private int position = -1;
-    //
     @Column(name = "number_of_descendants")
     private int numberOfDescendants = 0;
     //
     @Column(name = "shared")
     private boolean shared = false;
     //
-    @Column(name = "checked")
-    private boolean checked = false;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.folder", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
+    //
+    @Version
+    private int version;
 
-    //<editor-fold defaultstate="collapsed" desc="Getter and setter methods">
+    /**
+     * Default constructor
+     */
+    public GPFolder() {
+    }
+
+    /**
+     * Constructor with name arg
+     * @param name: folder name
+     */
+    public GPFolder(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the version
+     */
+    public int getVersion() {
+        return version;
+    }
+
+    // The application must not alter the version number set up by Hibernate in any way [Hibernate reference]
+//    /**
+//     * @param version
+//     *          the version to set
+//     */
+//    public void setVersion(int version) {
+//        this.version = version;
+//    }
     /**
      * @return the id
      */
@@ -129,20 +153,6 @@ public class GPFolder implements Serializable {
     }
 
     /**
-     * @return the position
-     */
-    public int getPosition() {
-        return position;
-    }
-
-    /**
-     * @param position the position to set
-     */
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    /**
      * @return the shared
      */
     public boolean isShared() {
@@ -154,51 +164,6 @@ public class GPFolder implements Serializable {
      */
     public void setShared(boolean shared) {
         this.shared = shared;
-    }
-
-    /**
-     * @return the parent
-     */
-    public GPFolder getParent() {
-        return parent;
-    }
-
-    /**
-     * @param parent
-     *            the parent to set
-     */
-    public void setParent(GPFolder parent) {
-        this.parent = parent;
-    }
-
-    /**
-     * @return the owner
-     */
-    public GPUser getOwner() {
-        return owner;
-    }
-
-    /**
-     * @param owner
-     *            the owner to set
-     */
-    public void setOwner(GPUser owner) {
-        this.owner = owner;
-    }
-
-    /**
-     * @return the checked
-     */
-    public boolean isChecked() {
-        return checked;
-    }
-
-    /**
-     * @param checked
-     *            the checked to set
-     */
-    public void setChecked(boolean checked) {
-        this.checked = checked;
     }
 
     /**
@@ -215,7 +180,29 @@ public class GPFolder implements Serializable {
     public void setNumberOfDescendants(int numberOfDescendants) {
         this.numberOfDescendants = numberOfDescendants;
     }
-    //</editor-fold>
+
+    /**
+     * @return the userFolders
+     */
+    public List<GPUserFolders> getUserFolders() {
+        return userFolders;
+    }
+
+    /**
+     * @param userFolders
+     *          the userFolders to set
+     */
+    public void setUserFolders(List<GPUserFolders> userFolders) {
+        this.userFolders = userFolders;
+    }
+
+    public boolean addUserFolder(GPUserFolders userFolder) {
+        return this.userFolders.add(userFolder);
+    }
+
+    public boolean removeUserFolder(GPUserFolders userFolder) {
+        return this.userFolders.remove(userFolder);
+    }
 
     /*
      * (non-Javadoc)
@@ -224,20 +211,42 @@ public class GPFolder implements Serializable {
      */
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("GPFolder {");
-        str.append(" id=").append(id);
+        StringBuilder str = new StringBuilder(this.getClass().getSimpleName()).append(" {");
+        str.append("id=").append(id);
         str.append(", name=").append(name);
-        if (parent != null) {
-            str.append(", parent.name=").append(parent.getName());
-            str.append("(id=").append(parent.getId()).append(")");
-        } else { // owner != null
-            str.append(", owner.username=").append(owner.getUsername());
-            str.append("(id=").append(owner.getId()).append(")");
-        }
-        str.append(", position=").append(position);
+        str.append(", version=").append(version);
         str.append(", numberOfDescendants=").append(numberOfDescendants);
         str.append(", shared=").append(shared);
-        str.append(", checked=").append(checked).append("}");
-        return str.toString();
+        return str.append("}").toString();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GPFolder other = (GPFolder) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        int hash = 13;
+        hash = 77 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
     }
 }

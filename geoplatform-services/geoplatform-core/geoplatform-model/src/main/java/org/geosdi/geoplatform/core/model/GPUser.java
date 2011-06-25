@@ -41,20 +41,23 @@ import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -108,6 +111,11 @@ public class GPUser implements Serializable, UserDetails {
     //
     @Transient
     private Collection<GPAuthority> gpAuthorities;
+    //
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
 
     /**
      * Default constructor
@@ -250,14 +258,28 @@ public class GPUser implements Serializable, UserDetails {
         return credentialsNonExpired;
     }
 
+    /**
+     * @return the userFolders
+     */
+    public List<GPUserFolders> getUserFolders() {
+        return userFolders;
+    }
+
+    /**
+     * @param userFolders
+     *          the userFolders to set
+     */
+    public void setUserFolders(List<GPUserFolders> userFolders) {
+        this.userFolders = userFolders;
+    }
+
     /*
      * (non-Javadoc)
-     *
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("GPUser {");
+        StringBuilder str = new StringBuilder(this.getClass().getSimpleName()).append(" {");
         str.append("id=").append(id);
         str.append(", username=").append(username);
         str.append(", password=").append(password);
@@ -266,13 +288,12 @@ public class GPUser implements Serializable, UserDetails {
         str.append(", sendEmail=").append(sendEmail);
         str.append(", accountNonExpired=").append(accountNonExpired);
         str.append(", accountNonLocked=").append(accountNonLocked);
-        str.append(", credentialsNonExpired=").append(credentialsNonExpired).append('}');
-        return str.toString();
+        str.append(", credentialsNonExpired=").append(credentialsNonExpired);
+        return str.append('}').toString();
     }
 
     /*
      * (non-Javadoc)
-     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -292,7 +313,6 @@ public class GPUser implements Serializable, UserDetails {
 
     /*
      * (non-Javadoc)
-     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -306,13 +326,13 @@ public class GPUser implements Serializable, UserDetails {
         String hashPasswordSpeicifed = md5hash(password);
         if (this.password.equals(hashPasswordSpeicifed)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private String md5hash(String password) throws NoSuchAlgorithmException {
         String hashString = null;
+        // MD5 (128 bits) - TODO Better algotithm: SHA-1 (160 bits), SHA-256, SHA-384, SHA-512
         java.security.MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
         byte[] hash = digest.digest(password.getBytes());
         hashString = "";

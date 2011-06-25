@@ -99,9 +99,6 @@ public abstract class GPLayer implements Serializable {
     @Column(name = "position")
     private int position = -1;
     //
-    @Column(name = "owner_id", nullable = false)
-    private long ownerId = -1;
-    //
     @Column(name = "shared")
     private boolean shared = false;
     //
@@ -111,7 +108,6 @@ public abstract class GPLayer implements Serializable {
     @Column(name = "cached")
     private boolean cached = false;
 
-    //<editor-fold defaultstate="collapsed" desc="Getter and setter methods">
     /**
      * @return the id
      */
@@ -185,21 +181,6 @@ public abstract class GPLayer implements Serializable {
      */
     public void setShared(boolean shared) {
         this.shared = shared;
-    }
-
-    /**
-     * @return the ownerId
-     */
-    public long getOwnerId() {
-        return ownerId;
-    }
-
-    /**
-     * @param ownerId
-     *            the ownerId to set
-     */
-    public void setOwnerId(long ownerId) {
-        this.ownerId = ownerId;
     }
 
     /**
@@ -306,11 +287,10 @@ public abstract class GPLayer implements Serializable {
     public void setCached(boolean cached) {
         this.cached = cached;
     }
-    //</editor-fold>
 
-    public abstract GPFolder getFolder();
+    public abstract GPUserFolders getUserFolders();
 
-    public abstract void setFolder(GPFolder folder);
+    public abstract void setUserFolders(GPUserFolders userFolders);
 
     /*
      * (non-Javadoc)
@@ -355,7 +335,7 @@ public abstract class GPLayer implements Serializable {
      */
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(this.getClass().getSimpleName()).append(" {");
         str.append("id=").append(id);
         str.append(", name=").append(name);
         str.append(", title=").append(title);
@@ -365,12 +345,24 @@ public abstract class GPLayer implements Serializable {
         str.append(", bbox=").append(bbox);
         str.append(", layerType=").append(layerType);
         str.append(", position=").append(position);
-        str.append(", ownerId=").append(ownerId);
         str.append(", shared=").append(shared);
         str.append(", checked=").append(checked);
         str.append(", cached=").append(cached);
-        str.append(", folder.name=").append(getFolder().getName());
-        str.append("(id=").append(getFolder().getId()).append(")");
-        return str.toString();
+        if (this.getUserFolders() != null) {
+            if (this.getUserFolders().getUser() != null) {
+                str.append(", parent_user.username=").append(this.getUserFolders().getUser().getUsername());
+                str.append("(id=").append(this.getUserFolders().getUser().getId()).append(")");
+            } else {
+                str.append(", parent_user=NULL");
+            }
+            if (this.getUserFolders().getFolder() != null) {
+                str.append(", parent_folder.alias=").append(this.getUserFolders().getAlias());
+                str.append(", parent_folder.name=").append(this.getUserFolders().getFolder().getName());
+                str.append("(id=").append(this.getUserFolders().getFolder().getId()).append(")");
+            } else {
+                str.append(", parent_folder=NULL");
+            }
+        }
+        return str.append("}").toString();
     }
 }

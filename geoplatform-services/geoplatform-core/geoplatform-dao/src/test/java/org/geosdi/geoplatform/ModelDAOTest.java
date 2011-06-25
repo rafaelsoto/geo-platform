@@ -36,7 +36,6 @@
 package org.geosdi.geoplatform;
 
 import java.text.ParseException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -48,20 +47,23 @@ public class ModelDAOTest extends BaseDAOTest {
 
     @Test
     public void testRemoveAll() throws ParseException {
-        logger.trace("\n\t@@@ testServers @@@");
+        logger.trace("\n\t@@@ testRemoveAll @@@");
         Assert.assertNotNull("userDAO is NULL", super.userDAO);
+        Assert.assertNotNull("authorityDAO is NULL", super.authorityDAO);
+        Assert.assertNotNull("userFoldersDAO is NULL", super.userFoldersDAO);
         Assert.assertNotNull("folderDAO is NULL", super.folderDAO);
         Assert.assertNotNull("layerDAO is NULL", super.layerDAO);
         Assert.assertNotNull("styleDAO is NULL", super.styleDAO);
         Assert.assertNotNull("serverDAO is NULL", super.serverDAO);
-        Assert.assertNotNull("authorityDAO is NULL", super.authorityDAO);
-        
+
         removeAll();
 
-        Assert.assertEquals("All Users doesn't REMOVED", 0, userDAO.findAll().size());
-        Assert.assertEquals("All Styles doesn't REMOVED", 0, styleDAO.findAll().size());
-        Assert.assertEquals("All Folders doesn't REMOVED", 0, folderDAO.findAll().size());
-        Assert.assertEquals("All Layers doesn't REMOVED", 0, layerDAO.findAll().size());
+        Assert.assertEquals("All Styles doesn't REMOVED", 0, super.styleDAO.findAll().size());
+        Assert.assertEquals("All Layers doesn't REMOVED", 0, super.layerDAO.findAll().size());
+        Assert.assertEquals("All UserFolders doesn't REMOVED", 0, super.userFoldersDAO.findAll().size());
+        Assert.assertEquals("All Folders doesn't REMOVED", 0, super.folderDAO.findAll().size());
+        Assert.assertEquals("All Authorities doesn't REMOVED", 0, super.authorityDAO.findAll().size());
+        Assert.assertEquals("All Users doesn't REMOVED", 0, super.userDAO.findAll().size());
 
         insertData();
         insertFolders();
