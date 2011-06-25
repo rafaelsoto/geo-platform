@@ -31,9 +31,13 @@
     </servlet-mapping>
     
     <!-- Spring Security -->
-    <!-- FilterChainProxy will intercept all incoming requests and 
-         delegate the request's control to the appropriate Spring handler -->
     <filter>
+        <description>
+            An istance of FilterChainProxy will intercept all incoming requests
+            and delegate the request's control to the appropriate Spring handler.
+            The name of this filter must be exactly springSecurityFilterChain
+            for wire Spring Security to the DelegatingFilterProxy.
+        </description>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>

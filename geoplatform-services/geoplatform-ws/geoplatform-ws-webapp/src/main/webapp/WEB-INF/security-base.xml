@@ -3,10 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/jdbc  http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
-		http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/jdbc
+                http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+		http://www.springframework.org/schema/security
 		http://www.springframework.org/schema/security/spring-security-3.0.xsd">
     
     <!-- Enable annotations (based on expected ACL privilege) -->
@@ -17,12 +18,13 @@
     </global-method-security>
     
     <!-- All URLs within application to be secured, requiring the following roles to access -->
-    <http auto-config='true'>
+    <!-- auto-config=true sets up a default filter chain of 10 servlet filters -->
+    <http auto-config="true">
         <intercept-url pattern="/**" access="ROLE_GUEST, ROLE_USER, ROLE_ADMIN"/>
     </http>
         
     <!-- Add some users -->
-	<!-- TODO: replace this with the database-based authentication provider -->
+    <!-- TODO: replace this with the database-based authentication provider -->
     <authentication-manager alias="authenticationManager">
         <authentication-provider>
             <password-encoder ref="passwordEncoder"/>
@@ -35,8 +37,8 @@
     </authentication-manager>
     
     <!-- Use a Plaintext encoder since the user's passwords are stored as clear text in the database -->
-    <!-- TODO: encrypted password -->
-    <bean id="passwordEncoder"
-          class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
-    
+    <!-- TODO: encrypted password -->    
+    <beans:bean id="passwordEncoder"
+                class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
+   
 </beans:beans>

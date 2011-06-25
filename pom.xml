@@ -6,7 +6,7 @@
     <artifactId>geo-platform</artifactId>
     <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Geo-Platform :: == GeoSDI Framework</name>
+    <name>[Security] Geo-Platform :: == GeoSDI Framework</name>
 
 
     <scm>
