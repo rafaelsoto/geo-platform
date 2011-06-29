@@ -79,7 +79,7 @@ public class GPUser implements Serializable, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GP_USER_SEQ")
     @SequenceGenerator(name = "GP_USER_SEQ", sequenceName = "GP_USER_SEQ")
-    private long id;
+    private long id = -1;
     //
     @Column(name = "user_name", unique = true, nullable = false)
     private String username;
@@ -111,11 +111,12 @@ public class GPUser implements Serializable, UserDetails {
     //
     @Transient
     private Collection<GPAuthority> gpAuthorities;
-    //
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
+    // Hibernate with this list remove "on delete cascade" on FK of gp_user_folders(user_id)
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id")
+////    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+////    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+////        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+//    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
 
     /**
      * Default constructor
@@ -258,20 +259,20 @@ public class GPUser implements Serializable, UserDetails {
         return credentialsNonExpired;
     }
 
-    /**
-     * @return the userFolders
-     */
-    public List<GPUserFolders> getUserFolders() {
-        return userFolders;
-    }
-
-    /**
-     * @param userFolders
-     *          the userFolders to set
-     */
-    public void setUserFolders(List<GPUserFolders> userFolders) {
-        this.userFolders = userFolders;
-    }
+//    /**
+//     * @return the userFolders
+//     */
+//    public List<GPUserFolders> getUserFolders() {
+//        return userFolders;
+//    }
+//
+//    /**
+//     * @param userFolders
+//     *          the userFolders to set
+//     */
+//    public void setUserFolders(List<GPUserFolders> userFolders) {
+//        this.userFolders = userFolders;
+//    }
 
     /*
      * (non-Javadoc)

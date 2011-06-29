@@ -50,7 +50,6 @@ import org.geosdi.geoplatform.core.model.GPLayer;
 import org.geosdi.geoplatform.core.model.GPStyle;
 import org.geosdi.geoplatform.core.model.GPUser;
 import org.geosdi.geoplatform.core.model.GPUserFolders;
-import org.geosdi.geoplatform.core.model.UserFolderPk;
 import org.geotools.data.ows.Layer;
 import org.geotools.data.ows.WMSCapabilities;
 import org.geotools.data.wms.WebMapServer;
@@ -110,6 +109,9 @@ public abstract class BaseDAOTest {
     //
     @Autowired
     protected GPAuthorityDAO authorityDAO;
+    //
+//    private final String wmsURL = "http://imaa.geosdi.org/geoserver/wms?service=wms&version=1.1.1&request=GetCapabilities";
+    private final String wmsURL = "http://maps.telespazio.it/dpc/dpc-wms?service=wms&version=1.1.1&request=GetCapabilities";
     //
     protected final String nameUserTest_1 = "user_test_1";
     protected final String nameUserTest_2 = "user_test_2";
@@ -253,26 +255,27 @@ public abstract class BaseDAOTest {
 
     private void insertUserFolders(List<Layer> layerList) {
         // +6 because {"only folders"; "empty subfolder A"; "empty subfolder B"; "my raster"; "IGM"; "vector layer"}
-        int position = layerList.size() + 6;
+        int position = layerList.size() + 6 + 1; // +1 because position have base one
 
         // "only folders"
         GPFolder onlyFolders = new GPFolder("only folders");
-        GPUserFolders userOnlyFolders = this.createUserFolderBind(userTest_1, onlyFolders, position, null);
+        GPUserFolders userOnlyFolders = this.createBindingUserFolder(userTest_1, onlyFolders, position, null);
 
         // "only folders" ---> "empty subfolder A"
         GPFolder emptySubFolderA = new GPFolder("empty subfolder A");
-        this.createUserFolderBind(userTest_1, emptySubFolderA, --position, userOnlyFolders);
+        GPUserFolders userEmptySubFolderA = this.createBindingUserFolder(userTest_1, emptySubFolderA, --position, userOnlyFolders);
 
         // "only folders" ---> "empty subfolder B"
         GPFolder emptySubFolderB = new GPFolder("empty subfolder B");
-        this.createUserFolderBind(userTest_1, emptySubFolderB, --position, userOnlyFolders);
+        GPUserFolders userEmptySubFolderB = this.createBindingUserFolder(userTest_1, emptySubFolderB, --position, userOnlyFolders);
 
         onlyFolders.setNumberOfDescendants(2);
-        folderDAO.persist(onlyFolders, emptySubFolderA, emptySubFolderB); // Persist also the GPUserFolders entities
+        folderDAO.persist(onlyFolders, emptySubFolderA, emptySubFolderB);
+        userFoldersDAO.persist(userOnlyFolders, userEmptySubFolderA, userEmptySubFolderB);
 
 //        // "my raster"
         GPFolder folderRaster = new GPFolder("my raster");
-        GPUserFolders userFolderRaster = this.createUserFolderBind(userTest_1, folderRaster, --position, null);
+        GPUserFolders userFolderRaster = this.createBindingUserFolder(userTest_1, folderRaster, --position, null);
 
         // "my raster" ---> _rasterLayer1_ ---> Styles
         GPRasterLayer rasterLayer1 = this.createRasterLayer(--position, userFolderRaster);
@@ -281,6 +284,7 @@ public abstract class BaseDAOTest {
         //
         folderRaster.setNumberOfDescendants(layerList.size() + 2); // +2 because {"IGM"; "vector layer"}
         folderDAO.persist(folderRaster);
+        userFoldersDAO.persist(userFolderRaster);
         layerDAO.persist(rasterLayer1);
         styleDAO.persist(style1, style2);
 
@@ -291,24 +295,25 @@ public abstract class BaseDAOTest {
 
         // ---> "my raster" --> "IGM"
         GPFolder folderIGM = new GPFolder("IGM");
-        GPUserFolders userFolderIGM = this.createUserFolderBind(userTest_1, folderIGM, --position, userFolderRaster);
+        GPUserFolders userFolderIGM = this.createBindingUserFolder(userTest_1, folderIGM, --position, userFolderRaster);
 
         // ---> "my raster" --> "IGM" _vectorLayer1_
         GPVectorLayer vectorLayer1 = this.createVectorLayer(--position, userFolderIGM);
         //
         folderIGM.setNumberOfDescendants(1);
         folderDAO.persist(folderIGM);
+        userFoldersDAO.persist(userFolderIGM);
         layerDAO.persist(vectorLayer1);
     }
 
-    protected GPUserFolders createUserFolderBind(GPUser user, GPFolder folder,
-            int position, GPUserFolders userFolderParent) {
+    protected GPUserFolders createBindingUserFolder(GPUser user, GPFolder folder,
+            int position, GPUserFolders parentUserFolder) {
         GPUserFolders userFolder = new GPUserFolders();
-        userFolder.setPk(new UserFolderPk(user, folder));
+        userFolder.setUserAndFolder(user, folder);
         userFolder.setPosition(position);
-        userFolder.setParent(userFolderParent);
+        userFolder.setParentUserFolder(parentUserFolder);
 
-        folder.addUserFolder(userFolder);
+//        folder.addUserFolder(userFolder);
 
         return userFolder;
     }
@@ -366,7 +371,7 @@ public abstract class BaseDAOTest {
     private List<Layer> loadLayersFromServer() {
         URL url = null;
         try {
-            url = new URL("http://imaa.geosdi.org/geoserver/wms?service=wms&version=1.1.1&request=GetCapabilities");
+            url = new URL(wmsURL);
         } catch (MalformedURLException e) {
             logger.error("Error:" + e);
         }

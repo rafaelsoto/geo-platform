@@ -67,7 +67,7 @@ public class WSTest implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.info("WSTest - afterPropertiesSet-------------------------------> " + this.getClass().getName());
-        greeter = gpWSClient.create();
+//        greeter = gpWSClient.create();
     }
 
     @Test

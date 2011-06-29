@@ -39,7 +39,9 @@ package org.geosdi.geoplatform;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
+import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -59,6 +61,7 @@ import org.geosdi.geoplatform.core.model.GPLayerInfo;
 import org.geosdi.geoplatform.core.model.GPLayerType;
 import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
 import org.geosdi.geoplatform.cxf.GeoPlatformWSClient;
 import org.geosdi.geoplatform.request.RequestById;
@@ -86,40 +89,46 @@ public abstract class ServiceTest implements InitializingBean {
     protected List<String> layerInfoKeywords;
     // User
     protected final String usernameTest = "username_test_ws";
-    protected GPUser userTest = null;
     protected long idUserTest = -1;
+    protected GPUser userTest = null;
     // Folder A
     protected final String nameRootFolderA = "rootFolderA";
     protected GPFolder rootFolderA = null;
-    protected long idRootFolderA = -1;
+    protected GPUserFolders userTestRootFolderA = null;
+    protected long idUserRootFolderA = -1;
     // Folder B
     protected final String nameRootFolderB = "rootFolderB";
     protected GPFolder rootFolderB = null;
-    protected long idRootFolderB = -1;
+    protected GPUserFolders userTestRootFolderB = null;
+    protected long idUserRootFolderB = -1;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.info("ServiceTest - afterPropertiesSet-------------------------------> " + this.getClass().getName());
-        Assert.assertNotNull(gpJettyServer);
 
+        Assert.assertNotNull("gpJettyServer is NULL", gpJettyServer);
         gpJettyServer.start();
 
-//        geoPlatformService = gpWSClient.create();
+        geoPlatformService = gpWSClient.create();
+        Assert.assertNotNull("geoPlatformService is NULL", geoPlatformService);
     }
 
     @Before
     public void setUp() throws Exception {
-        logger.trace("\n\t@@@ {}.setUp @@@", this.getClass().getName());
+        logger.trace("\n\t@@@ {}.setUp @@@", this.getClass().getSimpleName());
+
         // Insert User
         idUserTest = this.createAndInsertUser(usernameTest);
         userTest = geoPlatformService.getUserDetailByName(new SearchRequest(usernameTest));
 
         // Create root folders for the user
-        idRootFolderA = createAndInsertFolderWithOwner(nameRootFolderA, userTest, 2, false);
-        rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idRootFolderA));
+        idUserRootFolderA = createAndInsertFolder(userTest, nameRootFolderA, 2, false, null);
+        userTestRootFolderA = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderA);
+        rootFolderA = geoPlatformService.getFolderDetail(new RequestById(userTestRootFolderA.getFolder().getId())); // TODO ? DEL ?
 
-        idRootFolderB = createAndInsertFolderWithOwner(nameRootFolderB, userTest, 1, false);
-        rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idRootFolderB));
+        idUserRootFolderB = createAndInsertFolder(userTest, nameRootFolderB, 1, false, null);
+        userTestRootFolderB = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderB);
+        rootFolderB = geoPlatformService.getFolderDetail(new RequestById(userTestRootFolderB.getFolder().getId())); // TODO ? DEL ?
 
         // Set the list of keywords (for raster layer)
         layerInfoKeywords = new ArrayList<String>();
@@ -128,12 +137,15 @@ public abstract class ServiceTest implements InitializingBean {
 
     @After
     public void tearDown() {
-        logger.trace("\n\t@@@ {}.tearDown @@@", this.getClass().getName());
+        logger.trace("\n\t@@@ {}.tearDown @@@", this.getClass().getSimpleName());
         // Delete user
         this.deleteUser(idUserTest);
+        // Delete folders
+        this.deleteFolder(idUserRootFolderA);
+        this.deleteFolder(idUserRootFolderB);
     }
 
-    // Create and insert (with assert) a User
+    // Create and insert a User
     protected long createAndInsertUser(String username) throws IllegalParameterFault {
         GPUser user = createUser(username);
         logger.debug("\n*** GPUser to INSERT:\n{}\n***", user);
@@ -148,7 +160,9 @@ public abstract class ServiceTest implements InitializingBean {
         user.setUsername(username);
         user.setEmailAddress(username + "@test");
         user.setEnabled(true);
+        // TODO FIX: Utility.md5("pwd_" + username)
         user.setPassword("918706bb28e76c3a5f3c7f0dd6f06ff0"); // clear password: 'pwd_username_test_ws'
+//        user.setPassword("pwd_" + username);
         user.setSendEmail(true);
         return user;
     }
@@ -163,34 +177,47 @@ public abstract class ServiceTest implements InitializingBean {
         }
     }
 
-    protected long createAndInsertFolderWithOwner(String folderName, GPUser owner, int position, boolean shared) {
-        GPFolder folder = createFolder(folderName, owner, position, shared);
-        folder.setParent(null);
-        long id = geoPlatformService.insertFolder(folder);
-        return id;
+    // Delete (with assert) a Folder
+    protected void deleteFolder(long idFolder) {
+        try {
+            boolean check = geoPlatformService.deleteFolder(new RequestById(idFolder));
+            Assert.assertTrue("Folder with id = " + idFolder + " has not been eliminated", check);
+        } catch (Exception e) {
+            Assert.fail("Error while deleting Folder with Id: " + idFolder);
+        }
     }
 
-    protected long createAndInsertFolderWithParent(String folderName, GPUser owner, GPFolder parentFolder, int position, boolean shared) {
-        GPFolder folder = createFolder(folderName, owner, position, shared);
-        folder.setParent(parentFolder);
-        long id = geoPlatformService.insertFolder(folder);
-        return id;
+    protected long createAndInsertFolder(GPUser owner, String folderName,
+            int position, boolean shared, GPUserFolders parentUserFolder) throws IllegalParameterFault {
+        GPFolder folder = this.createFolder(folderName, shared);
+        GPUserFolders userFolder = this.createBindingUserFolder(owner, folder, position, null);
+
+        return geoPlatformService.insertFolder(userFolder);
     }
 
-    protected GPFolder createFolder(String folderName, GPUser owner, int position, boolean shared) {
-        GPFolder folder = new GPFolder();
-        folder.setOwner(owner);
-        folder.setName(folderName);
-        folder.setPosition(position);
+    protected GPFolder createFolder(String folderName, boolean shared) {
+        GPFolder folder = new GPFolder(folderName);
         folder.setShared(shared);
+
         return folder;
     }
 
-    protected long createAndInsertRasterLayer(String abstractText, GPFolder parentFolder, String name, int position, boolean shared,
-            long ownerId, String srs, String title, String urlServer) {
+    protected GPUserFolders createBindingUserFolder(GPUser user, GPFolder folder,
+            int position, GPUserFolders parentUserFolder) {
+        GPUserFolders userFolder = new GPUserFolders();
+        userFolder.setUserAndFolder(user, folder);
+        userFolder.setPosition(position);
+        userFolder.setParentUserFolder(parentUserFolder);
+
+//        folder.addUserFolder(userFolder);
+
+        return userFolder;
+    }
+
+    protected long createAndInsertRasterLayer(GPUserFolders userFolder, String title, String name,
+            String abstractText, int position, boolean shared, String srs, String urlServer) {
         GPRasterLayer rasterLayer = new GPRasterLayer();
-        createLayer(rasterLayer, abstractText, parentFolder, name, position, shared, ownerId, srs, title, urlServer);
-        rasterLayer.setFolder(parentFolder);
+        this.createLayer(rasterLayer, userFolder, title, name, abstractText, position, shared, srs, urlServer);
 
         GPLayerInfo layerInfo = new GPLayerInfo();
         layerInfo.setKeywords(layerInfoKeywords);
@@ -198,39 +225,31 @@ public abstract class ServiceTest implements InitializingBean {
         rasterLayer.setLayerInfo(layerInfo);
 
         rasterLayer.setLayerType(GPLayerType.RASTER);
-        long id = geoPlatformService.insertLayer(rasterLayer);
-        return id;
+        return geoPlatformService.insertLayer(rasterLayer);
     }
 
-    protected long createAndInsertVectorLayer(String abstractText, GPFolder parentFolder, String name, int position, boolean shared,
-            long ownerId, String srs, String title, String urlServer) {
+    protected long createAndInsertVectorLayer(GPUserFolders userFolder, String title, String name,
+            String abstractText, int position, boolean shared, String srs, String urlServer) {
         GPVectorLayer vectorLayer = new GPVectorLayer();
-        createLayer(vectorLayer, abstractText, parentFolder, name, position, shared, ownerId, srs, title, urlServer);
-        vectorLayer.setFolder(parentFolder);
+        this.createLayer(vectorLayer, userFolder, title, name, abstractText, position, shared, srs, urlServer);
 
         vectorLayer.setLayerType(GPLayerType.POLYGON);
-        long id = geoPlatformService.insertLayer(vectorLayer);
-        return id;
+        return geoPlatformService.insertLayer(vectorLayer);
     }
 
-    protected void createLayer(GPLayer gpLayer, String abstractText, GPFolder parentFolder, String name, int position, boolean shared,
-            long ownerId, String srs, String title, String urlServer) {
-        double minX = 10;
-        double minY = 10;
-        double maxX = 20;
-        double maxY = 20;
+    protected void createLayer(GPLayer gpLayer, GPUserFolders userFolder, String name, String title,
+            String abstractText, int position, boolean shared, String srs, String urlServer) {
+        gpLayer.setUserFolders(userFolder);
 
-        gpLayer.setFolder(parentFolder);
-        gpLayer.setAbstractText(abstractText);
+        gpLayer.setTitle(title);
         gpLayer.setName(name);
+        gpLayer.setAbstractText(abstractText);
         gpLayer.setPosition(position);
         gpLayer.setShared(shared);
-        gpLayer.setOwnerId(ownerId);
         gpLayer.setSrs(srs);
-        gpLayer.setTitle(title);
         gpLayer.setUrlServer(urlServer);
 
-        GPBBox bBox = new GPBBox(minX, minY, maxX, maxY);
+        GPBBox bBox = new GPBBox(10, 10, 20, 20);
         gpLayer.setBbox(bBox);
     }
 }

@@ -58,6 +58,7 @@ import org.geosdi.geoplatform.core.dao.GPLayerDAO;
 import org.geosdi.geoplatform.core.dao.GPServerDAO;
 import org.geosdi.geoplatform.core.dao.GPStyleDAO;
 import org.geosdi.geoplatform.core.dao.GPUserDAO;
+import org.geosdi.geoplatform.core.dao.GPUserFoldersDAO;
 import org.geosdi.geoplatform.core.model.GPBBox;
 import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPLayer;
@@ -65,6 +66,7 @@ import org.geosdi.geoplatform.core.model.GPLayerInfo;
 import org.geosdi.geoplatform.core.model.GPLayerType;
 import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
 import org.geosdi.geoplatform.core.model.GeoPlatformServer;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
@@ -92,6 +94,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
 
     // DAO
     private GPUserDAO userDao;
+    private GPUserFoldersDAO userFoldersDao;
     private GPServerDAO serverDao;
     private GPFolderDAO folderDao;
     private GPLayerDAO layerDao;
@@ -133,6 +136,12 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
         this.folderServiceDelegate.setUserDao(userDao);
         this.layerServiceDelegate.setUserDao(userDao);
         this.aclServiceDelegate.setUserDao(userDao);
+    }
+
+    @Autowired
+    public void setUserFoldersDao(GPUserFoldersDAO userFoldersDao) {
+        this.userFoldersDao = userFoldersDao;
+        this.folderServiceDelegate.setUserFoldersDao(userFoldersDao);
     }
 
     /**
@@ -318,14 +327,14 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     // === Folder
     // ==========================================================================
     @Override
-    public long insertFolder(GPFolder folder) {
-        return this.folderServiceDelegate.insertFolder(folder);
+    public long insertFolder(GPUserFolders userFolder) throws IllegalParameterFault {
+        return this.folderServiceDelegate.insertFolder(userFolder);
     }
 
     @Override
-    public long updateFolder(GPFolder folder) throws ResourceNotFoundFault,
+    public long updateFolder(GPUserFolders userFolder) throws ResourceNotFoundFault,
             IllegalParameterFault {
-        return folderServiceDelegate.updateFolder(folder);
+        return folderServiceDelegate.updateFolder(userFolder);
     }
 
     @Override
@@ -402,6 +411,28 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     // ==========================================================================
     // === Folder / User
     // ==========================================================================
+    @Override
+    public GPUserFolders getUserFolder(long userFolderId)
+            throws ResourceNotFoundFault {
+        return folderServiceDelegate.getUserFolder(userFolderId);
+    }
+
+    @Override
+    public GPUserFolders getUserFolderByUserAndFolderId(long userId, long folderId)
+            throws ResourceNotFoundFault {
+        return folderServiceDelegate.getUserFolderByUserAndFolderId(userId, folderId);
+    }
+
+    @Override
+    public List<GPUserFolders> getUserFolderByUserId(long userId) {
+        return folderServiceDelegate.getUserFolderByUserId(userId);
+    }
+
+    @Override
+    public List<GPUserFolders> getUserFolderByFolderId(long folderId) {
+        return folderServiceDelegate.getUserFolderByFolderId(folderId);
+    }
+
     @Override
     public void setFolderShared(RequestById request)
             throws ResourceNotFoundFault {

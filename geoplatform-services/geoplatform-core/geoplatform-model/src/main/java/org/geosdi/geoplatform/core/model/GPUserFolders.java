@@ -38,16 +38,17 @@
 package org.geosdi.geoplatform.core.model;
 
 import java.io.Serializable;
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.acls.domain.BasePermission;
@@ -59,28 +60,30 @@ import org.springframework.security.acls.model.Permission;
  *
  */
 @Entity
-@Table(name = "gp_user_folders")
+@Table(name = "gp_user_folders", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "folder_id"})})
 public class GPUserFolders implements Serializable {
 
     @Id
-//    @EmbeddedId
-    @AssociationOverrides({
-        @AssociationOverride(name = "pk.user", joinColumns =
-        @JoinColumn(name = "user_id")),
-        @AssociationOverride(name = "pk.folder", joinColumns =
-        @JoinColumn(name = "folder_id"))
-    })
-    private UserFolderPk pk = new UserFolderPk();
-//    private UserFolderPk pk = null;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GP_USER_FOLDERS_SEQ")
+    @SequenceGenerator(name = "GP_USER_FOLDERS_SEQ", sequenceName = "GP_USER_FOLDERS_SEQ")
+    private long id = -1;
     //
-//    @Column(name = "owner", nullable = false) // TODO ? DEL and use Permission.ADMINISTRATOR ?
-//    private boolean owner = false;
+    @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @org.hibernate.annotations.Index(name = "USER_INDEX") // TODO Uncomment
+    private GPUser user;
+    //
+    @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+//    @org.hibernate.annotations.Index(name = "FOLDER_INDEX") // TODO Uncomment
+    private GPFolder folder;
     //
     @Column(name = "permission_mask", nullable = false)
     private int permissionMask = BasePermission.ADMINISTRATION.getMask();
     //    
-    @Column(name = "alias")
-    private String alias = null;
+    @Column(name = "alias_name")
+    private String aliasName = null;
     //
     @Column(name = "position") // TODO ? nullable = false ?
     private int position = -1;
@@ -90,38 +93,93 @@ public class GPUserFolders implements Serializable {
     //
     @ManyToOne(optional = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumns({
-        @JoinColumn(name = "parent_user_id"),
-        @JoinColumn(name = "parent_folder_id")})
-    private GPUserFolders parentFolder;
+    @JoinColumn(name = "parent_user_folder_id") // referencedColumnName = "id", 
+    private GPUserFolders parentUserFolder;
 
-//    /**
-//     * @return the owner
-//     */
-//    public boolean isOwner() {
-//        return owner;
-//    }
-//
-//    /**
-//     * @param owner
-//     *            the owner to set
-//     */
-//    public void setOwner(boolean owner) {
-//        this.owner = owner;
-//    }
     /**
-     * @return the alias
+     * @return the id
      */
-    public String getAlias() {
-        return alias;
+    public long getId() {
+        return id;
     }
 
     /**
-     * @param alias
-     *          the alias to set
+     * @param id
+     *          the id to set
      */
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the user
+     */
+    public GPUser getUser() {
+        return user;
+    }
+
+    /**
+     * @param user
+     *          the user to set
+     */
+    public void setUser(GPUser user) {
+        this.user = user;
+    }
+
+    /**
+     * @return the folder
+     */
+    public GPFolder getFolder() {
+        return folder;
+    }
+
+    /**
+     * @param folder
+     *          the folder to set
+     */
+    public void setFolder(GPFolder folder) {
+        this.folder = folder;
+    }
+
+    /**
+     * @param user
+     *          the user to set
+     * @param folder
+     *          the folder to set
+     */
+    public void setUserAndFolder(GPUser user, GPFolder folder) {
+        this.user = user;
+        this.folder = folder;
+    }
+
+    /**
+     * @return the permissionMask
+     */
+    public int getPermissionMask() {
+        return permissionMask;
+    }
+
+    /**
+     * @param permissionMask
+     *          the permissionMask to set
+     */
+    public void setPermissionMask(int permissionMask) {
+        this.permissionMask = permissionMask;
+    }
+
+    /**
+     * @return the alias
+     */
+    public String getAliasName() {
+        return aliasName;
+    }
+
+    /**
+     * @param aliasName
+     *          the aliasName to set
+     */
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
     }
 
     /**
@@ -154,18 +212,18 @@ public class GPUserFolders implements Serializable {
     }
 
     /**
-     * @return the parentFolder
+     * @return the parentUserFolder
      */
-    public GPUserFolders getParent() {
-        return parentFolder;
+    public GPUserFolders getParentUserFolder() {
+        return parentUserFolder;
     }
 
     /**
-     * @param parentFolder
-     *            the parentFolder to set
+     * @param parentUserFolder
+     *            the parentUserFolder to set
      */
-    public void setParent(GPUserFolders parentFolder) {
-        this.parentFolder = parentFolder;
+    public void setParentUserFolder(GPUserFolders parentUserFolder) {
+        this.parentUserFolder = parentUserFolder;
     }
 
     /*
@@ -176,50 +234,28 @@ public class GPUserFolders implements Serializable {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder(this.getClass().getSimpleName()).append(" {");
-        str.append(" PK=").append(pk);
+        if (user != null) {
+            str.append(" user.username=").append(user.getUsername());
+            str.append("(id=").append(user.getId()).append(")");
+        } else {
+            str.append(" user=null");
+        }
+        if (folder != null) {
+            str.append(", folder.name=").append(folder.getName());
+            str.append("(id=").append(folder.getId()).append(")");
+        } else {
+            str.append(", folder=null");
+        }
         str.append(", permission=").append(permissionMask);
-        str.append(", alias=").append(getAlias());
+        str.append(", aliasName=").append(aliasName);
         str.append(", position=").append(position);
         str.append(", checked=").append(checked);
-        if (parentFolder != null) {
-            str.append(", parentFolder.PK=").append(parentFolder.getPk());
+        if (parentUserFolder != null) {
+            str.append(", parentFolder.id=").append(parentUserFolder.getId());
         } else {
             str.append(", parentFolder=NULL (this is a root folder)");
         }
         return str.append("}").toString();
-    }
-
-    /**
-     * @return the pk
-     */
-    public UserFolderPk getPk() {
-        return pk;
-    }
-
-    /**
-     * @param pk
-     *          the pk to set
-     */
-    public void setPk(UserFolderPk pk) {
-        this.pk = pk;
-    }
-
-//    @Transient
-    public GPUser getUser() {
-        return getPk().getUser();
-    }
-
-    public void setUser(GPUser user) {
-        this.getPk().setUser(user);
-    }
-
-//    @Transient
-    public GPFolder getFolder() {
-        return getPk().getFolder();
-    }
-
-    public void setFolder(GPFolder folder) {
-        getPk().setFolder(folder);
     }
 
     /*
@@ -227,16 +263,16 @@ public class GPUserFolders implements Serializable {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
 
-        GPUserFolders that = (GPUserFolders) o;
-        if (getPk() != null ? !getPk().equals(that.getPk()) : that.getPk() != null) {
+        final GPUserFolders other = (GPUserFolders) obj;
+        if (this.id != other.id) {
             return false;
         }
 
@@ -249,21 +285,9 @@ public class GPUserFolders implements Serializable {
      */
     @Override
     public int hashCode() {
-        return (getPk() != null ? getPk().hashCode() : 0);
-    }
-
-    /**
-     * @return the permissionMask
-     */
-    public int getPermissionMask() {
-        return permissionMask;
-    }
-
-    /**
-     * @param permissionMask
-     *          the permissionMask to set
-     */
-    public void setPermissionMask(int permissionMask) {
-        this.permissionMask = permissionMask;
+        int result;
+        result = (user != null ? user.hashCode() : 0);
+        result = 71 * result + (folder != null ? folder.hashCode() : 0);
+        return result;
     }
 }

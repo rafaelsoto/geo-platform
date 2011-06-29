@@ -46,6 +46,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.annotations.OnDelete;
@@ -73,7 +74,8 @@ public class GPVectorLayer extends GPLayer {
     //
     @ManyToOne(optional = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private GPUserFolders parent;
+    @JoinColumn(name = "user_folder_id")
+    private GPUserFolders userFolder;
 
     /**
      * @return the geometry
@@ -96,7 +98,7 @@ public class GPVectorLayer extends GPLayer {
      */
     @Override
     public GPUserFolders getUserFolders() {
-        return parent;
+        return userFolder;
     }
 
     /**
@@ -105,7 +107,7 @@ public class GPVectorLayer extends GPLayer {
      */
     @Override
     public void setUserFolders(GPUserFolders userFolder) {
-        this.parent = userFolder;
+        this.userFolder = userFolder;
     }
 
     /*

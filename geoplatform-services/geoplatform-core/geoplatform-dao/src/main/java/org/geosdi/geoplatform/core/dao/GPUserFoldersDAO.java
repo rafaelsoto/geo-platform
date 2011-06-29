@@ -40,7 +40,6 @@ package org.geosdi.geoplatform.core.dao;
 import com.googlecode.genericdao.search.ISearch;
 import java.util.List;
 import org.geosdi.geoplatform.core.model.GPUserFolders;
-import org.geosdi.geoplatform.core.model.UserFolderPk;
 
 /**
  * @author Vincenzo Monteverde
@@ -51,7 +50,7 @@ public interface GPUserFoldersDAO {
 
     public List<GPUserFolders> findAll();
 
-    public GPUserFolders find(UserFolderPk userFoldersId);
+    public GPUserFolders find(long userFoldersId);
 
     public void persist(GPUserFolders... usersFolders);
 
@@ -61,7 +60,11 @@ public interface GPUserFoldersDAO {
 
     public boolean remove(GPUserFolders userFolders);
 
-    public boolean removeById(UserFolderPk userFoldersId);
+    public boolean removeById(long userFoldersId);
+
+    public boolean removeByUserId(long userId);
+
+    public boolean removeByFolderId(long folderId);
 
     public List<GPUserFolders> search(ISearch search);
 

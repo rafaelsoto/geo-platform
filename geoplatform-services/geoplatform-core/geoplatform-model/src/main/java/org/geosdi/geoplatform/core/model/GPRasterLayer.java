@@ -39,6 +39,7 @@ package org.geosdi.geoplatform.core.model;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -68,7 +69,8 @@ public class GPRasterLayer extends GPLayer {
     //
     @ManyToOne(optional = true) // TODO ? optional = false ?
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private GPUserFolders parent;
+    @JoinColumn(name = "user_folder_id")
+    private GPUserFolders userFolder;
 
     /**
      * @return the layerInfo
@@ -90,7 +92,7 @@ public class GPRasterLayer extends GPLayer {
      */
     @Override
     public GPUserFolders getUserFolders() {
-        return parent;
+        return userFolder;
     }
 
     /**
@@ -99,7 +101,7 @@ public class GPRasterLayer extends GPLayer {
      */
     @Override
     public void setUserFolders(GPUserFolders userFolder) {
-        this.parent = userFolder;
+        this.userFolder = userFolder;
     }
 
 

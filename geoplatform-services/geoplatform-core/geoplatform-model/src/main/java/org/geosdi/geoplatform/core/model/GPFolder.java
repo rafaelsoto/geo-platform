@@ -38,29 +38,26 @@
 package org.geosdi.geoplatform.core.model;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 
 /**
  * @author Francesco Izzi - geoSDI
  * 
  */
 @XmlRootElement(name = "Folder")
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity(name = "Folder")
 @Table(name = "gp_folder")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "folder")
@@ -74,7 +71,7 @@ public class GPFolder implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GP_FOLDER_SEQ")
     @SequenceGenerator(name = "GP_FOLDER_SEQ", sequenceName = "GP_FOLDER_SEQ")
-    private long id;
+    private long id = -1;
     //
     @Column(name = "name", nullable = false)
     private String name;
@@ -85,10 +82,13 @@ public class GPFolder implements Serializable {
     @Column(name = "shared")
     private boolean shared = false;
     //
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.folder", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
+//    @XmlElementWrapper(name = "userFolders")
+//    @XmlElement(name = "userFolder")
+//    // Hibernate with this list remove "on delete cascade" on FK of gp_user_folders(folder_id)
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "folder", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+//        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+//    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
     //
     @Version
     private int version;
@@ -181,28 +181,28 @@ public class GPFolder implements Serializable {
         this.numberOfDescendants = numberOfDescendants;
     }
 
-    /**
-     * @return the userFolders
-     */
-    public List<GPUserFolders> getUserFolders() {
-        return userFolders;
-    }
-
-    /**
-     * @param userFolders
-     *          the userFolders to set
-     */
-    public void setUserFolders(List<GPUserFolders> userFolders) {
-        this.userFolders = userFolders;
-    }
-
-    public boolean addUserFolder(GPUserFolders userFolder) {
-        return this.userFolders.add(userFolder);
-    }
-
-    public boolean removeUserFolder(GPUserFolders userFolder) {
-        return this.userFolders.remove(userFolder);
-    }
+//    /**
+//     * @return the userFolders
+//     */
+//    public List<GPUserFolders> getUserFolders() {
+//        return userFolders;
+//    }
+//
+//    /**
+//     * @param userFolders
+//     *          the userFolders to set
+//     */
+//    public void setUserFolders(List<GPUserFolders> userFolders) {
+//        this.userFolders = userFolders;
+//    }
+//
+//    public boolean addUserFolder(GPUserFolders userFolder) {
+//        return this.userFolders.add(userFolder);
+//    }
+//
+//    public boolean removeUserFolder(GPUserFolders userFolder) {
+//        return this.userFolders.remove(userFolder);
+//    }
 
     /*
      * (non-Javadoc)

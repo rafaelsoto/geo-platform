@@ -112,6 +112,7 @@ public class LayerService implements ILayerService {
         return elements;
     }
 
+    // TODO FIX
     @Override
     public long saveFolderForUser(String folderName, int position,
             int numberOfDescendants, boolean isChecked) throws GeoPlatformException {
@@ -127,11 +128,11 @@ public class LayerService implements ILayerService {
 
         GPFolder folder = new GPFolder();
         folder.setName(folderName);
-        folder.setPosition(position);
+//        folder.setPosition(position);
         folder.setShared(false);
-        folder.setOwner(user);
+//        folder.setOwner(user);
         folder.setNumberOfDescendants(numberOfDescendants);
-        folder.setChecked(isChecked);
+//        folder.setChecked(isChecked);
 
         return this.geoPlatformServiceClient.insertFolder(folder);
     }
@@ -154,11 +155,11 @@ public class LayerService implements ILayerService {
 
         GPFolder folder = new GPFolder();
         folder.setName(folderName);
-        folder.setPosition(position);
+//        folder.setPosition(position);
         folder.setShared(false);
-        folder.setParent(gpFolder);
+//        folder.setParent(gpFolder);
         folder.setNumberOfDescendants(numberOfDescendants);
-        folder.setChecked(isChecked);
+//        folder.setChecked(isChecked);
 
         return geoPlatformServiceClient.insertFolder(folder);
     }

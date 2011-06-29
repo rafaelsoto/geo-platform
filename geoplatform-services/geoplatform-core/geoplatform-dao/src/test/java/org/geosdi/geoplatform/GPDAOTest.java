@@ -48,6 +48,7 @@ import junit.framework.Assert;
 import org.geosdi.geoplatform.core.model.GPLayer;
 import org.geosdi.geoplatform.core.model.GPLayerInfo;
 import org.geosdi.geoplatform.core.model.GPRasterLayer;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
 import org.junit.After;
 import org.junit.Before;
@@ -66,8 +67,12 @@ public class GPDAOTest extends BaseDAOTest {
     // User
     private String nameUser = "user_position_test";
     private GPUser userPositionTest = null;
+    // UserFolders
+    private GPUserFolders userRootFolder;
+    private GPUserFolders userFolderA;
+    private GPUserFolders userFolderB;
     // Folders
-    private GPFolder userFolder;
+    private GPFolder rootFolder;
     private GPFolder folderA;
     private GPFolder folderB;
     // Layers
@@ -80,38 +85,42 @@ public class GPDAOTest extends BaseDAOTest {
 
     @Before
     public void setUp() {
-        logger.info("\n\t@@@ " + getClass().getSimpleName() + ".setUp @@@");
+        logger.trace("\n\t@@@ " + getClass().getSimpleName() + ".setUp @@@");
         userPositionTest = super.insertUser(nameUser);
 
         endPosition = beginPosition + 930;
-//        userFolder = super.createUserFolder("folder_of_" + nameUser, userPositionTest, beginPosition + 900); // 333930
-//        userFolder.setNumberOfDescendants(13);
-//        userFolder.setChecked(false);
-//        //
-//        folderDAO.persist(userFolder);
-//
-//        folderA = super.createEmptyFolder("folder_position_test_A", userPositionTest, userFolder, beginPosition + 600); // 333630        
-//        folderB = super.createEmptyFolder("folder_position_test_B", userPositionTest, userFolder, beginPosition + 300); // 333330
-//        folderA.setNumberOfDescendants(3);
-//        folderB.setNumberOfDescendants(9);
-//        folderA.setChecked(false);
-//        folderB.setChecked(true);
-//        //
-//        folderDAO.persist(folderA, folderB);
-//
-//        rasterLayer = super.createRasterLayer(beginPosition + 30, folderB, userPositionTest.getId()); // 333030
-//        vectorLayer = super.createVectorLayer(beginPosition, folderB, userPositionTest.getId()); // 333000
-//        rasterLayer.setTitle(rasterLayer.getTitle() + "_position_test");
-//        vectorLayer.setTitle(vectorLayer.getTitle() + "_position_test");
-//        rasterLayer.setChecked(false);
-//        vectorLayer.setChecked(true);
-//        //
-//        layerDAO.persist(rasterLayer, vectorLayer);
+
+        rootFolder = new GPFolder("folder_of_" + nameUser);
+        userRootFolder = this.createBindingUserFolder(userPositionTest, rootFolder, beginPosition + 900, null); // 333930
+        rootFolder.setNumberOfDescendants(13);
+        //
+        folderDAO.persist(rootFolder);
+        userFoldersDAO.persist(userRootFolder);
+
+        folderA = new GPFolder("folder_position_test_A");
+        userFolderA = this.createBindingUserFolder(userPositionTest, folderA, beginPosition + 600, userRootFolder); // 333630        
+        folderB = new GPFolder("folder_position_test_B");
+        userFolderB = this.createBindingUserFolder(userPositionTest, folderB, beginPosition + 300, userRootFolder); // 333330        
+        userFolderB.setChecked(true);
+        folderA.setNumberOfDescendants(3);
+        folderB.setNumberOfDescendants(9);
+        //
+        folderDAO.persist(folderA, folderB);
+        userFoldersDAO.persist(userFolderA, userFolderB);
+
+        rasterLayer = super.createRasterLayer(beginPosition + 30, userFolderB); // 333030
+        vectorLayer = super.createVectorLayer(beginPosition, userFolderB); // 333000
+        rasterLayer.setTitle(rasterLayer.getTitle() + "_position_test");
+        vectorLayer.setTitle(vectorLayer.getTitle() + "_position_test");
+        rasterLayer.setChecked(false);
+        vectorLayer.setChecked(true);
+        //
+        layerDAO.persist(rasterLayer, vectorLayer);
     }
 
     @After
     public void tearDown() {
-        logger.info("\n\t@@@ " + getClass().getSimpleName() + ".tearDown @@@");
+        logger.trace("\n\t@@@ " + getClass().getSimpleName() + ".tearDown @@@");
         // Remove user and his folders and layers
         userDAO.remove(userPositionTest);
     }
@@ -123,60 +132,58 @@ public class GPDAOTest extends BaseDAOTest {
         Assert.assertNotNull("layerDAO is NULL", super.layerDAO);
 //        Assert.assertNotNull("styleDAO is NULL", super.styleDAO);
     }
-        
 
-//    @Test
-//    public void testTransactionsOnLayers() {
-//        List<String> layerInfoKeywords = new ArrayList<String>();
-//        layerInfoKeywords.add("keyword_test");
-//
-//        GPLayerInfo layerInfo = new GPLayerInfo();
-//        layerInfo.setKeywords(layerInfoKeywords);
-//        layerInfo.setQueryable(false);
-//
-//        String titleRasterLayer3 = "Raster Layer 3";
-//        String titleVectorLayer3 = "Vector Layer 3";
-//
-//        try {
-//            // "folder_position_test_A" ---> "rasterLayer3"
-//            GPRasterLayer rasterLayer3 = super.createRasterLayer(beginPosition, folderA, userPositionTest.getId());
-//            rasterLayer3.setTitle(titleRasterLayer3);
-//            rasterLayer3.setChecked(false);
-//
-//            // "folder_position_test_A" ---> "vectorLayer3"
-//            GPVectorLayer vectorLayer3 = super.createVectorLayer(beginPosition, folderA, userPositionTest.getId());
-//            vectorLayer3.setTitle(titleVectorLayer3);
-//            vectorLayer3.setChecked(true);
-//
-//            // "folder_position_test_A" ---> "rasterLayer4"
-//            GPRasterLayer rasterLayer4 = super.createRasterLayer(beginPosition, folderA, userPositionTest.getId());
-//            rasterLayer4.setTitle(null);
-//            rasterLayer4.setChecked(false);
-//
-//            // "folder_position_test_A" ---> "vectorLayer4"
-//            GPVectorLayer vectorLayer4 = super.createVectorLayer(beginPosition, folderA, userPositionTest.getId());
-//            vectorLayer4.setTitle(null);
-//            vectorLayer4.setChecked(true);
-//            //
-//            ArrayList<GPLayer> layersList = new ArrayList<GPLayer>();
-//            layersList.add(rasterLayer3);
-//            layersList.add(vectorLayer3);
-//            layersList.add(rasterLayer4);
-//            layersList.add(vectorLayer4);
-//
-//            GPLayer[] layersArray = layersList.toArray(new GPLayer[layersList.size()]);
-//            layerDAO.persist(layersArray);
-//            Assert.fail("saveAddedLayersAndTreeModifications must throws an exception");
-//        } catch (Exception ex) {
-//        }
-//
-//        GPLayer newRasterLayer3 = layerDAO.findByLayerName(titleRasterLayer3);
-//        Assert.assertNull("rasterLayer3 must be null", newRasterLayer3);
-//
-//        GPLayer newVectorLayer3 = layerDAO.findByLayerName(titleVectorLayer3);
-//        Assert.assertNull("rectorLayer3 must be null", newVectorLayer3);
-//    }
-//
+    @Test
+    public void testTransactionsOnLayers() {
+        List<String> layerInfoKeywords = new ArrayList<String>();
+        layerInfoKeywords.add("keyword_test");
+
+        GPLayerInfo layerInfo = new GPLayerInfo();
+        layerInfo.setKeywords(layerInfoKeywords);
+        layerInfo.setQueryable(false);
+
+        String titleRasterLayer3 = "Raster Layer 3";
+        String titleVectorLayer3 = "Vector Layer 3";
+
+        try {
+            // "folder_position_test_A" ---> "rasterLayer3"
+            GPRasterLayer rasterLayer3 = super.createRasterLayer(beginPosition, userFolderA);
+            rasterLayer3.setTitle(titleRasterLayer3);
+            rasterLayer3.setChecked(false);
+
+            // "folder_position_test_A" ---> "vectorLayer3"
+            GPVectorLayer vectorLayer3 = super.createVectorLayer(beginPosition, userFolderA);
+            vectorLayer3.setTitle(titleVectorLayer3);
+            vectorLayer3.setChecked(true);
+
+            // "folder_position_test_A" ---> "rasterLayer4"
+            GPRasterLayer rasterLayer4 = super.createRasterLayer(beginPosition, userFolderA);
+            rasterLayer4.setTitle(null);
+            rasterLayer4.setChecked(false);
+
+            // "folder_position_test_A" ---> "vectorLayer4"
+            GPVectorLayer vectorLayer4 = super.createVectorLayer(beginPosition, userFolderA);
+            vectorLayer4.setTitle(null);
+            vectorLayer4.setChecked(true);
+            //
+            ArrayList<GPLayer> layersList = new ArrayList<GPLayer>();
+            layersList.add(rasterLayer3);
+            layersList.add(vectorLayer3);
+            layersList.add(rasterLayer4);
+            layersList.add(vectorLayer4);
+
+            GPLayer[] layersArray = layersList.toArray(new GPLayer[layersList.size()]);
+            layerDAO.persist(layersArray);
+            Assert.fail("saveAddedLayersAndTreeModifications must throws an exception");
+        } catch (Exception ex) {
+        }
+
+        GPLayer newRasterLayer3 = layerDAO.findByLayerName(titleRasterLayer3);
+        Assert.assertNull("rasterLayer3 must be null", newRasterLayer3);
+
+        GPLayer newVectorLayer3 = layerDAO.findByLayerName(titleVectorLayer3);
+        Assert.assertNull("rectorLayer3 must be null", newVectorLayer3);
+    }
 //    //<editor-fold defaultstate="collapsed" desc="Test of updatePositionsRange">
 //    /**
 //     * Test of updatePositionsRange method for Folders

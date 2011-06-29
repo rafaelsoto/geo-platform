@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.geosdi.geoplatform.core.model.GPFolder;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
 
 /**
  * @author giuseppe
@@ -50,7 +51,7 @@ import org.geosdi.geoplatform.core.model.GPFolder;
 @XmlRootElement(name = "FolderDTO")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FolderDTO extends AbstractElementDTO {
-    
+
     private int numberOfDescendants;
 
     /**
@@ -64,9 +65,9 @@ public class FolderDTO extends AbstractElementDTO {
      * Constructor with GPFolder as arg
      * @param folder
      */
-    public FolderDTO(GPFolder folder) {
-        super(folder.getId(), folder.getName(), folder.getPosition(),
-                folder.isShared(), folder.isChecked());
+    public FolderDTO(GPFolder folder, GPUserFolders userFolder) {
+        super(folder.getId(), folder.getName(), userFolder.getPosition(),
+                folder.isShared(), userFolder.isChecked());
         this.numberOfDescendants = folder.getNumberOfDescendants();
     }
 

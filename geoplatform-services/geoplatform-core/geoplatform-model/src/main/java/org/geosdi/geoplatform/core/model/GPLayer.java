@@ -356,7 +356,7 @@ public abstract class GPLayer implements Serializable {
                 str.append(", parent_user=NULL");
             }
             if (this.getUserFolders().getFolder() != null) {
-                str.append(", parent_folder.alias=").append(this.getUserFolders().getAlias());
+                str.append(", parent_folder.aliasName=").append(this.getUserFolders().getAliasName());
                 str.append(", parent_folder.name=").append(this.getUserFolders().getFolder().getName());
                 str.append("(id=").append(this.getUserFolders().getFolder().getId()).append(")");
             } else {

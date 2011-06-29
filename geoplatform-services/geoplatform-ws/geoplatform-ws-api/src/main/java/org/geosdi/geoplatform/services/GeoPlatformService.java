@@ -56,6 +56,7 @@ import org.geosdi.geoplatform.core.model.GPLayerInfo;
 import org.geosdi.geoplatform.core.model.GPLayerType;
 import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
 import org.geosdi.geoplatform.core.model.GeoPlatformServer;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
@@ -146,11 +147,12 @@ public interface GeoPlatformService {
     // ==========================================================================
     @Put
     @HttpResource(location = "/folder")
-    long insertFolder(@WebParam(name = "Folder") GPFolder folder);
+    long insertFolder(@WebParam(name = "Folder") GPUserFolders userFolder)
+            throws IllegalParameterFault;
 
     @Post
     @HttpResource(location = "/folder")
-    long updateFolder(@WebParam(name = "Folder") GPFolder folder)
+    long updateFolder(@WebParam(name = "Folder") GPUserFolders userFolder)
             throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Delete
@@ -305,6 +307,35 @@ public interface GeoPlatformService {
     @HttpResource(location = "/folders/{userId}")
     @WebResult(name = "count")
     int getAllUserFoldersCount(@WebParam(name = "userId") long userId);
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="UserFolders">
+    // ==========================================================================
+    // === UserFolders
+    // ==========================================================================
+    @Get
+    @HttpResource(location = "/user-folders/{userFolderId}")
+    @WebResult(name = "UserFolder")
+    GPUserFolders getUserFolder(@WebParam(name = "userFolderId") long userFolderId)
+            throws ResourceNotFoundFault;
+
+    @Get
+    @HttpResource(location = "/user/{userId}/folders/{folderId}")
+    @WebResult(name = "UserFolder")
+    GPUserFolders getUserFolderByUserAndFolderId(
+            @WebParam(name = "userId") long userId,
+            @WebParam(name = "folderId") long folderId)
+            throws ResourceNotFoundFault;
+
+    @Get
+    @HttpResource(location = "/user/{userId}")
+    @WebResult(name = "UserFolders")
+    List<GPUserFolders> getUserFolderByUserId(@WebParam(name = "userId") long userId);
+
+    @Get
+    @HttpResource(location = "/folders/{folderId}")
+    @WebResult(name = "UserFolders")
+    List<GPUserFolders> getUserFolderByFolderId(@WebParam(name = "folderId") long folderId);
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Layer / Style">

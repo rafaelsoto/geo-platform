@@ -39,7 +39,6 @@ package org.geosdi.geoplatform.core.dao.impl;
 
 import org.geosdi.geoplatform.core.dao.GPUserFoldersDAO;
 import org.geosdi.geoplatform.core.model.GPUserFolders;
-import org.geosdi.geoplatform.core.model.UserFolderPk;
 
 import com.googlecode.genericdao.search.ISearch;
 import com.googlecode.genericdao.search.Search;
@@ -53,7 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Transactional
-public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, UserFolderPk>
+public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, Long>
         implements GPUserFoldersDAO {
 
     @Override
@@ -62,12 +61,8 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, UserFolderPk>
     }
 
     @Override
-    public GPUserFolders find(UserFolderPk userFoldersId) {
-//        return super.find(userFoldersId); // Run (magicaly) but execute a strange outer join on x_user_id=y_folder_id
-        if (userFoldersId != null && userFoldersId.getUser() != null && userFoldersId.getFolder() != null) {
-            this.find(userFoldersId.getUser().getId(), userFoldersId.getFolder().getId());
-        }
-        return null;
+    public GPUserFolders find(long userFoldersId) {
+        return super.find(userFoldersId);
     }
 
     @Override
@@ -87,37 +82,51 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, UserFolderPk>
 
     @Override
     public boolean remove(GPUserFolders userFolders) {
-//        return super.remove(userFolders); // Don't run because GPUserFolders has UserFolderPk composite-key
-        if (userFolders != null) {
-            if (em().contains(userFolders)) {
-                em().remove(userFolders);
-                return true;
-            } else {
-                return this.removeById(userFolders.getPk());
-            }
-        }
-        return false;
+        return super.remove(userFolders);
     }
 
     @Override
-    public boolean removeById(UserFolderPk userFoldersId) {
-//        return super.removeById(userFoldersId); // Don't run because GPUserFolders has UserFolderPk composite-key
-        if (userFoldersId != null) {
-            // Hibernate Query Language [HQL]
-            StringBuilder str = new StringBuilder();
-            str.append("select _it_.pk.user.id, _it_.pk.folder.id");
-            str.append(" from ").append(getMetadataUtil().get(GPUserFolders.class).getEntityName()).append(" _it_");
-            str.append(" where _it_.pk.user.id = ? and _it_.pk.folder.id = ?");
-            // Set query
-            Query query = em().createQuery(str.toString());
-            query.setParameter(1, userFoldersId.getUser().getId());
-            query.setParameter(2, userFoldersId.getFolder().getId());
-            // Remove existent entity
-            if (!query.getResultList().isEmpty()) {
-                em().remove(em().getReference(GPUserFolders.class, userFoldersId));
-                return true;
-            }
+    public boolean removeById(long userFoldersId) {
+        return super.removeById(userFoldersId);
+    }
+
+    // TODO Check
+    @Override
+    public boolean removeByUserId(long userId) {
+        // Hibernate Query Language [HQL]
+        StringBuilder str = new StringBuilder();
+        str.append("select _it_.user.id");
+        str.append(" from ").append(getMetadataUtil().get(GPUserFolders.class).getEntityName()).append(" _it_");
+        str.append(" where _it_.user.id = ?");
+        // Set query
+        Query query = em().createQuery(str.toString());
+        query.setParameter(1, userId);
+        // Remove existent entities
+        if (!query.getResultList().isEmpty()) {
+            em().remove(em().getReference(GPUserFolders.class, userId));
+            return true;
         }
+
+        return false;
+    }
+
+    // TODO Check
+    @Override
+    public boolean removeByFolderId(long folderId) {
+        // Hibernate Query Language [HQL]
+        StringBuilder str = new StringBuilder();
+        str.append("select _it_.folder.id");
+        str.append(" from ").append(getMetadataUtil().get(GPUserFolders.class).getEntityName()).append(" _it_");
+        str.append(" where _it_.folder.id = ?");
+        // Set query
+        Query query = em().createQuery(str.toString());
+        query.setParameter(1, folderId);
+        // Remove existent entities
+        if (!query.getResultList().isEmpty()) {
+            em().remove(em().getReference(GPUserFolders.class, folderId));
+            return true;
+        }
+
         return false;
     }
 
@@ -135,7 +144,7 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, UserFolderPk>
     public List<GPUserFolders> findByUserId(long userId) {
         Search search = new Search();
         search.addSortDesc("position");
-        search.addFilterEqual("pk.user.id", userId);
+        search.addFilterEqual("user.id", userId);
         return search(search);
     }
 
@@ -143,15 +152,15 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, UserFolderPk>
     public List<GPUserFolders> findByFolderId(long folderId) {
         Search search = new Search();
         search.addSortDesc("position");
-        search.addFilterEqual("pk.folder.id", folderId);
+        search.addFilterEqual("folder.id", folderId);
         return search(search);
     }
 
     @Override
     public GPUserFolders find(long userId, long folderId) {
         Search search = new Search();
-        search.addFilterEqual("pk.user.id", userId);
-        search.addFilterEqual("pk.folder.id", folderId);
+        search.addFilterEqual("user.id", userId);
+        search.addFilterEqual("folder.id", folderId);
         return searchUnique(search);
     }
 }

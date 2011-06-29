@@ -190,21 +190,22 @@ public class DTOConverter {
         }
     }
 
+    // FIX
     public GPFolder convertMementoFolder(MementoFolder memento) {
         GPFolder gpFolder = new GPFolder();
         gpFolder.setName(memento.getFolderName());
-        gpFolder.setChecked(memento.isChecked());
+//        gpFolder.setChecked(memento.isChecked());
         gpFolder.setId(memento.getIdBaseElement());
         gpFolder.setNumberOfDescendants(memento.getNumberOfDescendants());
         if (memento.getIdParent() != 0L) {
             GPFolder parent = new GPFolder();
             parent.setId(memento.getIdParent());
-            gpFolder.setParent(parent);
+//            gpFolder.setParent(parent);
         }
         GPUser user = new GPUser();
         user.setUsername("user_test_0");
-        gpFolder.setOwner(user);
-        gpFolder.setPosition(memento.getzIndex());
+//        gpFolder.setOwner(user);
+//        gpFolder.setPosition(memento.getzIndex());
         /*TODO: Once implemented shared function you must set this property
         gpFolder.setShared(true);*/
         return gpFolder;
@@ -218,6 +219,7 @@ public class DTOConverter {
         return wsMap;
     }
 
+    // TODO FIX
     public ArrayList<GPLayer> convertMementoLayers(List<AbstractMementoLayer> addedLayers) {
         ArrayList<GPLayer> layersList = new ArrayList<GPLayer>();
         GPFolder folder = new GPFolder();
@@ -240,7 +242,7 @@ public class DTOConverter {
             this.convertToLayerElementFromMementoLayer(layer, memento);
 
             folder.setId(memento.getIdFolderParent());
-            layer.setFolder(folder);
+//            layer.setFolder(folder);
 
             layersList.add(layer);
         }
