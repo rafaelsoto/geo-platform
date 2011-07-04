@@ -42,6 +42,7 @@ import org.geosdi.geoplatform.cxf.GeoPlatformWSClient;
 import org.geosdi.geoplatform.services.Greeter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mortbay.jetty.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -63,19 +64,25 @@ public class WSTest implements InitializingBean {
     protected GeoPlatformWSClient gpWSClient;
     //
     protected Greeter greeter;
+    
+    @Autowired
+    protected Server gpJettyServer;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         logger.info("WSTest - afterPropertiesSet-------------------------------> " + this.getClass().getName());
+        
+        gpJettyServer.start();
+        
 //        greeter = gpWSClient.create();
     }
 
     @Test
     public void testUpdateServer() {
-//        GreeterService service = new GreeterService();
-//        Greeter port = service.getGreeterPort();
-//        port.greetMe("Anne");
-        greeter.greetMe("Anne");
+////        GreeterService service = new GreeterService();
+////        Greeter port = service.getGreeterPort();
+////        port.greetMe("Anne");
+//        greeter.greetMe("Anne");
         Assert.assertTrue(true);
     }
 }

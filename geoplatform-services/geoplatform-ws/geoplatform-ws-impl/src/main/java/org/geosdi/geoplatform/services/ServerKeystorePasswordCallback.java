@@ -68,23 +68,23 @@ public class ServerKeystorePasswordCallback implements CallbackHandler {
      * It attempts to get the password from the private 
      * alias/passwords map.
      */
-    @Override
+//    @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (int i = 0; i < callbacks.length; i++) {
             WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
 
-            logger.info("########### Alias server: " + pc.getIdentifier());
-            logger.info("########### pc.getUsage(): " + pc.getUsage());
-
-//            logger.info("########### WSPasswordCallback.SECRET_KEY: " + WSPasswordCallback.SECRET_KEY);
-            logger.info("########### WSPasswordCallback.CUSTOM_TOKEN: " + WSPasswordCallback.CUSTOM_TOKEN);
-            logger.info("########### WSPasswordCallback.SECURITY_CONTEXT_TOKEN: " + WSPasswordCallback.SECURITY_CONTEXT_TOKEN);
-            logger.info("########### WSPasswordCallback.SIGNATURE: " + WSPasswordCallback.SIGNATURE);
-            logger.info("########### WSPasswordCallback.USERNAME_TOKEN: " + WSPasswordCallback.USERNAME_TOKEN);
-            logger.info("########### WSPasswordCallback.DECRYPT: " + WSPasswordCallback.DECRYPT);
-            logger.info("########### WSPasswordCallback.ENCRYPTED_KEY_TOKEN: " + WSPasswordCallback.ENCRYPTED_KEY_TOKEN);
-            logger.info("########### WSPasswordCallback.USERNAME_TOKEN_UNKNOWN: " + WSPasswordCallback.USERNAME_TOKEN_UNKNOWN);
-            logger.info("########### WSPasswordCallback.KEY_NAME: " + WSPasswordCallback.KEY_NAME);
+//            logger.info("########### Alias server: " + pc.getIdentifier());
+//            logger.info("########### pc.getUsage(): " + pc.getUsage());
+//
+////            logger.info("########### WSPasswordCallback.SECRET_KEY: " + WSPasswordCallback.SECRET_KEY);
+//            logger.info("########### WSPasswordCallback.CUSTOM_TOKEN: " + WSPasswordCallback.CUSTOM_TOKEN);
+//            logger.info("########### WSPasswordCallback.SECURITY_CONTEXT_TOKEN: " + WSPasswordCallback.SECURITY_CONTEXT_TOKEN);
+//            logger.info("########### WSPasswordCallback.SIGNATURE: " + WSPasswordCallback.SIGNATURE);
+//            logger.info("########### WSPasswordCallback.USERNAME_TOKEN: " + WSPasswordCallback.USERNAME_TOKEN);
+//            logger.info("########### WSPasswordCallback.DECRYPT: " + WSPasswordCallback.DECRYPT);
+//            logger.info("########### WSPasswordCallback.ENCRYPTED_KEY_TOKEN: " + WSPasswordCallback.ENCRYPTED_KEY_TOKEN);
+//            logger.info("########### WSPasswordCallback.USERNAME_TOKEN_UNKNOWN: " + WSPasswordCallback.USERNAME_TOKEN_UNKNOWN);
+//            logger.info("########### WSPasswordCallback.KEY_NAME: " + WSPasswordCallback.KEY_NAME);
 
             String pass = passwords.get(pc.getIdentifier());
             if (pass != null) {

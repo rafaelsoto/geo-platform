@@ -37,6 +37,9 @@
         <property name="sidDao" ref="sidDAO" />
         <property name="guiComponentDao" ref="guiComponentDAO" />
     </bean>
+    
+    <bean id="greeter"
+          class="org.geosdi.geoplatform.services.GreeterServiceImpl"/>
 
 	<!--===================================================================== -->
 

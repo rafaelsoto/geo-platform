@@ -123,8 +123,9 @@ public class WSLayerTest extends ServiceTest {
 //        geoPlatformService.updateFolder(rootFolderB);
     }
 
-//    @Test
-//    public void testAddLayers() {
+    @Test
+    public void testAddLayers() {
+        Assert.assertTrue("Mock assert", 1 < 2);
 //        try {
 //            List<Long> idList = addLayer3();
 //
@@ -164,7 +165,7 @@ public class WSLayerTest extends ServiceTest {
 //        } catch (ResourceNotFoundFault rnnf) {
 //            Assert.fail("Layer with ID \"" + rnnf.getId() + "\"has a resource not found");
 //        }
-//    }
+    }
 //
 //    @Test
 //    public void testGetLayer() {

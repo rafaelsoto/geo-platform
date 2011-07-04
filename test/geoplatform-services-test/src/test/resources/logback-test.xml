@@ -39,6 +39,6 @@
     <logger name="org.geosdi.geoplatform.WSUsersTest" level="info"/>
     
     <logger name="org.geosdi.geoplatform.core.dao.impl.GPFolderDAOImpl" level="info"/>
-    <logger name="org.geosdi.geoplatform.core.dao.impl.GPLayerDAOImpl" level="info"/>    
+    <logger name="org.geosdi.geoplatform.core.dao.impl.GPLayerDAOImpl" level="info"/>
 
 </configuration>
