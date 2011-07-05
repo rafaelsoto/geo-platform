@@ -73,7 +73,7 @@ public class GPAuthority implements GrantedAuthority, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GP_AUTHORITY_SEQ")
     @SequenceGenerator(name = "GP_AUTHORITY_SEQ", sequenceName = "GP_AUTHORITY_SEQ")
-    private long id;
+    private long id = -1;
     //
     @Column(name = "username", nullable = false)
     private String username;
@@ -81,7 +81,7 @@ public class GPAuthority implements GrantedAuthority, Serializable {
     @Column(name = "authority", nullable = false)
     private String authority;
     //
-    @ManyToOne(targetEntity = GPUser.class)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     private GPUser gpUser;
 

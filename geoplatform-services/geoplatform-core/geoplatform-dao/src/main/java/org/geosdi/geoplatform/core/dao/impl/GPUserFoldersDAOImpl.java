@@ -234,4 +234,16 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, Long>
         }
         return true;
     }
+    
+    @Override
+    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders) {
+        for (Long longIth : idFolders) {
+            boolean checkSave = this.persistCheckStatusFolder(longIth, isChecked);
+            if (!checkSave) {
+                logger.debug("\n*** The Folder with ID \"{}\" is has NOT changed the check***", longIth);
+                return false;
+            }
+        }
+        return true;
+    }    
 }

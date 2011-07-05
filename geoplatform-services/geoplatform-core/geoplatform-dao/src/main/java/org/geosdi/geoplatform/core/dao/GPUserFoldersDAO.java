@@ -82,4 +82,6 @@ public interface GPUserFoldersDAO {
             int deltaValue);
 
     public boolean persistCheckStatusFolder(long idFolder, boolean checked);
+
+    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders);
 }
