@@ -41,17 +41,21 @@ import com.googlecode.genericdao.search.Filter;
 import com.googlecode.genericdao.search.Search;
 import java.util.ArrayList;
 import java.util.List;
+import org.geosdi.geoplatform.core.dao.GPFolderDAO;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import org.geosdi.geoplatform.core.dao.GPUserDAO;
+import org.geosdi.geoplatform.core.dao.GPUserFoldersDAO;
 import org.geosdi.geoplatform.core.model.GPUser;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.request.PaginatedSearchRequest;
 import org.geosdi.geoplatform.request.RequestById;
 import org.geosdi.geoplatform.request.SearchRequest;
 import org.geosdi.geoplatform.responce.UserDTO;
+import org.springframework.security.acls.domain.BasePermission;
 
 /**
  * @author giuseppe
@@ -62,6 +66,8 @@ class UserServiceImpl {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     // DAO
     private GPUserDAO userDao;
+    private GPUserFoldersDAO userFoldersDao;
+    private GPFolderDAO folderDao;
 
     /**
      * @param userDao
@@ -69,6 +75,22 @@ class UserServiceImpl {
      */
     public void setUserDao(GPUserDAO userDao) {
         this.userDao = userDao;
+    }
+
+    /**
+     * @param userFoldersDao
+     *          the userFoldersDao to set
+     */
+    public void setUserFoldersDao(GPUserFoldersDAO userFoldersDao) {
+        this.userFoldersDao = userFoldersDao;
+    }
+
+    /**
+     * @param folderDao
+     *          the folderDao to set
+     */
+    public void setFolderDao(GPFolderDAO folderDao) {
+        this.folderDao = folderDao;
     }
 
     /**
@@ -123,14 +145,24 @@ class UserServiceImpl {
      *
      * @throws ResourceNotFoundFault
      */
-    public boolean deleteUser(RequestById request)
+    public boolean deleteUser(long userId)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        GPUser user = userDao.find(request.getId());
+        GPUser user = userDao.find(userId);
         if (user == null) {
-            throw new ResourceNotFoundFault("User not found", request.getId());
+            throw new ResourceNotFoundFault("User not found", userId);
         }
 
-        return userDao.remove(user);
+        List<GPUserFolders> userFoldersList = userFoldersDao.findByOwnerUserId(userId);
+        for (GPUserFolders userFolder : userFoldersList) {
+            // Remove all UserFolders that reference (also of other users) by cascading
+            if (!folderDao.remove(userFolder.getFolder())) {
+                return false;
+            }
+        }
+
+        // Remove all UserFolders that reference by cascading
+        // Only that reference to shared folders
+        return userDao.remove(user); 
     }
 
     /**
@@ -245,7 +277,7 @@ class UserServiceImpl {
 
     public GPUser getUserDetailByUsernameAndPassword(String username) {
         Search searchCriteria = new Search(GPUser.class);
-        
+
         Filter usernameFilter = Filter.equal("username", username);
         searchCriteria.addFilter(usernameFilter);
 

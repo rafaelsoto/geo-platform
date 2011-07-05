@@ -142,6 +142,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     public void setUserFoldersDao(GPUserFoldersDAO userFoldersDao) {
         this.userFoldersDao = userFoldersDao;
         this.folderServiceDelegate.setUserFoldersDao(userFoldersDao);
+        this.userServiceDelegate.setUserFoldersDao(userFoldersDao);
     }
 
     /**
@@ -163,6 +164,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
         this.folderDao = folderDao;
         this.folderServiceDelegate.setFolderDao(folderDao);
         this.layerServiceDelegate.setFolderDao(folderDao);
+        this.userServiceDelegate.setFolderDao(folderDao);
     }
 
     /**
@@ -262,9 +264,9 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public boolean deleteUser(RequestById request)
+    public boolean deleteUser(long userId)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        return userServiceDelegate.deleteUser(request);
+        return userServiceDelegate.deleteUser(userId);
     }
 
     @Override
@@ -327,53 +329,54 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     // === Folder
     // ==========================================================================
     @Override
-    public long insertFolder(GPUserFolders userFolder) throws IllegalParameterFault {
-        return this.folderServiceDelegate.insertFolder(userFolder);
+    public long insertUserFolder(GPUserFolders userFolder) throws IllegalParameterFault {
+        return this.folderServiceDelegate.insertUserFolder(userFolder);
     }
 
     @Override
-    public long updateFolder(GPUserFolders userFolder) throws ResourceNotFoundFault,
+    public long updateUserFolder(GPUserFolders userFolder) throws ResourceNotFoundFault,
             IllegalParameterFault {
-        return folderServiceDelegate.updateFolder(userFolder);
+        return folderServiceDelegate.updateUserFolder(userFolder);
     }
 
     @Override
-    public boolean deleteFolder(RequestById request)
+    public boolean deleteUserFolder(long userFolderId)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        return folderServiceDelegate.deleteFolder(request);
+        return folderServiceDelegate.deleteUserFolder(userFolderId);
     }
 
     @Override
-    public long saveAddedFolderAndTreeModifications(GPFolder folder, GPWebServiceMapData descendantsMapData) throws ResourceNotFoundFault {
-        return folderServiceDelegate.saveAddedFolderAndTreeModifications(folder, descendantsMapData);
-    }
-
-    @Override
-    public boolean saveDeletedFolderAndTreeModifications(long id, GPWebServiceMapData descendantsMapData)
+    public long saveAddedFolderAndTreeModifications(GPUserFolders userFolder, GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        return folderServiceDelegate.saveDeletedFolderAndTreeModifications(id, descendantsMapData);
+        return folderServiceDelegate.saveAddedFolderAndTreeModifications(userFolder, descendantsMapData);
     }
 
     @Override
-    public boolean saveCheckStatusFolderAndTreeModifications(long folderId, boolean isChecked)
+    public boolean saveDeletedFolderAndTreeModifications(long userFolderId, GPWebServiceMapData descendantsMapData)
+            throws ResourceNotFoundFault, IllegalParameterFault {
+        return folderServiceDelegate.saveDeletedFolderAndTreeModifications(userFolderId, descendantsMapData);
+    }
+
+    @Override
+    public boolean saveCheckStatusFolderAndTreeModifications(long userFolderId, boolean checked)
             throws ResourceNotFoundFault {
-        return folderServiceDelegate.saveCheckStatusFolderAndTreeModifications(folderId, isChecked);
+        return folderServiceDelegate.saveCheckStatusFolderAndTreeModifications(userFolderId, checked);
     }
 
     @Override
-    public boolean saveDragAndDropFolderAndTreeModifications(String username, long idElementMoved, long idNewParent, int newPseudoPosition,
+    public boolean saveDragAndDropFolderAndTreeModifications(String username, long idElementMoved, long idNewParent, int newPosition,
             GPWebServiceMapData descendantsMapData) throws ResourceNotFoundFault {
-        return folderServiceDelegate.saveDragAndDropFolderModifications(username, idElementMoved, idNewParent, newPseudoPosition, descendantsMapData);
+        return folderServiceDelegate.saveDragAndDropFolderModifications(username, idElementMoved, idNewParent, newPosition, descendantsMapData);
     }
 
     @Override
-    public FolderDTO getShortFolder(RequestById request) throws ResourceNotFoundFault {
-        return folderServiceDelegate.getShortFolder(request);
+    public FolderDTO getShortFolder(long userFolderId) throws ResourceNotFoundFault {
+        return folderServiceDelegate.getShortFolder(userFolderId);
     }
 
     @Override
-    public GPFolder getFolderDetail(RequestById request) throws ResourceNotFoundFault {
-        return folderServiceDelegate.getFolderDetail(request);
+    public GPUserFolders getUserFolderDetail(long userFolderId) throws ResourceNotFoundFault {
+        return folderServiceDelegate.getUserFolderDetail(userFolderId);
     }
 
     @Override
@@ -392,18 +395,18 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public List<FolderDTO> getChildrenFolders(long folderId, int num, int page) {
-        return folderServiceDelegate.getChildrenFolders(folderId, num, page);
+    public List<FolderDTO> getChildrenFoldersByRequest(RequestById request) {
+        return folderServiceDelegate.getChildrenFoldersByRequest(request);
     }
 
     @Override
-    public List<FolderDTO> getChildrenFoldersByFolderId(long folderId) {
-        return folderServiceDelegate.getChildrenFolders(folderId);
+    public List<FolderDTO> getChildrenFolders(long userFolderId) {
+        return folderServiceDelegate.getChildrenFolders(userFolderId);
     }
 
     @Override
-    public TreeFolderElements getChildrenElements(long folderId) {
-        return folderServiceDelegate.getChildrenElements(folderId);
+    public TreeFolderElements getChildrenElements(long userFolderId) {
+        return folderServiceDelegate.getChildrenElements(userFolderId);
     }
     //</editor-fold>
 
@@ -463,8 +466,8 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public List<FolderDTO> getAllUserFolders(long userId, int num, int page) {
-        return folderServiceDelegate.getAllUserFolders(userId, num, page);
+    public List<FolderDTO> getAllUserFolders(RequestById request) {
+        return folderServiceDelegate.getAllUserFolders(request);
     }
 
     @Override
@@ -473,8 +476,8 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public long getUserFoldersCount(RequestById request) {
-        return folderServiceDelegate.getUserFoldersCount(request);
+    public long getUserFoldersCount(long userId) {
+        return folderServiceDelegate.getUserFoldersCount(userId);
     }
 
     @Override

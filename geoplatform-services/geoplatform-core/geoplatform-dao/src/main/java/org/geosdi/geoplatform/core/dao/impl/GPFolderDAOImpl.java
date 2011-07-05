@@ -94,7 +94,6 @@ public class GPFolderDAOImpl extends BaseDAO<GPFolder, Long> implements
         search.addFilterEqual("name", folderName);
         return searchUnique(search);
     }
-
 //    @Override
 //    public boolean updatePositionsRangeInOppositeWay(
 //            int beginPositionFirstRange, int endPositionFirstRange,
@@ -249,46 +248,47 @@ public class GPFolderDAOImpl extends BaseDAO<GPFolder, Long> implements
 //        return true;
 //    }
 //
-//    @Override
-//    public boolean updateAncestorsDescendants(Map<Long, Integer> descendantsMap) {
-//        assert (descendantsMap != null) : "descendantsMap does not be NULL";
-//        // No descendants to update // TODO: assert?
-//        if (descendantsMap.isEmpty()) {
-//            return true;
-//        }
-//        // Select the folders of interest (wrt the set od ID)
-//        Search search = new Search();
-//        search.addFilterIn("id", descendantsMap.keySet());
-//        List<GPFolder> matchingFolders = super.search(search);
-//        logger.debug("\n*** Matching Folders count: {} ***", matchingFolders.size());
-//
-//        // No updates (select 0 folders)
-//        if (matchingFolders.isEmpty()) {
-//            return true;
-//        }
-//
-//        int[] oldDescendants = new int[matchingFolders.size()]; // Only for log
-//        for (int ind = 0; ind < matchingFolders.size(); ind++) {
-//            GPFolder folder = matchingFolders.get(ind);
-//            oldDescendants[ind] = folder.getNumberOfDescendants();
-//            int newNumberOfDescendants = descendantsMap.get(folder.getId());
-//            folder.setNumberOfDescendants(newNumberOfDescendants);
-//        }
-//        GPFolder[] foldersUpdated = merge(matchingFolders.toArray(new GPFolder[matchingFolders.size()]));
-//
-//        // Check the update
-//        for (int ind = 0; ind < foldersUpdated.length; ind++) {
-//            long id = foldersUpdated[ind].getId();
-//            int numberOfDescendants = foldersUpdated[ind].getNumberOfDescendants();
-//            logger.trace("\n*** Number of Descentans of the UPDATED GPFolder: {} (OLD Descentans = {}) ***",
-//                    numberOfDescendants, oldDescendants[ind]);
-//            if (descendantsMap.get(id) != numberOfDescendants) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
+
+    @Override
+    public boolean updateAncestorsDescendants(Map<Long, Integer> descendantsMap) {
+        assert (descendantsMap != null) : "descendantsMap does not be NULL";
+        // No descendants to update // TODO: assert?
+        if (descendantsMap.isEmpty()) {
+            return true;
+        }
+        // Select the folders of interest (wrt the set od ID)
+        Search search = new Search();
+        search.addFilterIn("id", descendantsMap.keySet());
+        List<GPFolder> matchingFolders = super.search(search);
+        logger.debug("\n*** Matching Folders count: {} ***", matchingFolders.size());
+
+        // No updates (select 0 folders)
+        if (matchingFolders.isEmpty()) {
+            return true;
+        }
+
+        int[] oldDescendants = new int[matchingFolders.size()]; // Only for log
+        for (int ind = 0; ind < matchingFolders.size(); ind++) {
+            GPFolder folder = matchingFolders.get(ind);
+            oldDescendants[ind] = folder.getNumberOfDescendants();
+            int newNumberOfDescendants = descendantsMap.get(folder.getId());
+            folder.setNumberOfDescendants(newNumberOfDescendants);
+        }
+        GPFolder[] foldersUpdated = merge(matchingFolders.toArray(new GPFolder[matchingFolders.size()]));
+
+        // Check the update
+        for (int ind = 0; ind < foldersUpdated.length; ind++) {
+            long id = foldersUpdated[ind].getId();
+            int numberOfDescendants = foldersUpdated[ind].getNumberOfDescendants();
+            logger.trace("\n*** Number of Descentans of the UPDATED GPFolder: {} (OLD Descentans = {}) ***",
+                    numberOfDescendants, oldDescendants[ind]);
+            if (descendantsMap.get(id) != numberOfDescendants) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 //    @Override
 //    public boolean persistCheckStatusFolder(long idFolder, boolean isChecked) {
 //        // Retrieve the folder

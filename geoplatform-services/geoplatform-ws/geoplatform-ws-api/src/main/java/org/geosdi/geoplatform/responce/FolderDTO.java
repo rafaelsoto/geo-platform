@@ -52,7 +52,8 @@ import org.geosdi.geoplatform.core.model.GPUserFolders;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FolderDTO extends AbstractElementDTO {
 
-    private int numberOfDescendants;
+    private Long idUserFolder = null;
+    private Integer numberOfDescendants = null;
 
     /**
      * Default constructor
@@ -65,10 +66,36 @@ public class FolderDTO extends AbstractElementDTO {
      * Constructor with GPFolder as arg
      * @param folder
      */
-    public FolderDTO(GPFolder folder, GPUserFolders userFolder) {
-        super(folder.getId(), folder.getName(), userFolder.getPosition(),
-                folder.isShared(), userFolder.isChecked());
+    public FolderDTO(GPFolder folder) { // TODO DEL
+        super(folder.getId(), folder.getName(), null,
+                folder.isShared(), null);
         this.numberOfDescendants = folder.getNumberOfDescendants();
+    }
+
+    /**
+     * Constructor with GPUserFolder as arg
+     * @param userFolder
+     */
+    public FolderDTO(GPUserFolders userFolder) {
+        super(userFolder.getFolder().getId(), userFolder.getFolder().getName(), userFolder.getPosition(),
+                userFolder.getFolder().isShared(), userFolder.isChecked());
+        this.idUserFolder = userFolder.getId();
+        this.numberOfDescendants = userFolder.getFolder().getNumberOfDescendants();
+    }
+
+    /**
+     * @return the idUserFolder
+     */
+    public Long getIdUserFolder() {
+        return idUserFolder;
+    }
+
+    /**
+     * @param idUserFolder 
+     *              the idUserFolder to set
+     */
+    public void setIdUserFolder(Long idUserFolder) {
+        this.idUserFolder = idUserFolder;
     }
 
     /**
@@ -93,6 +120,7 @@ public class FolderDTO extends AbstractElementDTO {
     @Override
     public String toString() {
         return "FolderDTO [" + super.toString()
+                + ", idUserFolder=" + idUserFolder
                 + ", numberOfDescendants=" + numberOfDescendants + "]";
     }
 }

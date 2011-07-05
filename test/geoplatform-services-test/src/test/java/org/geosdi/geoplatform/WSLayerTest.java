@@ -107,7 +107,7 @@ public class WSLayerTest extends ServiceTest {
 //        //
 //        rootFolderA.setPosition(6);
 //        rootFolderA.setNumberOfDescendants(2);
-//        geoPlatformService.updateFolder(rootFolderA);
+//        geoPlatformService.updateUserFolder(rootFolderA);
 //
 //        // "rootFolderB" ---> "rasterLayer2"
 //        idRaster2 = createAndInsertRasterLayer("abstract_" + nameRaster2, rootFolderB, nameRaster2, 2,
@@ -120,7 +120,7 @@ public class WSLayerTest extends ServiceTest {
 //        //
 //        rootFolderB.setPosition(3);
 //        rootFolderB.setNumberOfDescendants(2);
-//        geoPlatformService.updateFolder(rootFolderB);
+//        geoPlatformService.updateUserFolder(rootFolderB);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class WSLayerTest extends ServiceTest {
 //        try {
 //            List<Long> idList = addLayer3();
 //
-//            rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//            rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //            Assert.assertEquals("position of rootFolderA", 8, rootFolderA.getPosition());
 //            Assert.assertEquals("descendants of rootFolderA", 4, rootFolderA.getNumberOfDescendants());
 //
@@ -149,7 +149,7 @@ public class WSLayerTest extends ServiceTest {
 //            Assert.assertEquals("name of newVectorLayer1", nameVector1, newVectorLayer1.getName());
 //            Assert.assertEquals("position of newVectorLayer1", 4, newVectorLayer1.getPosition());
 //
-//            rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//            rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //            Assert.assertEquals("position of rootFolderB", 3, rootFolderB.getPosition());
 //            Assert.assertEquals("descendants of rootFolderB", 2, rootFolderB.getNumberOfDescendants());
 //
@@ -305,7 +305,7 @@ public class WSLayerTest extends ServiceTest {
 //                    super.usernameTest, layerToTest, descendantsMapData);
 //            layerToTest.setId(idLayerToTest);
 //
-//            rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//            rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //            Assert.assertEquals("Position of root folder A before removing", 7, rootFolderA.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder A before removing", 2, rootFolderA.getNumberOfDescendants());
 //
@@ -315,7 +315,7 @@ public class WSLayerTest extends ServiceTest {
 //            vector1 = geoPlatformService.getVectorLayer(idVector1);
 //            Assert.assertEquals("Position of vector layer 1 before removing", 5, vector1.getPosition());
 //
-//            rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//            rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //            Assert.assertEquals("Position of root folder B before removing", 4, rootFolderB.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder B before removing", 3, rootFolderB.getNumberOfDescendants());
 //
@@ -330,7 +330,7 @@ public class WSLayerTest extends ServiceTest {
 //            map.put(idUserRootFolderB, 2);
 //            geoPlatformService.saveDeletedLayerAndTreeModifications(layerToTest.getId(), descendantsMapData);
 //
-//            rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//            rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //            Assert.assertEquals("Position of root folder A after removing", 6, rootFolderA.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder A before removing", 2, rootFolderA.getNumberOfDescendants());
 //
@@ -340,7 +340,7 @@ public class WSLayerTest extends ServiceTest {
 //            vector1 = geoPlatformService.getVectorLayer(idVector1);
 //            Assert.assertEquals("Position of vector layer 1 after removing", 4, vector1.getPosition());
 //
-//            rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//            rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //            Assert.assertEquals("Position of root folder B after removing", 3, rootFolderB.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder A before removing", 2, rootFolderB.getNumberOfDescendants());
 //
@@ -368,7 +368,7 @@ public class WSLayerTest extends ServiceTest {
 //                    super.usernameTest, idVector2, idUserRootFolderB, 2, descendantsMapData);
 //            Assert.assertTrue("Drag and Drop successful", checkDD);
 //
-//            rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//            rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //            Assert.assertEquals("Position of root folder A after drag and drop operation", 6, rootFolderA.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder A after drag and drop operation", 2, rootFolderA.getNumberOfDescendants());
 //
@@ -380,7 +380,7 @@ public class WSLayerTest extends ServiceTest {
 //            Assert.assertEquals("Position of vector layer 1 after drag and drop operation", 4, vector1.getPosition());
 //            Assert.assertEquals("Parent of vector layer 1 after drag and drop operation", idUserRootFolderA, vector1.getFolder().getId());
 //
-//            rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//            rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //            Assert.assertEquals("Position of root folder B after drag and drop operation", 3, rootFolderB.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder B after drag and drop operation", 2, rootFolderB.getNumberOfDescendants());
 //
@@ -416,7 +416,7 @@ public class WSLayerTest extends ServiceTest {
 //                    super.usernameTest, idRaster2, idUserRootFolderB, 1, descendantsMapData);
 //            Assert.assertTrue("Drag and Drop successful", checkDD);
 //
-//            rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//            rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //            Assert.assertEquals("Position of root folder A after drag and drop operation", 6, rootFolderA.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder A after drag and drop operation", 2, rootFolderA.getNumberOfDescendants());
 //
@@ -428,7 +428,7 @@ public class WSLayerTest extends ServiceTest {
 //            Assert.assertEquals("Position of vector layer 1 after drag and drop operation", 4, vector1.getPosition());
 //            Assert.assertEquals("Parent of vector layer 1 after drag and drop operation", idUserRootFolderA, vector1.getFolder().getId());
 //
-//            rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//            rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //            Assert.assertEquals("Position of root folder B after drag and drop operation", 3, rootFolderB.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder B after drag and drop operation", 2, rootFolderB.getNumberOfDescendants());
 //
@@ -466,7 +466,7 @@ public class WSLayerTest extends ServiceTest {
 //                    super.usernameTest, idVector2, idUserRootFolderA, 4, descendantsMapData);
 //            Assert.assertTrue("Drag and Drop successful", checkDD);
 //
-//            rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//            rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //            Assert.assertEquals("Position of root folder A after drag and drop operation", 6, rootFolderA.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder A after drag and drop operation", 3, rootFolderA.getNumberOfDescendants());
 //
@@ -478,7 +478,7 @@ public class WSLayerTest extends ServiceTest {
 //            Assert.assertEquals("Position of vector layer 1 after drag and drop operation", 3, vector1.getPosition());
 //            Assert.assertEquals("Parent of vector layer 1 after drag and drop operation", idUserRootFolderA, vector1.getFolder().getId());
 //
-//            rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//            rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //            Assert.assertEquals("Position of root folder B after drag and drop operation", 2, rootFolderB.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder B after drag and drop operation", 1, rootFolderB.getNumberOfDescendants());
 //
@@ -519,7 +519,7 @@ public class WSLayerTest extends ServiceTest {
 //                    super.usernameTest, idVector1, idUserRootFolderB, 1, descendantsMapData);
 //            Assert.assertTrue("Drag and Drop successful", checkDD);
 //
-//            rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//            rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //            Assert.assertEquals("Position of root folder A after drag and drop operation", 6, rootFolderA.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder A after drag and drop operation", 1, rootFolderA.getNumberOfDescendants());
 //
@@ -531,7 +531,7 @@ public class WSLayerTest extends ServiceTest {
 //            Assert.assertEquals("Position of vector layer 1 after drag and drop operation", 1, vector1.getPosition());
 //            Assert.assertEquals("Parent of vector layer 1 after drag and drop operation", idUserRootFolderB, vector1.getFolder().getId());
 //
-//            rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//            rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //            Assert.assertEquals("Position of root folder B after drag and drop operation", 4, rootFolderB.getPosition());
 //            Assert.assertEquals("Number of descendant of root folder B after drag and drop operation", 3, rootFolderB.getNumberOfDescendants());
 //
@@ -669,7 +669,7 @@ public class WSLayerTest extends ServiceTest {
 //
 //    private void checkInitialState()
 //            throws ResourceNotFoundFault {
-//        rootFolderA = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderA));
+//        rootFolderA = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderA));
 //        Assert.assertEquals("Position of root folder A after DD II", 6, rootFolderA.getPosition());
 //        Assert.assertEquals("Number of descendant of root folder A after DD II", 2, rootFolderA.getNumberOfDescendants());
 //
@@ -681,7 +681,7 @@ public class WSLayerTest extends ServiceTest {
 //        Assert.assertEquals("Position of vector layer 1 after DD II", 4, vector1.getPosition());
 //        Assert.assertEquals("Parent of vector layer 1 after DD II", idUserRootFolderA, vector1.getFolder().getId());
 //
-//        rootFolderB = geoPlatformService.getFolderDetail(new RequestById(idUserRootFolderB));
+//        rootFolderB = geoPlatformService.getUserFolderDetail(new RequestById(idUserRootFolderB));
 //        Assert.assertEquals("Position of root folder B after DD II", 3, rootFolderB.getPosition());
 //        Assert.assertEquals("Number of descendant of root folder B after DD II", 2, rootFolderB.getNumberOfDescendants());
 //

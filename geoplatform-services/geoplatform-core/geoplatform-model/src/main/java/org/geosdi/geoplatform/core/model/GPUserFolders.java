@@ -93,8 +93,7 @@ public class GPUserFolders implements Serializable {
     //
     @ManyToOne(optional = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "parent_user_folder_id") // referencedColumnName = "id", 
-    private GPUserFolders parentUserFolder;
+    private GPUserFolders parent;
 
     /**
      * @return the id
@@ -212,18 +211,18 @@ public class GPUserFolders implements Serializable {
     }
 
     /**
-     * @return the parentUserFolder
+     * @return the parent
      */
-    public GPUserFolders getParentUserFolder() {
-        return parentUserFolder;
+    public GPUserFolders getParent() {
+        return parent;
     }
 
     /**
-     * @param parentUserFolder
-     *            the parentUserFolder to set
+     * @param parent
+     *            the parent to set
      */
-    public void setParentUserFolder(GPUserFolders parentUserFolder) {
-        this.parentUserFolder = parentUserFolder;
+    public void setParent(GPUserFolders parent) {
+        this.parent = parent;
     }
 
     /*
@@ -250,10 +249,10 @@ public class GPUserFolders implements Serializable {
         str.append(", aliasName=").append(aliasName);
         str.append(", position=").append(position);
         str.append(", checked=").append(checked);
-        if (parentUserFolder != null) {
-            str.append(", parentFolder.id=").append(parentUserFolder.getId());
+        if (parent != null) {
+            str.append(", parent.id=").append(parent.getId());
         } else {
-            str.append(", parentFolder=NULL (this is a root folder)");
+            str.append(", parent=NULL (this is a root folder)");
         }
         return str.append("}").toString();
     }

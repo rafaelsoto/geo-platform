@@ -307,11 +307,11 @@ public abstract class BaseDAOTest {
     }
 
     protected GPUserFolders createBindingUserFolder(GPUser user, GPFolder folder,
-            int position, GPUserFolders parentUserFolder) {
+            int position, GPUserFolders parent) {
         GPUserFolders userFolder = new GPUserFolders();
         userFolder.setUserAndFolder(user, folder);
         userFolder.setPosition(position);
-        userFolder.setParentUserFolder(parentUserFolder);
+        userFolder.setParent(parent);
 
 //        folder.addUserFolder(userFolder);
 

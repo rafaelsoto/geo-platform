@@ -149,6 +149,15 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, Long>
     }
 
     @Override
+    public List<GPUserFolders> findByOwnerUserId(long userId) {
+        Search search = new Search();
+        search.addSortDesc("position");
+        search.addFilterEqual("user.id", userId);
+        search.addFilterEqual("permissionMask", 16);
+        return search(search);
+    }
+
+    @Override
     public List<GPUserFolders> findByFolderId(long folderId) {
         Search search = new Search();
         search.addSortDesc("position");
@@ -162,5 +171,67 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, Long>
         search.addFilterEqual("user.id", userId);
         search.addFilterEqual("folder.id", folderId);
         return searchUnique(search);
+    }
+
+    @Override
+    public boolean updatePositionsLowerBound(int lowerBoundPosition, int deltaValue) {
+        assert (deltaValue != 0) : "deltaValue does not be 0";
+        // Select the folders of interest (position >= lowerBoundP)
+        Search search = new Search();
+        search.addFilterGreaterOrEqual("position", lowerBoundPosition);
+        List<GPUserFolders> matchingFolders = super.search(search);
+
+        logger.debug("\n*** UPDATE Folders with Position from {} *** deltaValue = {} ***",
+                new Object[]{lowerBoundPosition, deltaValue});
+        logger.debug("\n*** Matching Folders count: {} ***", matchingFolders.size());
+
+        // No updates (select 0 folders)
+        if (matchingFolders.isEmpty()) {
+            return true;
+        }
+        return this.updatePositions(matchingFolders, deltaValue);
+    }
+
+    private boolean updatePositions(List<GPUserFolders> matchingFolders, int deltaValue) {
+        int[] oldPositions = new int[matchingFolders.size()];
+        for (int ind = matchingFolders.size() - 1; ind >= 0; ind--) {
+            GPUserFolders folder = matchingFolders.get(ind);
+            oldPositions[ind] = folder.getPosition();
+            folder.setPosition(folder.getPosition() + deltaValue);
+        }
+        GPUserFolders[] foldersUpdated = merge(matchingFolders.toArray(new GPUserFolders[matchingFolders.size()]));
+
+        // Check the update
+        for (int ind = foldersUpdated.length - 1; ind >= 0; ind--) {
+            logger.trace("\n*** Position of the UPDATED GPFolder: {} ({} + {}) ***", new Object[]{
+                        foldersUpdated[ind].getPosition(), oldPositions[ind], deltaValue});
+            if ((oldPositions[ind] + deltaValue) != foldersUpdated[ind].getPosition()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean persistCheckStatusFolder(long idFolder, boolean checked) {
+        // Retrieve the folder
+        GPUserFolders folder = this.find(idFolder);
+        if (folder == null) {
+            logger.debug("\n*** The Folder with ID \"{}\" is NOT exist into DB ***", idFolder);
+            return false;
+        }
+        logger.trace("\n*** Folder RETRIEVED:\n{}\n*** MOD checked to {} ***", folder, checked);
+
+        // Merge iff the check status is different
+        if (folder.isChecked() != checked) {
+            folder.setChecked(checked);
+
+            GPUserFolders folderUpdated = this.merge(folder);
+
+            if (folderUpdated.isChecked() != checked) {
+                return false;
+            }
+        }
+        return true;
     }
 }

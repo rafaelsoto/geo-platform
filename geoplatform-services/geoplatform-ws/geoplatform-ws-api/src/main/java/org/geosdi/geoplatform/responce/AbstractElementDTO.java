@@ -51,9 +51,9 @@ public abstract class AbstractElementDTO implements IElementDTO,
 
     private Long id = null; // Database identity
     private String name;
-    private Integer position = null;
+    private Integer position = null;    
+    private Boolean checked = null;
     private boolean shared;
-    private boolean checked;
 
     //<editor-fold defaultstate="collapsed" desc="Constructor method">
     /**
@@ -69,7 +69,7 @@ public abstract class AbstractElementDTO implements IElementDTO,
      * @param position
      * @param shared
      */
-    public AbstractElementDTO(long id, String name, int position, boolean shared, boolean checked) {
+    public AbstractElementDTO(Long id, String name, Integer position, boolean shared, Boolean checked) {
         this.id = id;
         this.name = name;
         this.position = position;

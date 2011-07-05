@@ -72,7 +72,14 @@ public interface GPUserFoldersDAO {
 
     public List<GPUserFolders> findByUserId(long userId);
 
+    public List<GPUserFolders> findByOwnerUserId(long userId);
+
     public List<GPUserFolders> findByFolderId(long folderId);
 
     public GPUserFolders find(long userId, long folderId);
+
+    public boolean updatePositionsLowerBound(int lowerBoundPosition,
+            int deltaValue);
+
+    public boolean persistCheckStatusFolder(long idFolder, boolean checked);
 }

@@ -39,9 +39,7 @@ package org.geosdi.geoplatform;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
-import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -85,22 +83,19 @@ public abstract class ServiceTest implements InitializingBean {
     //
     @Autowired
     protected Server gpJettyServer;
-    //
-    protected List<String> layerInfoKeywords;
     // User
     protected final String usernameTest = "username_test_ws";
     protected long idUserTest = -1;
     protected GPUser userTest = null;
-    // Folder A
+    // Folders
     protected final String nameRootFolderA = "rootFolderA";
-    protected GPFolder rootFolderA = null;
-    protected GPUserFolders userTestRootFolderA = null;
-    protected long idUserRootFolderA = -1;
-    // Folder B
     protected final String nameRootFolderB = "rootFolderB";
-    protected GPFolder rootFolderB = null;
-    protected GPUserFolders userTestRootFolderB = null;
+    protected long idUserRootFolderA = -1;
     protected long idUserRootFolderB = -1;
+    protected GPUserFolders userTestRootFolderA = null;
+    protected GPUserFolders userTestRootFolderB = null;
+    //
+    protected List<String> layerInfoKeywords;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -122,13 +117,11 @@ public abstract class ServiceTest implements InitializingBean {
         userTest = geoPlatformService.getUserDetailByName(new SearchRequest(usernameTest));
 
         // Create root folders for the user
-        idUserRootFolderA = createAndInsertFolder(userTest, nameRootFolderA, 2, false, null);
+        idUserRootFolderA = this.createAndInsertFolder(userTest, nameRootFolderA, 2, false, null);
         userTestRootFolderA = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderA);
-        rootFolderA = geoPlatformService.getFolderDetail(new RequestById(userTestRootFolderA.getFolder().getId())); // TODO ? DEL ?
 
-        idUserRootFolderB = createAndInsertFolder(userTest, nameRootFolderB, 1, false, null);
+        idUserRootFolderB = this.createAndInsertFolder(userTest, nameRootFolderB, 1, false, null);
         userTestRootFolderB = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderB);
-        rootFolderB = geoPlatformService.getFolderDetail(new RequestById(userTestRootFolderB.getFolder().getId())); // TODO ? DEL ?
 
         // Set the list of keywords (for raster layer)
         layerInfoKeywords = new ArrayList<String>();
@@ -140,9 +133,6 @@ public abstract class ServiceTest implements InitializingBean {
         logger.trace("\n\t@@@ {}.tearDown @@@", this.getClass().getSimpleName());
         // Delete user
         this.deleteUser(idUserTest);
-        // Delete folders
-        this.deleteFolder(idUserRootFolderA);
-        this.deleteFolder(idUserRootFolderB);
     }
 
     // Create and insert a User
@@ -162,7 +152,6 @@ public abstract class ServiceTest implements InitializingBean {
         user.setEnabled(true);
         // TODO FIX: Utility.md5("pwd_" + username)
         user.setPassword("918706bb28e76c3a5f3c7f0dd6f06ff0"); // clear password: 'pwd_username_test_ws'
-//        user.setPassword("pwd_" + username);
         user.setSendEmail(true);
         return user;
     }
@@ -170,7 +159,7 @@ public abstract class ServiceTest implements InitializingBean {
     // Delete (with assert) a User
     protected void deleteUser(long idUser) {
         try {
-            boolean check = geoPlatformService.deleteUser(new RequestById(idUser));
+            boolean check = geoPlatformService.deleteUser(idUser);
             Assert.assertTrue("User with id = " + idUser + " has not been eliminated", check);
         } catch (Exception e) {
             Assert.fail("Error while deleting User with Id: " + idUser);
@@ -178,9 +167,9 @@ public abstract class ServiceTest implements InitializingBean {
     }
 
     // Delete (with assert) a Folder
-    protected void deleteFolder(long idFolder) {
+    protected void deleteUserFolder(long idFolder) {
         try {
-            boolean check = geoPlatformService.deleteFolder(new RequestById(idFolder));
+            boolean check = geoPlatformService.deleteUserFolder(idFolder);
             Assert.assertTrue("Folder with id = " + idFolder + " has not been eliminated", check);
         } catch (Exception e) {
             Assert.fail("Error while deleting Folder with Id: " + idFolder);
@@ -188,26 +177,32 @@ public abstract class ServiceTest implements InitializingBean {
     }
 
     protected long createAndInsertFolder(GPUser owner, String folderName,
-            int position, boolean shared, GPUserFolders parentUserFolder) throws IllegalParameterFault {
+            int position, boolean shared, GPUserFolders parent) throws IllegalParameterFault {
+        
         GPFolder folder = this.createFolder(folderName, shared);
-        GPUserFolders userFolder = this.createBindingUserFolder(owner, folder, position, null);
-
-        return geoPlatformService.insertFolder(userFolder);
+        GPUserFolders userFolder = this.createBindingUserFolder(owner, folder, position, parent);
+        return geoPlatformService.insertUserFolder(userFolder);
+    }
+    
+    protected GPUserFolders createUserFolder(GPUser owner, String folderName,
+            int position, boolean shared, GPUserFolders parent) throws IllegalParameterFault {
+        
+        GPFolder folder = this.createFolder(folderName, shared);
+        return this.createBindingUserFolder(owner, folder, position, parent);
     }
 
     protected GPFolder createFolder(String folderName, boolean shared) {
         GPFolder folder = new GPFolder(folderName);
         folder.setShared(shared);
-
         return folder;
     }
 
     protected GPUserFolders createBindingUserFolder(GPUser user, GPFolder folder,
-            int position, GPUserFolders parentUserFolder) {
+            int position, GPUserFolders parent) {
         GPUserFolders userFolder = new GPUserFolders();
         userFolder.setUserAndFolder(user, folder);
         userFolder.setPosition(position);
-        userFolder.setParentUserFolder(parentUserFolder);
+        userFolder.setParent(parent);
 
 //        folder.addUserFolder(userFolder);
 

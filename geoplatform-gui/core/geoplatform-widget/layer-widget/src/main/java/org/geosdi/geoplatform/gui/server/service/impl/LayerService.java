@@ -187,7 +187,7 @@ public class LayerService implements ILayerService {
 
     private void deleteFolder(long id) throws GeoPlatformException {
         try {
-            this.geoPlatformServiceClient.deleteFolder(new RequestById(id));
+            this.geoPlatformServiceClient.deleteUserFolder(new RequestById(id));
         } catch (Exception ex) {
             logger.error("LayerService",
                     "Ubable to delete Folder with ID : " + id);
