@@ -699,8 +699,16 @@ class FolderServiceImpl {
         if (userFolder.getUser() == null) { // TODO assert
             throw new IllegalParameterFault("User of UserFolder must be NOT NULL");
         }
+        // Check GPFolder
+        GPFolder folder = userFolder.getFolder();
         if (userFolder.getFolder() == null) { // TODO assert
             throw new IllegalParameterFault("Folder of UserFolder must be NOT NULL");
         }
+        if (folder.getName() == null) { // TODO assert
+            throw new IllegalParameterFault("Folder \"name\" of UserFolder must be NOT NULL");
+        }
+        if (folder.getNumberOfDescendants() < 0) { // TODO assert
+            throw new IllegalParameterFault("Folder \"numberOfDescendants\" of UserFolder must be greater or equal 0");
+        }        
     }
 }

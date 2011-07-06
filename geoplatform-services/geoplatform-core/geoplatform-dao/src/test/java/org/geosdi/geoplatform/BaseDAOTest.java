@@ -330,7 +330,7 @@ public abstract class BaseDAOTest {
         raster.setUrlServer("http://dpc.geosdi.org/geoserver/wms");
         raster.setBbox(new GPBBox(6.342, 35.095, 19.003, 47.316));
         raster.setLayerType(GPLayerType.RASTER);
-        raster.setUserFolders(userFolder);
+        raster.setUserFolder(userFolder);
         // GPLayerInfo
         GPLayerInfo info = new GPLayerInfo();
         List<String> keywords = new ArrayList<String>();
@@ -363,7 +363,7 @@ public abstract class BaseDAOTest {
         vector.setBbox(new GPBBox(1.1, 2.2, 3.3, 3.3));
         vector.setLayerType(GPLayerType.MULTIPOLYGON);
         vector.setChecked(true);
-        vector.setUserFolders(userFolder);
+        vector.setUserFolder(userFolder);
         return vector;
     }
 
@@ -425,7 +425,7 @@ public abstract class BaseDAOTest {
             }
             raster.setLayerInfo(infoLayer);
 
-            raster.setUserFolders(userFolder);
+            raster.setUserFolder(userFolder);
             raster.setLayerType(GPLayerType.RASTER);
             raster.setPosition(--position);
             raster.setUrlServer("http://imaa.geosdi.org/geoserver/wms");

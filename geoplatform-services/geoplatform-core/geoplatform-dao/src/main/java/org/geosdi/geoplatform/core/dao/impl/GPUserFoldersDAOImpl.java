@@ -66,6 +66,11 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, Long>
     }
 
     @Override
+    public GPUserFolders[] find(Long[] ids) {
+        return super.find(ids);
+    }
+
+    @Override
     public void persist(GPUserFolders... usersFolders) {
         super.persist(usersFolders);
     }
@@ -234,7 +239,7 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, Long>
         }
         return true;
     }
-    
+
     @Override
     public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders) {
         for (Long longIth : idFolders) {
@@ -245,5 +250,5 @@ public class GPUserFoldersDAOImpl extends BaseDAO<GPUserFolders, Long>
             }
         }
         return true;
-    }    
+    }
 }

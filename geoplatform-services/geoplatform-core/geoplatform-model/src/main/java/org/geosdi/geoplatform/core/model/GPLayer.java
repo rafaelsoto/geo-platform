@@ -288,9 +288,9 @@ public abstract class GPLayer implements Serializable {
         this.cached = cached;
     }
 
-    public abstract GPUserFolders getUserFolders();
+    public abstract GPUserFolders getUserFolder();
 
-    public abstract void setUserFolders(GPUserFolders userFolders);
+    public abstract void setUserFolder(GPUserFolders userFolder);
 
     /*
      * (non-Javadoc)
@@ -348,17 +348,17 @@ public abstract class GPLayer implements Serializable {
         str.append(", shared=").append(shared);
         str.append(", checked=").append(checked);
         str.append(", cached=").append(cached);
-        if (this.getUserFolders() != null) {
-            if (this.getUserFolders().getUser() != null) {
-                str.append(", parent_user.username=").append(this.getUserFolders().getUser().getUsername());
-                str.append("(id=").append(this.getUserFolders().getUser().getId()).append(")");
+        if (this.getUserFolder() != null) {
+            if (this.getUserFolder().getUser() != null) {
+                str.append(", parent_user.username=").append(this.getUserFolder().getUser().getUsername());
+                str.append("(id=").append(this.getUserFolder().getUser().getId()).append(")");
             } else {
                 str.append(", parent_user=NULL");
             }
-            if (this.getUserFolders().getFolder() != null) {
-                str.append(", parent_folder.aliasName=").append(this.getUserFolders().getAliasName());
-                str.append(", parent_folder.name=").append(this.getUserFolders().getFolder().getName());
-                str.append("(id=").append(this.getUserFolders().getFolder().getId()).append(")");
+            if (this.getUserFolder().getFolder() != null) {
+                str.append(", parent_folder.aliasName=").append(this.getUserFolder().getAliasName());
+                str.append(", parent_folder.name=").append(this.getUserFolder().getFolder().getName());
+                str.append("(id=").append(this.getUserFolder().getFolder().getId()).append(")");
             } else {
                 str.append(", parent_folder=NULL");
             }

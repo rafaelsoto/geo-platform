@@ -69,6 +69,7 @@ class UserServiceImpl {
     private GPUserFoldersDAO userFoldersDao;
     private GPFolderDAO folderDao;
 
+    //<editor-fold defaultstate="collapsed" desc="Setter methods">
     /**
      * @param userDao
      *          the userDao to set
@@ -92,6 +93,7 @@ class UserServiceImpl {
     public void setFolderDao(GPFolderDAO folderDao) {
         this.folderDao = folderDao;
     }
+    //</editor-fold>
 
     /**
      * This method is used to insert a User
@@ -162,7 +164,7 @@ class UserServiceImpl {
 
         // Remove all UserFolders that reference by cascading
         // Only that reference to shared folders
-        return userDao.remove(user); 
+        return userDao.remove(user);
     }
 
     /**

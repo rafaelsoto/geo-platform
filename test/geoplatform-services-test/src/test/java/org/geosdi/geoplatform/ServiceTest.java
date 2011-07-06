@@ -62,7 +62,6 @@ import org.geosdi.geoplatform.core.model.GPUser;
 import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
 import org.geosdi.geoplatform.cxf.GeoPlatformWSClient;
-import org.geosdi.geoplatform.request.RequestById;
 import org.geosdi.geoplatform.request.SearchRequest;
 import org.geosdi.geoplatform.services.GeoPlatformService;
 
@@ -178,15 +177,15 @@ public abstract class ServiceTest implements InitializingBean {
 
     protected long createAndInsertFolder(GPUser owner, String folderName,
             int position, boolean shared, GPUserFolders parent) throws IllegalParameterFault {
-        
+
         GPFolder folder = this.createFolder(folderName, shared);
         GPUserFolders userFolder = this.createBindingUserFolder(owner, folder, position, parent);
         return geoPlatformService.insertUserFolder(userFolder);
     }
-    
+
     protected GPUserFolders createUserFolder(GPUser owner, String folderName,
             int position, boolean shared, GPUserFolders parent) throws IllegalParameterFault {
-        
+
         GPFolder folder = this.createFolder(folderName, shared);
         return this.createBindingUserFolder(owner, folder, position, parent);
     }
@@ -210,7 +209,8 @@ public abstract class ServiceTest implements InitializingBean {
     }
 
     protected long createAndInsertRasterLayer(GPUserFolders userFolder, String title, String name,
-            String abstractText, int position, boolean shared, String srs, String urlServer) {
+            String abstractText, int position, boolean shared, String srs, String urlServer)
+            throws IllegalParameterFault {
         GPRasterLayer rasterLayer = new GPRasterLayer();
         this.createLayer(rasterLayer, userFolder, title, name, abstractText, position, shared, srs, urlServer);
 
@@ -224,7 +224,8 @@ public abstract class ServiceTest implements InitializingBean {
     }
 
     protected long createAndInsertVectorLayer(GPUserFolders userFolder, String title, String name,
-            String abstractText, int position, boolean shared, String srs, String urlServer) {
+            String abstractText, int position, boolean shared, String srs, String urlServer)
+            throws IllegalParameterFault {
         GPVectorLayer vectorLayer = new GPVectorLayer();
         this.createLayer(vectorLayer, userFolder, title, name, abstractText, position, shared, srs, urlServer);
 
@@ -232,9 +233,9 @@ public abstract class ServiceTest implements InitializingBean {
         return geoPlatformService.insertLayer(vectorLayer);
     }
 
-    protected void createLayer(GPLayer gpLayer, GPUserFolders userFolder, String name, String title,
+    protected void createLayer(GPLayer gpLayer, GPUserFolders userFolder, String title, String name,
             String abstractText, int position, boolean shared, String srs, String urlServer) {
-        gpLayer.setUserFolders(userFolder);
+        gpLayer.setUserFolder(userFolder);
 
         gpLayer.setTitle(title);
         gpLayer.setName(name);

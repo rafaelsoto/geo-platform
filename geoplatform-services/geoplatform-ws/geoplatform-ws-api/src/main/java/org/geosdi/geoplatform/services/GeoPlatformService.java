@@ -339,7 +339,8 @@ public interface GeoPlatformService {
     // ==========================================================================
     @Put
     @HttpResource(location = "/layer")
-    long insertLayer(@WebParam(name = "Layer") GPLayer layer);
+    long insertLayer(@WebParam(name = "Layer") GPLayer layer)
+            throws IllegalParameterFault;
 
     @Post
     @HttpResource(location = "/layer")
@@ -352,9 +353,9 @@ public interface GeoPlatformService {
             throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Delete
-    @HttpResource(location = "/layers/{id}")
-    boolean deleteLayer(RequestById request) throws ResourceNotFoundFault,
-            IllegalParameterFault;
+    @HttpResource(location = "/layers/{layerId}")
+    boolean deleteLayer(@WebParam(name = "layerId") long layerId)
+            throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Put
     @HttpResource(location = "/layer/{descendantsMap}")
@@ -374,7 +375,8 @@ public interface GeoPlatformService {
 
     @Delete
     @HttpResource(location = "/layers/{id}/{descendantsMap}")
-    boolean saveDeletedLayerAndTreeModifications(@WebParam(name = "id") long id,
+    boolean saveDeletedLayerAndTreeModifications(
+            @WebParam(name = "layerId") long layerId,
             @WebParam(name = "descendantsMapData") GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault;
 
@@ -382,15 +384,15 @@ public interface GeoPlatformService {
     @HttpResource(location = "/layer/{layerId}")
     boolean saveCheckStatusLayerAndTreeModifications(
             @WebParam(name = "layerId") long layerId,
-            @WebParam(name = "isChecked") boolean isChecked)
+            @WebParam(name = "checked") boolean checked)
             throws ResourceNotFoundFault;
 
     @Put
     @HttpResource(location = "/layer/{layerId}")
     public boolean fixCheckStatusLayerAndTreeModifications(
             @WebParam(name = "layerId") long layerId,
-            @WebParam(name = "oldFolderId") long oldFolderId,
-            @WebParam(name = "newFolderId") long newFolderId)
+            @WebParam(name = "oldUserFolderId") long oldUserFolderId,
+            @WebParam(name = "newUserFolderId") long newUserFolderId)
             throws ResourceNotFoundFault;
 
     @Put

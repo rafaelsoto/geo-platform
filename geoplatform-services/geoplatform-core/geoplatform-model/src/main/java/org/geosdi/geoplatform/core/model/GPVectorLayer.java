@@ -72,7 +72,7 @@ public class GPVectorLayer extends GPLayer {
     @Column(name = "geometry", nullable = true)
     private Geometry geometry;
     //
-    @ManyToOne(optional = true)
+    @ManyToOne(optional = true) // TODO ? optional = false ?
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_folder_id")
     private GPUserFolders userFolder;
@@ -97,7 +97,7 @@ public class GPVectorLayer extends GPLayer {
      * @return the userFolder
      */
     @Override
-    public GPUserFolders getUserFolders() {
+    public GPUserFolders getUserFolder() {
         return userFolder;
     }
 
@@ -106,7 +106,7 @@ public class GPVectorLayer extends GPLayer {
      *          the userFolder to set
      */
     @Override
-    public void setUserFolders(GPUserFolders userFolder) {
+    public void setUserFolder(GPUserFolders userFolder) {
         this.userFolder = userFolder;
     }
 

@@ -143,6 +143,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
         this.userFoldersDao = userFoldersDao;
         this.folderServiceDelegate.setUserFoldersDao(userFoldersDao);
         this.userServiceDelegate.setUserFoldersDao(userFoldersDao);
+        this.layerServiceDelegate.setUserFoldersDao(userFoldersDao);
     }
 
     /**
@@ -491,24 +492,26 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     // === Layer / Style
     // ==========================================================================
     @Override
-    public long insertLayer(GPLayer layer) {
+    public long insertLayer(GPLayer layer) throws IllegalParameterFault {
         return layerServiceDelegate.insertLayer(layer);
     }
 
     @Override
-    public long updateRasterLayer(GPRasterLayer layer) throws ResourceNotFoundFault, IllegalParameterFault {
+    public long updateRasterLayer(GPRasterLayer layer)
+            throws ResourceNotFoundFault, IllegalParameterFault {
         return layerServiceDelegate.updateRasterLayer(layer);
     }
 
     @Override
-    public long updateVectorLayer(GPVectorLayer layer) throws ResourceNotFoundFault, IllegalParameterFault {
+    public long updateVectorLayer(GPVectorLayer layer)
+            throws ResourceNotFoundFault, IllegalParameterFault {
         return layerServiceDelegate.updateVectorLayer(layer);
     }
 
     @Override
-    public boolean deleteLayer(RequestById request)
+    public boolean deleteLayer(long layerId)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        return layerServiceDelegate.deleteLayer(request);
+        return layerServiceDelegate.deleteLayer(layerId);
     }
 
     @Override
@@ -530,15 +533,15 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public boolean saveCheckStatusLayerAndTreeModifications(long layerId, boolean isChecked)
+    public boolean saveCheckStatusLayerAndTreeModifications(long layerId, boolean checked)
             throws ResourceNotFoundFault {
-        return layerServiceDelegate.saveCheckStatusLayerAndTreeModifications(layerId, isChecked);
+        return layerServiceDelegate.saveCheckStatusLayerAndTreeModifications(layerId, checked);
     }
 
     @Override
-    public boolean fixCheckStatusLayerAndTreeModifications(long layerId, long oldFolderId, long newFolderId)
+    public boolean fixCheckStatusLayerAndTreeModifications(long layerId, long oldUserFolderId, long newUserFolderId)
             throws ResourceNotFoundFault {
-        return layerServiceDelegate.fixCheckStatusLayerAndTreeModifications(layerId, oldFolderId, newFolderId);
+        return layerServiceDelegate.fixCheckStatusLayerAndTreeModifications(layerId, oldUserFolderId, newUserFolderId);
     }
 
     @Override

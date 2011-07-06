@@ -52,6 +52,8 @@ public interface GPUserFoldersDAO {
 
     public GPUserFolders find(long userFoldersId);
 
+    public GPUserFolders[] find(Long[] ids);
+
     public void persist(GPUserFolders... usersFolders);
 
     public GPUserFolders merge(GPUserFolders userFolders);

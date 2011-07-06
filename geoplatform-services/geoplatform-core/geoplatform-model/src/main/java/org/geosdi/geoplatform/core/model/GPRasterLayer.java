@@ -91,7 +91,7 @@ public class GPRasterLayer extends GPLayer {
      * @return the userFolder
      */
     @Override
-    public GPUserFolders getUserFolders() {
+    public GPUserFolders getUserFolder() {
         return userFolder;
     }
 
@@ -100,7 +100,7 @@ public class GPRasterLayer extends GPLayer {
      *          the userFolder to set
      */
     @Override
-    public void setUserFolders(GPUserFolders userFolder) {
+    public void setUserFolder(GPUserFolders userFolder) {
         this.userFolder = userFolder;
     }
 
