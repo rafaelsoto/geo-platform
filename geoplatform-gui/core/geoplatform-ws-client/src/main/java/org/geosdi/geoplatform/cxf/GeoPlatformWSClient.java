@@ -43,7 +43,6 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.geosdi.geoplatform.services.GeoPlatformService;
-import org.geosdi.geoplatform.services.Greeter;
 
 /**
  *
@@ -52,16 +51,9 @@ import org.geosdi.geoplatform.services.Greeter;
  */
 public class GeoPlatformWSClient {
 
-    private String address = "http://localhost:8282/geoplatform-service/soap";
-    private GeoPlatformService geoPLatformService;
-    private static GeoPlatformWSClient singleton = new GeoPlatformWSClient();
+    private String address;
 
-    public static GeoPlatformWSClient getInstance() {
-        return singleton;
-    }
-
-//    public GeoPlatformService create() {
-    private void create() {
+    public GeoPlatformService create() {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 
         factory.getInInterceptors().add(new LoggingInInterceptor());
@@ -122,7 +114,7 @@ public class GeoPlatformWSClient {
 
         factory.setAddress(this.address);
 
-        geoPLatformService = (GeoPlatformService) factory.create();
+        return (GeoPlatformService) factory.create();
     }
 
 //    public Greeter create() {
@@ -200,12 +192,5 @@ public class GeoPlatformWSClient {
      */
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public GeoPlatformService getGeoPlatformService() {
-        if (this.geoPLatformService == null) {
-            create();
-        }
-        return geoPLatformService;
     }
 }

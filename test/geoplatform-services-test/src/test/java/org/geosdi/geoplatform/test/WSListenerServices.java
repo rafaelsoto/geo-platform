@@ -62,16 +62,18 @@ import org.springframework.test.context.TestExecutionListener;
  */
 public class WSListenerServices implements TestExecutionListener {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     //
-    protected Endpoint e = null;
-    protected Bus bus = null;
+    private GeoPlatformService client = null;
+    private Endpoint endpoint = null;
+    private Bus bus = null;
 
     @Override
     public void beforeTestClass(TestContext testContext) throws Exception {
         logger.trace("\n\t@@@ {}.beforeTestClass @@@", this.getClass().getSimpleName());
         
-        GeoPlatformWSClient.getInstance().getGeoPlatformService(); //
+//        GeoPlatformWSClient.getInstance().getGeoPlatformService(); //
+        client = ((GeoPlatformWSClient) testContext.getApplicationContext().getBean("gpWSClient")).create();
 
         GeoPlatformService geoPlatformService = (GeoPlatformService) testContext.getApplicationContext().getBean("geoPlatformService");
         Assert.assertNotNull("geoPlatformService is NULL", geoPlatformService);
@@ -97,7 +99,7 @@ public class WSListenerServices implements TestExecutionListener {
 
         bf.setDefaultBus(bus);
         String address = "http://localhost:8282/geoplatform-service/soap";
-        e = Endpoint.publish(address, implementor);
+        endpoint = Endpoint.publish(address, implementor);
 
         logger.debug("\n*** Server ready...");
     }
@@ -105,6 +107,9 @@ public class WSListenerServices implements TestExecutionListener {
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
         logger.trace("\n\t@@@ {}.prepareTestInstance @@@", this.getClass().getSimpleName());
+        
+        WSUsersTest2 test = (WSUsersTest2)testContext.getTestInstance();
+        test.setGeoplatformServiceClient(client);
     }
 
     @Override
@@ -119,7 +124,7 @@ public class WSListenerServices implements TestExecutionListener {
     public void afterTestClass(TestContext testContext) throws Exception {
         logger.trace("\n\t@@@ {}.afterTestClass @@@", this.getClass().getSimpleName());
         
-        e.stop();
+        endpoint.stop();
         bus.shutdown(true);
     }
 }

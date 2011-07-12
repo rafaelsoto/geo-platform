@@ -66,7 +66,12 @@ public class WSUsersTest2 {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     //
-    protected GeoPlatformService geoplatformServiceClient = GeoPlatformWSClient.getInstance().getGeoPlatformService();
+//    protected GeoPlatformService geoplatformServiceClient = GeoPlatformWSClient.getInstance().getGeoPlatformService();
+    protected GeoPlatformService geoplatformServiceClient;
+
+    public void setGeoplatformServiceClient(GeoPlatformService geoplatformServiceClient) {
+        this.geoplatformServiceClient = geoplatformServiceClient;
+    }
     
     @Test
     public void testUpdateServer1() {
