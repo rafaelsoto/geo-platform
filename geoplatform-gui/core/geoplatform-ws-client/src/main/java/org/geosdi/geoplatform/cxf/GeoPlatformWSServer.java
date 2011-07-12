@@ -50,18 +50,11 @@ import org.geosdi.geoplatform.services.Greeter;
  * @author Giuseppe La Scaleia - CNR IMAA geoSDI Group
  * @email  giuseppe.lascaleia@geosdi.org
  */
-public class GeoPlatformWSClient {
+public class GeoPlatformWSServer {
 
     private String address = "http://localhost:8282/geoplatform-service/soap";
-    private GeoPlatformService geoPLatformService;
-    private static GeoPlatformWSClient singleton = new GeoPlatformWSClient();
-    
-    public static GeoPlatformWSClient getInstance() {
-        return singleton;
-    }
 
-//    public GeoPlatformService create() {
-    private void create() {
+    public GeoPlatformService create() {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         
         factory.getInInterceptors().add(new LoggingInInterceptor());
@@ -76,8 +69,8 @@ public class GeoPlatformWSClient {
         
         // ----------- Only signature
         outProps.put("action", "Timestamp Signature");
-        outProps.put("user", "clientx509v1");
-        outProps.put("signaturePropFile", "Client_Sign.properties");
+        outProps.put("user", "serverx509v1");
+        outProps.put("signaturePropFile", "Server_Decrypt.properties");
         
         // ----------- Signature and Encryption
 //        outProps.put("action", "Timestamp Signature Encrypt");
@@ -88,7 +81,7 @@ public class GeoPlatformWSClient {
         
 //        outProps.put("signatureKeyIdentifier", "DirectReference");
         
-        outProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
+        outProps.put("passwordCallbackClass", "org.geosdi.geoplatform.services.ServerKeystorePasswordCallback");
         
 //        outProps.put("signatureParts", "{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 //        outProps.put("encryptionParts", "{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
@@ -105,7 +98,7 @@ public class GeoPlatformWSClient {
         
 //         ----------- Only signature
         inProps.put("action", "Timestamp Signature");
-        inProps.put("signaturePropFile", "Client_Encrypt.properties");
+        inProps.put("signaturePropFile", "Server_SignVerf.properties");
 //        
         // ----------- Signature and Encryption
 //        Map<String, Object> inProps = new HashMap<String, Object>();
@@ -113,7 +106,7 @@ public class GeoPlatformWSClient {
 //        inProps.put("signaturePropFile", "/server.properties");
 //        inProps.put("decryptionPropFile", "/client.properties");
         
-        inProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
+        inProps.put("passwordCallbackClass", "org.geosdi.geoplatform.services.ServerKeystorePasswordCallback");
         
         WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
         factory.getInInterceptors().add(wssIn);
@@ -122,7 +115,7 @@ public class GeoPlatformWSClient {
 
         factory.setAddress(this.address);
 
-        geoPLatformService = (GeoPlatformService) factory.create();
+        return (GeoPlatformService) factory.create();
     }
     
 //    public Greeter create() {
@@ -201,12 +194,5 @@ public class GeoPlatformWSClient {
      */
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public GeoPlatformService getGeoPLatformService() {
-        if (this.geoPLatformService == null) {
-            create();
-        }
-        return geoPLatformService;
     }
 }

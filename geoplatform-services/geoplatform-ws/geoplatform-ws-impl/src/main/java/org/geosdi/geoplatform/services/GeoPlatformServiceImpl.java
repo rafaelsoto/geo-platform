@@ -60,7 +60,6 @@ import org.geosdi.geoplatform.core.dao.GPStyleDAO;
 import org.geosdi.geoplatform.core.dao.GPUserDAO;
 import org.geosdi.geoplatform.core.dao.GPUserFoldersDAO;
 import org.geosdi.geoplatform.core.model.GPBBox;
-import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPLayer;
 import org.geosdi.geoplatform.core.model.GPLayerInfo;
 import org.geosdi.geoplatform.core.model.GPLayerType;

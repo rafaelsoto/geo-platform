@@ -21,7 +21,7 @@
 	<!-- Services -->
 	<!--===================================================================== -->
 
-    <bean id="geoplatformService"
+    <bean id="geoPlatformService"
           class="org.geosdi.geoplatform.services.GeoPlatformServiceImpl">		
         <property name="userDao" ref="userDAO" />
         <property name="userFoldersDao" ref="userFoldersDAO" />
@@ -38,8 +38,8 @@
         <property name="guiComponentDao" ref="guiComponentDAO" />
     </bean>
     
-    <bean id="greeter"
-          class="org.geosdi.geoplatform.services.GreeterServiceImpl"/>
+    <!--<bean id="greeter"
+          class="org.geosdi.geoplatform.services.GreeterServiceImpl"/>-->
 
 	<!--===================================================================== -->
 

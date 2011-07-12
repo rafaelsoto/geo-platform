@@ -40,6 +40,7 @@ import java.util.List;
 import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
+import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.gui.client.model.composite.TreeElement;
@@ -134,7 +135,8 @@ public class LayerService implements ILayerService {
         folder.setNumberOfDescendants(numberOfDescendants);
 //        folder.setChecked(isChecked);
 
-        return this.geoPlatformServiceClient.insertFolder(folder);
+//        return this.geoPlatformServiceClient.insertFolder(folder);
+        return -1;
     }
 
     @Override
@@ -144,8 +146,9 @@ public class LayerService implements ILayerService {
         GPFolder gpFolder = null;
 
         try {
-            gpFolder = geoPlatformServiceClient.getFolderDetail(new RequestById(
-                    idParentFolder));
+//            gpFolder = geoPlatformServiceClient.getFolderDetail(new RequestById(
+//                    idParentFolder));
+            gpFolder = new GPFolder(); // TODO to be deleted
         } catch (Exception e) {
             logger.error("LayerService",
                     "Ubable to load Folder with ID : " + idParentFolder);
@@ -161,7 +164,8 @@ public class LayerService implements ILayerService {
         folder.setNumberOfDescendants(numberOfDescendants);
 //        folder.setChecked(isChecked);
 
-        return geoPlatformServiceClient.insertFolder(folder);
+//        return geoPlatformServiceClient.insertFolder(folder);
+        return -1;
     }
 
     @Override
@@ -187,7 +191,8 @@ public class LayerService implements ILayerService {
 
     private void deleteFolder(long id) throws GeoPlatformException {
         try {
-            this.geoPlatformServiceClient.deleteUserFolder(new RequestById(id));
+//            this.geoPlatformServiceClient.deleteUserFolder(new RequestById(id));
+            this.geoPlatformServiceClient.deleteUserFolder(id); // TODO to be deleted
         } catch (Exception ex) {
             logger.error("LayerService",
                     "Ubable to delete Folder with ID : " + id);
@@ -198,7 +203,8 @@ public class LayerService implements ILayerService {
 
     private void deleteLayer(long id) throws GeoPlatformException {
         try {
-            this.geoPlatformServiceClient.deleteLayer(new RequestById(id));
+//            this.geoPlatformServiceClient.deleteLayer(new RequestById(id));
+            this.geoPlatformServiceClient.deleteLayer(id); // TODO to be deleted
         } catch (Exception ex) {
             logger.error("LayerService",
                     "Ubable to delete Layer with ID : " + id);
@@ -216,11 +222,14 @@ public class LayerService implements ILayerService {
                 memento.getWsDescendantMap());
         long idSavedFolder = 0L;
         try {
+//            idSavedFolder = this.geoPlatformServiceClient.saveAddedFolderAndTreeModifications(
+//                    gpFolder, map);
             idSavedFolder = this.geoPlatformServiceClient.saveAddedFolderAndTreeModifications(
-                    gpFolder, map);
+                    new GPUserFolders(), map); // TODO to be deleted
         } catch (ResourceNotFoundFault ex) {
             this.logger.error("Failed to save folder on LayerService: " + ex);
             throw new GeoPlatformException(ex);
+        } catch (IllegalParameterFault ex) { // TODO to be deleted
         }
         return idSavedFolder;
     }

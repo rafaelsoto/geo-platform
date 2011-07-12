@@ -11,6 +11,7 @@
             http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
 	default-autowire="byName">
 
+    <!-- Scan for @Autowired annotations -->
     <context:annotation-config/>
 
     <bean id="gpWSClient" class="org.geosdi.geoplatform.cxf.GeoPlatformWSClient">
@@ -20,14 +21,14 @@
     <!--<bean id="gpWSClient" class="org.geosdi.geoplatform.cxf.GeoPlatformWSClient">-->
         <!--<property name="address" value="http://localhost:9000/SoapContext/GreeterPort" />-->
         <!--<property name="address" value="http://localhost:8282/geoplatform-service/greeter" />
-    </bean-->
+    </bean>-->
 
 	<!-- =============================================================== -->
 	<!-- Configure the Jetty Server with Spring -->
 	<!-- This file is the equivalent of jetty.xml, but written in spring -->
 	<!-- =============================================================== -->
 
-    <bean id="gpJettyServer" class="org.mortbay.jetty.Server"
+    <!--<bean id="gpJettyServer" class="org.mortbay.jetty.Server"
 		destroy-method="stop">
 
         <property name="threadPool">
@@ -71,6 +72,6 @@
             </bean>
         </property>
 
-    </bean>
+    </bean>-->
 
 </beans>

@@ -36,7 +36,7 @@
 
     <jaxws:endpoint id="geoplatformServiceSOAP"
     	implementorClass="org.geosdi.geoplatform.services.GeoPlatformServiceImpl"
-    	implementor="#geoplatformService"
+    	implementor="#geoPlatformService"
     	address="/soap">
 
         <jaxws:serviceFactory>
@@ -60,7 +60,7 @@
         </jaxws:inInterceptors>
     </jaxws:endpoint>
 
-    <jaxws:endpoint id="greeterSOAP"
+    <!--<jaxws:endpoint id="greeterSOAP"
     	implementorClass="org.geosdi.geoplatform.services.GreeterServiceImpl"
     	implementor="#greeter"
     	address="/greeter">
@@ -84,7 +84,7 @@
             <ref bean="TimestampSignEncrypt_Request"/>
             <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/>
         </jaxws:inInterceptors>
-    </jaxws:endpoint>
+    </jaxws:endpoint>-->
 
     <!-- ====================================================================-->
     <!--    
@@ -100,12 +100,12 @@
                 <!-- Use this action order for local clients -->
                 
                 <!-- .......... Only Encryption -->
-                <entry key="action" value="Encrypt"/>
-                <entry key="decryptionPropFile" value="Server_Decrypt.properties"/>
+                <!--<entry key="action" value="Encrypt"/>
+                <entry key="decryptionPropFile" value="Server_Decrypt.properties"/>-->
                 
                 <!-- .......... Only Signature -->
-                <!--<entry key="action" value="Signature"/>
-                <entry key="signaturePropFile" value="Server_SignVerf.properties"/>-->
+                <entry key="action" value="Signature"/>
+                <entry key="signaturePropFile" value="Server_SignVerf.properties"/>
                 
                 <!-- .......... Signature and Encryption -->
                 <!--<entry key="action" value="Timestamp Signature Encrypt"/>-->
@@ -133,14 +133,14 @@
         <constructor-arg>
             <map>
                 <!-- .......... Only Encryption -->
-                <entry key="action" value="Encrypt"/>
+                <!--<entry key="action" value="Encrypt"/>
                 <entry key="encryptionPropFile" value="Server_SignVerf.properties"/>
-                <entry key="encryptionUser" value="clientx509v1"/>
+                <entry key="encryptionUser" value="clientx509v1"/>-->
                 
                 <!-- .......... Only Signature -->
-                <!--<entry key="action" value="Signature"/>
+                <entry key="action" value="Signature"/>
                 <entry key="user" value="serverx509v1"/>
-                <entry key="signaturePropFile" value="Server_Decrypt.properties"/>-->
+                <entry key="signaturePropFile" value="Server_Decrypt.properties"/>
                 
                 <!-- .......... Signature and Encryption -->
                 <!--<entry key="action" value="Timestamp Signature Encrypt"/>-->
