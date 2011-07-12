@@ -55,7 +55,7 @@ public class GeoPlatformWSClient {
     private String address = "http://localhost:8282/geoplatform-service/soap";
     private GeoPlatformService geoPLatformService;
     private static GeoPlatformWSClient singleton = new GeoPlatformWSClient();
-    
+
     public static GeoPlatformWSClient getInstance() {
         return singleton;
     }
@@ -63,46 +63,46 @@ public class GeoPlatformWSClient {
 //    public GeoPlatformService create() {
     private void create() {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-        
+
         factory.getInInterceptors().add(new LoggingInInterceptor());
         factory.getOutInterceptors().add(new LoggingOutInterceptor());
-        
+
         Map<String, Object> outProps = new HashMap<String, Object>();
-        
+
         // ----------- Only Encryption
 //        outProps.put("action", "Encrypt");
 //        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
 //        outProps.put("encryptionUser", "serverx509v1");
-        
+
         // ----------- Only signature
         outProps.put("action", "Timestamp Signature");
         outProps.put("user", "clientx509v1");
         outProps.put("signaturePropFile", "Client_Sign.properties");
-        
+
         // ----------- Signature and Encryption
 //        outProps.put("action", "Timestamp Signature Encrypt");
 //        outProps.put("user", "client");
 //        outProps.put("signaturePropFile", "/client.properties");
 //        outProps.put("encryptionPropFile", "/server.properties");
 //        outProps.put("encryptionUser", "server");
-        
+
 //        outProps.put("signatureKeyIdentifier", "DirectReference");
-        
+
         outProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
-        
+
 //        outProps.put("signatureParts", "{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 //        outProps.put("encryptionParts", "{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 //        outProps.put("encryptionParts", "{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 //        outProps.put("encryptionSymAlgorithm", "http://www.w3.org/2001/04/xmlenc#tripledes-cbc");
         WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
         factory.getOutInterceptors().add(wssOut);
-        
+
         Map<String, Object> inProps = new HashMap<String, Object>();
-        
+
         // ----------- Only Encryption
 //        inProps.put("action", "Encrypt");
 //        inProps.put("decryptionPropFile", "Client_Sign.properties");
-        
+
 //         ----------- Only signature
         inProps.put("action", "Timestamp Signature");
         inProps.put("signaturePropFile", "Client_Encrypt.properties");
@@ -112,19 +112,19 @@ public class GeoPlatformWSClient {
 //        inProps.put("action", "Timestamp Signature Encrypt");
 //        inProps.put("signaturePropFile", "/server.properties");
 //        inProps.put("decryptionPropFile", "/client.properties");
-        
+
         inProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
-        
+
         WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
         factory.getInInterceptors().add(wssIn);
-        
+
         factory.setServiceClass(GeoPlatformService.class);
 
         factory.setAddress(this.address);
 
         geoPLatformService = (GeoPlatformService) factory.create();
     }
-    
+
 //    public Greeter create() {
 //        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 //        
@@ -188,7 +188,6 @@ public class GeoPlatformWSClient {
 //
 //        return (Greeter) factory.create();
 //    }
-
     /**
      * @return the address
      */
@@ -203,7 +202,7 @@ public class GeoPlatformWSClient {
         this.address = address;
     }
 
-    public GeoPlatformService getGeoPLatformService() {
+    public GeoPlatformService getGeoPlatformService() {
         if (this.geoPLatformService == null) {
             create();
         }

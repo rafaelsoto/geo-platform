@@ -37,29 +37,19 @@
 //</editor-fold>
 package org.geosdi.geoplatform.test;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import javax.xml.ws.Endpoint;
 import junit.framework.Assert;
-import org.apache.cxf.Bus;
-import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
-import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.geosdi.geoplatform.cxf.GeoPlatformWSClient;
 import org.junit.Test;
 
 import org.geosdi.geoplatform.responce.UserDTO;
 import org.geosdi.geoplatform.services.GeoPlatformService;
-import org.geosdi.geoplatform.services.ServerKeystorePasswordCallback;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -70,117 +60,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @email vincenzo.monteverde@geosdi.org - OpenPGP key ID 0xB25F4B38
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 @ContextConfiguration(locations = {"classpath*:applicationContext.xml"})
-//@TestExecutionListeners(value = {WSListenerServices.class})
+@TestExecutionListeners(value = {WSListenerServices.class})
 public class WSUsersTest2 {
-//public class WSUsersTest2 implements InitializingBean {
-    // TODO check:
-    //      searchUsers()
-    //      updateUser()
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     //
-//    @Autowired
-//    protected static GeoPlatformWSClient gpWSClient;
-    //
-//    @Resource
-    @Autowired
-    private GeoPlatformService geoPlatformService;
-    //
-//    @Autowired
-    protected GeoPlatformService geoplatformServiceClient = GeoPlatformWSClient.getInstance().getGeoPLatformService();
-    //
-    protected Endpoint e = null;
-    protected Bus bus = null;
+    protected GeoPlatformService geoplatformServiceClient = GeoPlatformWSClient.getInstance().getGeoPlatformService();
     
-//    @BeforeClass
-//    public static void initialize() throws Exception {
-//        System.out.println("\n\t@@@ {}.setUp @@@" + WSUsersTest2.class.getSimpleName());
-//        System.out.println(" @@@ OID: " + WSUsersTest2.class.toString());
-//
-////        Assert.assertNotNull("gpWSClient is NULL", gpWSClient);
-////        geoplatformServiceClient = gpWSClient.create();
-//        Assert.assertNotNull("geoPlatformService is NULL", geoPlatformService);
-//
-//        Object implementor = geoPlatformService;
-//        SpringBusFactory bf = new SpringBusFactory();
-//        bus = bf.createBus();
-//
-//        Map<String, Object> outProps = new HashMap<String, Object>();
-//        outProps.put("action", "Timestamp Signature");
-//        outProps.put("user", "serverx509v1");
-//        outProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-//        outProps.put("signaturePropFile", "./Server_Decrypt.properties");
-//        bus.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
-//        Map<String, Object> inProps = new HashMap<String, Object>();
-//        inProps.put("action", "Timestamp Signature");
-//        inProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-//        inProps.put("signaturePropFile", "./Server_SignVerf.properties");
-//        bus.getInInterceptors().add(new WSS4JInInterceptor(inProps));
-//
-//        bf.setDefaultBus(bus);
-//        String address = "http://localhost:8282/geoplatform-service/soap";
-//        e = Endpoint.publish(address, implementor);
-//
-//        System.out.println("Server ready...");
-//    }
-
-    @Before
-    public void setUp() throws Exception {
-        logger.trace("\n\t@@@ {}.setUp @@@", this.getClass().getSimpleName());
-        System.out.println(" @@@ OID: " + this.toString());
-
-//        Assert.assertNotNull("gpWSClient is NULL", gpWSClient);
-//        geoplatformServiceClient = gpWSClient.create();
-        Assert.assertNotNull("geoPlatformService is NULL", geoPlatformService);
-
-        Object implementor = geoPlatformService;
-        SpringBusFactory bf = new SpringBusFactory();
-        bus = bf.createBus();
-
-        Map<String, Object> outProps = new HashMap<String, Object>();
-        outProps.put("action", "Timestamp Signature");
-        outProps.put("user", "serverx509v1");
-        outProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        outProps.put("signaturePropFile", "./Server_Decrypt.properties");
-        bus.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
-        Map<String, Object> inProps = new HashMap<String, Object>();
-        inProps.put("action", "Timestamp Signature");
-        inProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        inProps.put("signaturePropFile", "./Server_SignVerf.properties");
-        bus.getInInterceptors().add(new WSS4JInInterceptor(inProps));
-
-        bf.setDefaultBus(bus);
-        String address = "http://localhost:8282/geoplatform-service/soap";
-        e = Endpoint.publish(address, implementor);
-
-        System.out.println("Server ready...");
-//        Thread.sleep(5 * 60 * 1000);
-    }
-
-    @After
-    public void tearDown() {
-        logger.trace("\n\t@@@ {}.tearDown @@@", this.getClass().getSimpleName());
-        System.out.println(" @@@ OID: " + this.toString());
-
-//        e.stop();
-//        bus.shutdown(true);
-    }
-
-//    @Autowired
-//    protected Server gpJettyServer;
-//    @Override
-//    public void afterPropertiesSet() throws Exception {
-//        logger.info("WSTest - afterPropertiesSet-------------------------------> " + this.getClass().getName());
-//        
-//    }
     @Test
     public void testUpdateServer1() {
-        logger.info("@@@@ Before");
-        System.out.println(" @@@ OID: " + this.toString());
-//        System.out.println(" @@@ OID server: " + geoPlatformService.toString());
-        System.out.println(" @@@ OID client: " + geoplatformServiceClient.toString());
         Assert.assertNotNull("geoplatformServiceClient is NULL", geoplatformServiceClient);
         List<UserDTO> userList = geoplatformServiceClient.getUsers();
         Assert.assertNotNull("userList is NULL", userList);
@@ -195,10 +84,6 @@ public class WSUsersTest2 {
 
     @Test
     public void testUpdateServer2() {
-        logger.info("@@@@ Before");
-        System.out.println(" @@@ OID: " + this.toString());
-//        System.out.println(" @@@ OID server: " + geoPlatformService.toString());
-        System.out.println(" @@@ OID client: " + geoplatformServiceClient.toString());
         Assert.assertNotNull("geoplatformServiceClient is NULL", geoplatformServiceClient);
         List<UserDTO> userList = geoplatformServiceClient.getUsers();
         logger.info("\n*** Number of Users into DB: {} ***", userList.size());

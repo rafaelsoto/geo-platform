@@ -42,6 +42,8 @@ import java.util.Map;
 import javax.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBusFactory;
+import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.geosdi.geoplatform.cxf.GeoPlatformWSClient;
@@ -50,7 +52,6 @@ import org.geosdi.geoplatform.services.ServerKeystorePasswordCallback;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 
@@ -60,21 +61,27 @@ import org.springframework.test.context.TestExecutionListener;
  * @email  giuseppe.lascaleia@geosdi.org
  */
 public class WSListenerServices implements TestExecutionListener {
-    
+
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     //
     protected Endpoint e = null;
     protected Bus bus = null;
-    
+
     @Override
     public void beforeTestClass(TestContext testContext) throws Exception {
-        System.out.println("@@@@ ------------- beforeTestClass");
-        GeoPlatformService geoPlatformService = (GeoPlatformService)testContext.getApplicationContext().getBean("geoPlatformService");
+        logger.trace("\n\t@@@ {}.beforeTestClass @@@", this.getClass().getSimpleName());
+        
+        GeoPlatformWSClient.getInstance().getGeoPlatformService(); //
+
+        GeoPlatformService geoPlatformService = (GeoPlatformService) testContext.getApplicationContext().getBean("geoPlatformService");
         Assert.assertNotNull("geoPlatformService is NULL", geoPlatformService);
 
         Object implementor = geoPlatformService;
         SpringBusFactory bf = new SpringBusFactory();
         bus = bf.createBus();
+
+        bus.getInInterceptors().add(new LoggingInInterceptor());
+        bus.getOutInterceptors().add(new LoggingOutInterceptor());
 
         Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put("action", "Timestamp Signature");
@@ -92,12 +99,12 @@ public class WSListenerServices implements TestExecutionListener {
         String address = "http://localhost:8282/geoplatform-service/soap";
         e = Endpoint.publish(address, implementor);
 
-        System.out.println("Server ready...");
-        System.out.println(" @@@ OID server: " + geoPlatformService.toString());
+        logger.debug("\n*** Server ready...");
     }
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
+        logger.trace("\n\t@@@ {}.prepareTestInstance @@@", this.getClass().getSimpleName());
     }
 
     @Override
@@ -110,6 +117,9 @@ public class WSListenerServices implements TestExecutionListener {
 
     @Override
     public void afterTestClass(TestContext testContext) throws Exception {
-        System.out.println("@@@@ ------------- afterTestClass");
+        logger.trace("\n\t@@@ {}.afterTestClass @@@", this.getClass().getSimpleName());
+        
+        e.stop();
+        bus.shutdown(true);
     }
 }

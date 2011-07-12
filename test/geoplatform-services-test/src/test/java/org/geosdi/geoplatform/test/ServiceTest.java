@@ -122,7 +122,7 @@ public abstract class ServiceTest implements InitializingBean {
         
         Assert.assertNotNull("gpWSClient is NULL", gpWSClient);
 //        geoplatformServiceClient = gpWSClient.create();
-        geoplatformServiceClient = gpWSClient.getGeoPLatformService();
+        geoplatformServiceClient = gpWSClient.getGeoPlatformService();
         
         Object implementor = geoPlatformService;
         SpringBusFactory bf = new SpringBusFactory();
