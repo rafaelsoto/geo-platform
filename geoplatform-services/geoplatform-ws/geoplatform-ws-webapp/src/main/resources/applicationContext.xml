@@ -48,7 +48,7 @@
                     </list>
                 </property>
             </bean>
-    	</jaxws:serviceFactory>
+        </jaxws:serviceFactory>
         
         <jaxws:outInterceptors>
             <bean class="org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor"/>
