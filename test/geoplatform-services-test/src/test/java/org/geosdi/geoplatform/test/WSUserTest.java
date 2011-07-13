@@ -141,17 +141,17 @@ public class WSUserTest extends ServiceTest {
             Assert.fail(ex.getMessage());
         }
     }
-//
-//    @Test
-//    public void testGetUserDetailByUsernameAndPassword3() {
-//        GPUser user = null;
-//        try {
-//            user = gpWSClient.getUserDetailByUsernameAndPassword(usernameTest, "pwd_username_test_ws_");
-//            Assert.fail("Test must fail because password is wrong");
-//        } catch (ResourceNotFoundFault ex) {
-//            Assert.fail(ex.getMessage());
-//        } catch (SOAPFaultException ex) {
-//            Assert.assertNull("User is not null", user);
-//        }
-//    }
+
+    @Test
+    public void testGetUserDetailByUsernameAndPassword3() {
+        GPUser user = null;
+        try {
+            user = gpWSClient.getUserDetailByUsernameAndPassword(usernameTest, "pwd_username_test_ws_");
+            Assert.fail("Test must fail because password is wrong");
+        } catch (ResourceNotFoundFault ex) {
+            Assert.fail(ex.getMessage());
+        } catch (SOAPFaultException ex) {
+            Assert.assertNull("User is not null", user);
+        }
+    }
 }

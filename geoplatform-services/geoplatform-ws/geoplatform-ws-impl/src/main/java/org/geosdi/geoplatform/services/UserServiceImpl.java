@@ -37,10 +37,12 @@
 //</editor-fold>
 package org.geosdi.geoplatform.services;
 
-import com.googlecode.genericdao.search.Filter;
 import com.googlecode.genericdao.search.Search;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.ws.soap.SOAPFaultException;
+import org.apache.cxf.binding.soap.SoapFault;
 import org.geosdi.geoplatform.core.dao.GPFolderDAO;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -276,16 +278,21 @@ class UserServiceImpl {
         return userDao.count(searchCriteria);
     }
 
-    public GPUser getUserDetailByUsernameAndPassword(String username) {
-        Search searchCriteria = new Search(GPUser.class);
-
-        searchCriteria.addFilterEqual("username", username);
-
-        List<GPUser> usersList = userDao.search(searchCriteria);
-        if (usersList.isEmpty()) {
-            return null;
+    public GPUser getUserDetailByUsernameAndPassword(String username, String password)
+            throws ResourceNotFoundFault, SOAPFaultException {
+        GPUser user = null;
+        try {
+            user = userDao.findByUsername(username);
+            if (user == null) {
+                throw new ResourceNotFoundFault("User with specified username was not found");
+            }
+            if (!user.verify(password)) {
+                throw new SoapFault("Specified password was incorrect", null);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new SoapFault(e.getMessage(), null);
         }
-        return usersList.get(0);
+        return user;
     }
 
     private List<UserDTO> convertToUserList(List<GPUser> userList) {

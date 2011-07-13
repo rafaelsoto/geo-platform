@@ -56,8 +56,6 @@ import org.geosdi.geoplatform.responce.collection.TreeFolderElements;
  * @author Giuseppe La Scaleia - CNR IMAA geoSDI Group
  * @email  giuseppe.lascaleia@geosdi.org
  */
-// TODO TEST DD on same position
-// TODO TEST DD with many subelements
 public class WSFolderTest extends ServiceTest {
 
     private final String nameFolder1 = "folder1";

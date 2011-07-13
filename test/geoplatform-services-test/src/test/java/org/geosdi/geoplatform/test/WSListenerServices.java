@@ -127,5 +127,7 @@ public class WSListenerServices implements TestExecutionListener {
 
         endpoint.stop();
         bus.shutdown(true);
+        // Wait to be sure that the endpoint was shutdown properly
+        Thread.sleep(5 * 1000);
     }
 }

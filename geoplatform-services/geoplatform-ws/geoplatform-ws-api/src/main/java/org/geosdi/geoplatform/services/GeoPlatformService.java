@@ -122,7 +122,10 @@ public interface GeoPlatformService {
 
     @Get
     @WebResult(name = "User")
-    GPUser getUserDetailByUsernameAndPassword(String username, String password) throws ResourceNotFoundFault, SOAPFaultException;
+    GPUser getUserDetailByUsernameAndPassword(
+            @WebParam(name = "username") String username,
+            @WebParam(name = "password") String password)
+            throws ResourceNotFoundFault, SOAPFaultException;
 
     @Get
     @HttpResource(location = "/users/search/{num}/{page}/{nameLike}")

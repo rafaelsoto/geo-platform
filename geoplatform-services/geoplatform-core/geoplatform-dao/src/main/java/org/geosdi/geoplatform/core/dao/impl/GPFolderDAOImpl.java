@@ -39,7 +39,6 @@ package org.geosdi.geoplatform.core.dao.impl;
 
 import com.googlecode.genericdao.search.ISearch;
 import com.googlecode.genericdao.search.Search;
-import java.util.ArrayList;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
@@ -288,7 +287,6 @@ public class GPFolderDAOImpl extends BaseDAO<GPFolder, Long> implements
         }
         return true;
     }
-
 //    @Override
 //    public boolean persistCheckStatusFolder(long idFolder, boolean isChecked) {
 //        // Retrieve the folder
