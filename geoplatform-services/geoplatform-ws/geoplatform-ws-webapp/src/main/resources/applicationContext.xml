@@ -104,11 +104,13 @@
                 <entry key="decryptionPropFile" value="Server_Decrypt.properties"/>-->
                 
                 <!-- .......... Only Signature -->
-                <entry key="action" value="Signature"/>
-                <entry key="signaturePropFile" value="Server_SignVerf.properties"/>
+                <!--<entry key="action" value="Signature"/>
+                <entry key="signaturePropFile" value="Server_SignVerf.properties"/>-->
                 
                 <!-- .......... Signature and Encryption -->
-                <!--<entry key="action" value="Timestamp Signature Encrypt"/>-->
+                <entry key="action" value="Timestamp Signature Encrypt"/>
+                <entry key="signaturePropFile" value="Server_SignVerf.properties"/>
+                <entry key="decryptionPropFile" value="Server_Decrypt.properties"/>
                 
                 <!-- Use this action spec for WCF clients 
                 <entry key="action" value="Signature Encrypt Timestamp"/>
@@ -138,12 +140,16 @@
                 <entry key="encryptionUser" value="clientx509v1"/>-->
                 
                 <!-- .......... Only Signature -->
-                <entry key="action" value="Signature"/>
+                <!--<entry key="action" value="Signature"/>
                 <entry key="user" value="serverx509v1"/>
-                <entry key="signaturePropFile" value="Server_Decrypt.properties"/>
+                <entry key="signaturePropFile" value="Server_Decrypt.properties"/>-->
                 
                 <!-- .......... Signature and Encryption -->
-                <!--<entry key="action" value="Timestamp Signature Encrypt"/>-->
+                <entry key="action" value="Timestamp Signature Encrypt"/>
+                <entry key="user" value="serverx509v1"/>
+                <entry key="signaturePropFile" value="Server_Decrypt.properties"/>
+                <entry key="encryptionPropFile" value="Server_SignVerf.properties"/>
+                <entry key="encryptionUser" value="clientx509v1"/>
                 
                 
                 <!--<entry key="user" value="server"/>-->

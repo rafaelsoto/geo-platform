@@ -39,9 +39,12 @@ package org.geosdi.geoplatform.test;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.ws.soap.SOAPFaultException;
 import junit.framework.Assert;
 import org.geosdi.geoplatform.core.model.GPUser;
+import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.request.RequestById;
 import org.geosdi.geoplatform.request.SearchRequest;
@@ -123,7 +126,7 @@ public class WSUserTest extends ServiceTest {
             Assert.assertNotNull("User is null", user);
         } catch (ResourceNotFoundFault ex) {
             Assert.fail(ex.getMessage());
-        } catch (SOAPFaultException ex) {
+        } catch (IllegalParameterFault ex) {
             Assert.fail(ex.getMessage());
         }
     }
@@ -137,7 +140,7 @@ public class WSUserTest extends ServiceTest {
             Assert.fail("Test must fail because username is wrong");
         } catch (ResourceNotFoundFault ex) {
             Assert.assertNull("User is not null", user);
-        } catch (SOAPFaultException ex) {
+        } catch (IllegalParameterFault ex) {
             Assert.fail(ex.getMessage());
         }
     }
@@ -150,7 +153,7 @@ public class WSUserTest extends ServiceTest {
             Assert.fail("Test must fail because password is wrong");
         } catch (ResourceNotFoundFault ex) {
             Assert.fail(ex.getMessage());
-        } catch (SOAPFaultException ex) {
+        } catch (IllegalParameterFault ex) {
             Assert.assertNull("User is not null", user);
         }
     }

@@ -92,16 +92,16 @@ public class GeoPlatformWSClient {
 //        outProps.put("encryptionUser", "serverx509v1");
 
         // ----------- Only signature
-        outProps.put("action", "Timestamp Signature");
-        outProps.put("user", "clientx509v1");
-        outProps.put("signaturePropFile", "Client_Sign.properties");
+//        outProps.put("action", "Timestamp Signature");
+//        outProps.put("user", "clientx509v1");
+//        outProps.put("signaturePropFile", "Client_Sign.properties");
 
         // ----------- Signature and Encryption
-//        outProps.put("action", "Timestamp Signature Encrypt");
-//        outProps.put("user", "client");
-//        outProps.put("signaturePropFile", "/client.properties");
-//        outProps.put("encryptionPropFile", "/server.properties");
-//        outProps.put("encryptionUser", "server");
+        outProps.put("action", "Timestamp Signature Encrypt");
+        outProps.put("user", "clientx509v1");
+        outProps.put("signaturePropFile", "Client_Sign.properties");
+        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
+        outProps.put("encryptionUser", "serverx509v1");
 
 //        outProps.put("signatureKeyIdentifier", "DirectReference");
 
@@ -122,14 +122,13 @@ public class GeoPlatformWSClient {
 //        inProps.put("decryptionPropFile", "Client_Sign.properties");
 
 //         ----------- Only signature
-        inProps.put("action", "Timestamp Signature");
-        inProps.put("signaturePropFile", "Client_Encrypt.properties");
+//        inProps.put("action", "Timestamp Signature");
+//        inProps.put("signaturePropFile", "Client_Encrypt.properties");
 //        
         // ----------- Signature and Encryption
-//        Map<String, Object> inProps = new HashMap<String, Object>();
-//        inProps.put("action", "Timestamp Signature Encrypt");
-//        inProps.put("signaturePropFile", "/server.properties");
-//        inProps.put("decryptionPropFile", "/client.properties");
+        inProps.put("action", "Timestamp Signature Encrypt");
+        inProps.put("signaturePropFile", "Client_Encrypt.properties");
+        inProps.put("decryptionPropFile", "Client_Sign.properties");
 
         inProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
 

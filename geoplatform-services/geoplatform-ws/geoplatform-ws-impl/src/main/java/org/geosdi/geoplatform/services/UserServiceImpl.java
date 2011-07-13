@@ -279,7 +279,7 @@ class UserServiceImpl {
     }
 
     public GPUser getUserDetailByUsernameAndPassword(String username, String password)
-            throws ResourceNotFoundFault, SOAPFaultException {
+            throws ResourceNotFoundFault, IllegalParameterFault {
         GPUser user = null;
         try {
             user = userDao.findByUsername(username);
@@ -287,10 +287,10 @@ class UserServiceImpl {
                 throw new ResourceNotFoundFault("User with specified username was not found");
             }
             if (!user.verify(password)) {
-                throw new SoapFault("Specified password was incorrect", null);
+                throw new IllegalParameterFault("Specified password was incorrect");
             }
         } catch (NoSuchAlgorithmException e) {
-            throw new SoapFault(e.getMessage(), null);
+            throw new IllegalParameterFault(e.getMessage());
         }
         return user;
     }

@@ -324,7 +324,7 @@ public class GPUser implements Serializable, UserDetails {
     }
 
     public boolean verify(String password) throws NoSuchAlgorithmException {
-        String hashPasswordSpeicifed = md5hash(password);
+        String hashPasswordSpeicifed = this.md5hash(password);
         if (this.password.equals(hashPasswordSpeicifed)) {
             return true;
         }

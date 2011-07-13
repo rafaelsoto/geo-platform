@@ -125,7 +125,7 @@ public interface GeoPlatformService {
     GPUser getUserDetailByUsernameAndPassword(
             @WebParam(name = "username") String username,
             @WebParam(name = "password") String password)
-            throws ResourceNotFoundFault, SOAPFaultException;
+            throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Get
     @HttpResource(location = "/users/search/{num}/{page}/{nameLike}")

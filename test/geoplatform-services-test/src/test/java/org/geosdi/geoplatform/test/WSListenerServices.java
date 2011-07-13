@@ -86,16 +86,19 @@ public class WSListenerServices implements TestExecutionListener {
         bus.getInInterceptors().add(new LoggingInInterceptor());        
 
         Map<String, Object> outProps = new HashMap<String, Object>();
-        outProps.put("action", "Timestamp Signature");
+        outProps.put("action", "Timestamp Signature Encrypt");
         outProps.put("user", "serverx509v1");
+        outProps.put("signaturePropFile", "Server_Decrypt.properties");
+        outProps.put("encryptionPropFile", "Server_SignVerf.properties");
+        outProps.put("encryptionUser", "clientx509v1");
         outProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        outProps.put("signaturePropFile", "./Server_Decrypt.properties");
         bus.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
         
         Map<String, Object> inProps = new HashMap<String, Object>();
-        inProps.put("action", "Timestamp Signature");
+        inProps.put("action", "Timestamp Signature Encrypt");
+        inProps.put("signaturePropFile", "Server_SignVerf.properties");
+        inProps.put("decryptionPropFile", "Server_Decrypt.properties");
         inProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        inProps.put("signaturePropFile", "./Server_SignVerf.properties");
         bus.getInInterceptors().add(new WSS4JInInterceptor(inProps));
 
         bf.setDefaultBus(bus);
