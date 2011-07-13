@@ -64,16 +64,16 @@ public class WSListenerServices implements TestExecutionListener {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     //
-    private GeoPlatformService client = null;
+    private GeoPlatformService gpWSClient = null;
     private Endpoint endpoint = null;
     private Bus bus = null;
 
     @Override
     public void beforeTestClass(TestContext testContext) throws Exception {
-        logger.trace("\n\t@@@ {}.beforeTestClass @@@", this.getClass().getSimpleName());
-        
-//        GeoPlatformWSClient.getInstance().getGeoPlatformService(); //
-        client = ((GeoPlatformWSClient) testContext.getApplicationContext().getBean("gpWSClient")).create();
+        logger.trace("\n\t@@@ WSListenerServices.beforeTestClass @@@");
+
+        // Client must be create before the Endpoint
+        gpWSClient = ((GeoPlatformWSClient) testContext.getApplicationContext().getBean("gpWSClient")).create();
 
         GeoPlatformService geoPlatformService = (GeoPlatformService) testContext.getApplicationContext().getBean("geoPlatformService");
         Assert.assertNotNull("geoPlatformService is NULL", geoPlatformService);
@@ -82,8 +82,8 @@ public class WSListenerServices implements TestExecutionListener {
         SpringBusFactory bf = new SpringBusFactory();
         bus = bf.createBus();
 
-        bus.getInInterceptors().add(new LoggingInInterceptor());
         bus.getOutInterceptors().add(new LoggingOutInterceptor());
+        bus.getInInterceptors().add(new LoggingInInterceptor());        
 
         Map<String, Object> outProps = new HashMap<String, Object>();
         outProps.put("action", "Timestamp Signature");
@@ -91,6 +91,7 @@ public class WSListenerServices implements TestExecutionListener {
         outProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
         outProps.put("signaturePropFile", "./Server_Decrypt.properties");
         bus.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
+        
         Map<String, Object> inProps = new HashMap<String, Object>();
         inProps.put("action", "Timestamp Signature");
         inProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
@@ -106,10 +107,10 @@ public class WSListenerServices implements TestExecutionListener {
 
     @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
-        logger.trace("\n\t@@@ {}.prepareTestInstance @@@", this.getClass().getSimpleName());
-        
-        WSUsersTest2 test = (WSUsersTest2)testContext.getTestInstance();
-        test.setGeoplatformServiceClient(client);
+        logger.trace("\n\t@@@ WSListenerServices.prepareTestInstance @@@");
+
+        ServiceTest testInstance = (ServiceTest) testContext.getTestInstance();
+        testInstance.setGeoplatformServiceClient(gpWSClient);
     }
 
     @Override
@@ -122,8 +123,8 @@ public class WSListenerServices implements TestExecutionListener {
 
     @Override
     public void afterTestClass(TestContext testContext) throws Exception {
-        logger.trace("\n\t@@@ {}.afterTestClass @@@", this.getClass().getSimpleName());
-        
+        logger.trace("\n\t@@@ WSListenerServices.afterTestClass @@@");
+
         endpoint.stop();
         bus.shutdown(true);
     }

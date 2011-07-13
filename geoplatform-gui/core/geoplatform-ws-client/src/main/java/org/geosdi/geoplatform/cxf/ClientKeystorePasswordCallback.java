@@ -13,10 +13,9 @@ import org.apache.ws.security.WSPasswordCallback;
 public class ClientKeystorePasswordCallback implements CallbackHandler {
 
     private Log logger = LogFactory.getLog(this.getClass());
-    
-    private Map<String, String> passwords = 
-        new HashMap<String, String>();
-    
+    //    
+    private Map<String, String> passwords = new HashMap<String, String>();
+
     public ClientKeystorePasswordCallback() {
         passwords.put("Alice", "ecilA");
         passwords.put("abcd", "dcba");
@@ -29,13 +28,21 @@ public class ClientKeystorePasswordCallback implements CallbackHandler {
     }
 
     /**
+     * Add an alias/password pair to the callback mechanism.
+     */
+    public void setAliasPassword(String alias, String password) {
+        passwords.put(alias, password);
+    }
+
+    /**
      * It attempts to get the password from the private 
      * alias/passwords map.
      */
+    @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (int i = 0; i < callbacks.length; i++) {
-            WSPasswordCallback pc = (WSPasswordCallback)callbacks[i];
-            
+            WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
+
 //            logger.info("########### Alias client: " + pc.getIdentifier());
 //            logger.info("########### pc.getUsage(): " + pc.getUsage());
 //
@@ -56,12 +63,4 @@ public class ClientKeystorePasswordCallback implements CallbackHandler {
             }
         }
     }
-    
-    /**
-     * Add an alias/password pair to the callback mechanism.
-     */
-    public void setAliasPassword(String alias, String password) {
-        passwords.put(alias, password);
-    }
-    
 }

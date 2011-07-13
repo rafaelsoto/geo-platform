@@ -82,28 +82,28 @@ public class WSFolderTest extends ServiceTest {
 
         // "rootFolderA" ---> "folder1"
         idUserTestFolder1 = createAndInsertFolder(userTest, nameFolder1, 6, false, userTestRootFolderA);
-        userTestFolder1 = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder1);
+        userTestFolder1 = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder1);
         // "rootFolderA" ---> "folder2"
         idUserTestFolder2 = createAndInsertFolder(userTest, nameFolder2, 5, false, userTestRootFolderA);
-        userTestFolder2 = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder2);
+        userTestFolder2 = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder2);
         //
         userTestRootFolderA.setPosition(7);
         userTestRootFolderA.getFolder().setNumberOfDescendants(2);
-        geoPlatformService.updateUserFolder(userTestRootFolderA);
+        gpWSClient.updateUserFolder(userTestRootFolderA);
 
         // "rootFolderB" ---> "folder3"
         idUserTestFolder3 = createAndInsertFolder(userTest, nameFolder3, 3, false, userTestRootFolderB);
-        userTestFolder3 = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder3);
+        userTestFolder3 = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder3);
         // "rootFolderB" ---> "folder4"
         idUserTestFolder4 = createAndInsertFolder(userTest, nameFolder4, 2, false, userTestRootFolderB);
-        userTestFolder4 = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder4);
+        userTestFolder4 = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder4);
         // "rootFolderB" ---> "folder5"
         idUserTestFolder5 = createAndInsertFolder(userTest, nameFolder5, 1, false, userTestRootFolderB);
-        userTestFolder5 = geoPlatformService.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder5);
+        userTestFolder5 = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserTestFolder5);
         //
         userTestRootFolderB.setPosition(4);
         userTestRootFolderB.getFolder().setNumberOfDescendants(3);
-        geoPlatformService.updateUserFolder(userTestRootFolderB);
+        gpWSClient.updateUserFolder(userTestRootFolderB);
     }
 
     @Test
@@ -127,14 +127,14 @@ public class WSFolderTest extends ServiceTest {
     @Test
     public void testGetShortFolder() {
         try {
-            FolderDTO folderA = geoPlatformService.getShortFolder(idUserRootFolderA);
+            FolderDTO folderA = gpWSClient.getShortFolder(idUserRootFolderA);
             Assert.assertNotNull("assertNotNull Folder A", folderA);
         } catch (ResourceNotFoundFault rnnf) {
             Assert.fail("Unable to find folder with id \"" + rnnf.getId());
         }
 
         try {
-            FolderDTO folderB = geoPlatformService.getShortFolder(idUserRootFolderB);
+            FolderDTO folderB = gpWSClient.getShortFolder(idUserRootFolderB);
             Assert.assertNotNull("assertNotNull Folder B", folderB);
         } catch (ResourceNotFoundFault rnnf) {
             Assert.fail("Unable to find folder with id \"" + rnnf.getId());
@@ -148,8 +148,8 @@ public class WSFolderTest extends ServiceTest {
             userTestFolder5.setParent(userTestRootFolderA);
             userTestFolder5.getFolder().setName(nameUserFolderUpdated);
 
-            geoPlatformService.updateUserFolder(userTestFolder5);
-            GPUserFolders userFolderUpdated = geoPlatformService.getUserFolderDetail(idUserTestFolder5);
+            gpWSClient.updateUserFolder(userTestFolder5);
+            GPUserFolders userFolderUpdated = gpWSClient.getUserFolderDetail(idUserTestFolder5);
 
             Assert.assertNotNull("userFolderUpdated is NULL", userFolderUpdated);
             Assert.assertNotNull("User of userFolderUpdated is NULL", userFolderUpdated.getUser());
@@ -168,26 +168,26 @@ public class WSFolderTest extends ServiceTest {
     public void testDeleteFolder() {
         try {
             // Assert number of folders of UserTest before delete
-            int totalFolders = geoPlatformService.getAllUserFoldersCount(idUserTest);
+            int totalFolders = gpWSClient.getAllUserFoldersCount(idUserTest);
             Assert.assertEquals("Number of all folders of UserTest before deleted",
                     7, totalFolders); // SetUp() added 2+5 folders
             //
-            List<FolderDTO> rootFolderList = geoPlatformService.getAllUserFoldersByUserId(idUserTest);
+            List<FolderDTO> rootFolderList = gpWSClient.getAllUserFoldersByUserId(idUserTest);
             int totalRootFolders = rootFolderList.size();
             Assert.assertEquals("Number of root folders of UserTest before deleted",
                     2, totalRootFolders);
 
             // Delete "rootFolderB" and in cascade "folder3" & "folder4" & "folder5"
-            geoPlatformService.deleteUserFolder(idUserRootFolderB);
+            gpWSClient.deleteUserFolder(idUserRootFolderB);
 
             // "rootFolderA" ---> "folder1" & "folder2"
-            List<FolderDTO> folderList = geoPlatformService.getAllUserFoldersByUserId(idUserTest);
+            List<FolderDTO> folderList = gpWSClient.getAllUserFoldersByUserId(idUserTest);
 
             // Assert total number of folders of UserTest after delete
             Assert.assertEquals("Number of root folders of UserTest after deleted",
                     1, folderList.size());
             Assert.assertEquals("Number of all folders of UserTest after deleted",
-                    totalFolders - 4, geoPlatformService.getAllUserFoldersCount(idUserTest));
+                    totalFolders - 4, gpWSClient.getAllUserFoldersCount(idUserTest));
 
             // Assert on the structure of user's folders
             // Assert on "rootFolderA"
@@ -196,7 +196,7 @@ public class WSFolderTest extends ServiceTest {
             Assert.assertEquals("Check idUserFolder on rootFolderA", idUserRootFolderA, folderToCheck.getIdUserFolder().longValue());
             Assert.assertEquals("Check id on rootFolderA", userTestRootFolderA.getFolder().getId(), folderToCheck.getId());
             // Assert on the structure of the subfolders of "rootFolderA"
-            TreeFolderElements childrenRootFolderA = geoPlatformService.getChildrenElements(idUserRootFolderA);
+            TreeFolderElements childrenRootFolderA = gpWSClient.getChildrenElements(idUserRootFolderA);
             logger.debug("\n*** childrenRootFolderA:\n{}\n***", childrenRootFolderA);
             Assert.assertNotNull("Check childrenRootFolderA not null", childrenRootFolderA);
             Assert.assertEquals("Check size of childrenRootFolderA", 2, childrenRootFolderA.size());
@@ -214,7 +214,7 @@ public class WSFolderTest extends ServiceTest {
             Assert.assertEquals("Check id of folder 2", userTestFolder2.getFolder().getId(), folderDTOToCheck.getId());
 
             // Assert on "rootFolderB" (deleted)
-            TreeFolderElements childrenRootFolderB = geoPlatformService.getChildrenElements(idUserRootFolderB);
+            TreeFolderElements childrenRootFolderB = gpWSClient.getChildrenElements(idUserRootFolderB);
             Assert.assertNull("Check childrenRootFolderB null", childrenRootFolderB);
 
         } catch (IllegalParameterFault ipf) {
@@ -238,19 +238,19 @@ public class WSFolderTest extends ServiceTest {
         GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
         descendantsMapData.setDescendantsMap(map); // Set an empty map
         try {
-            List<FolderDTO> childrenFolders = geoPlatformService.getChildrenFolders(idUserRootFolderB);
+            List<FolderDTO> childrenFolders = gpWSClient.getChildrenFolders(idUserRootFolderB);
             Assert.assertEquals("Before adding new folder - Number of subfolders of root folder B", 3, childrenFolders.size());
 
             String nameFolderToTest = "folderToTest";
             folderToTest = super.createUserFolder(userTest, nameFolderToTest, 1, false, null);
 
             // Adding new folder to user's root            
-            long idFolderToTest = geoPlatformService.saveAddedFolderAndTreeModifications(folderToTest, descendantsMapData);
+            long idFolderToTest = gpWSClient.saveAddedFolderAndTreeModifications(folderToTest, descendantsMapData);
 
             this.checkState(new int[]{8, 7, 6, 5, 4, 3, 2}, new int[]{2, 3}, "before removing");
 
             // Removing folder from user's root
-            boolean checkDelete = geoPlatformService.saveDeletedFolderAndTreeModifications(idFolderToTest, descendantsMapData);
+            boolean checkDelete = gpWSClient.saveDeletedFolderAndTreeModifications(idFolderToTest, descendantsMapData);
             Assert.assertTrue("Delete NOT done for \"" + folderToTest.getFolder().getName() + "\"", checkDelete);
 
             this.checkInitialState("after removing");
@@ -269,7 +269,7 @@ public class WSFolderTest extends ServiceTest {
         GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
         descendantsMapData.setDescendantsMap(map);
         try {
-            List<FolderDTO> childrenFolders = geoPlatformService.getChildrenFolders(idUserRootFolderB);
+            List<FolderDTO> childrenFolders = gpWSClient.getChildrenFolders(idUserRootFolderB);
             Assert.assertEquals("Before adding new folder - Number of subfolders of root folder B ", 3, childrenFolders.size());
 
             String nameFolderToTest = "folderToTest";
@@ -277,9 +277,9 @@ public class WSFolderTest extends ServiceTest {
 
             // Adding new folder to user's root folder B
             map.put(idUserRootFolderB, 4);
-            long idFolderToTest = geoPlatformService.saveAddedFolderAndTreeModifications(folderToTest, descendantsMapData);
+            long idFolderToTest = gpWSClient.saveAddedFolderAndTreeModifications(folderToTest, descendantsMapData);
 
-            childrenFolders = geoPlatformService.getChildrenFolders(idUserRootFolderB);
+            childrenFolders = gpWSClient.getChildrenFolders(idUserRootFolderB);
             Assert.assertEquals("After adding new folder - Number of subfolders of root folder B ", 4, childrenFolders.size());
 
             this.checkState(new int[]{8, 7, 6, 5, 4, 2, 1}, new int[]{2, 4}, "before removing");
@@ -287,10 +287,10 @@ public class WSFolderTest extends ServiceTest {
             // Removing folder from user's root folder B
             map.clear();
             map.put(idUserRootFolderB, 3);
-            boolean checkDelete = geoPlatformService.saveDeletedFolderAndTreeModifications(idFolderToTest, descendantsMapData);
+            boolean checkDelete = gpWSClient.saveDeletedFolderAndTreeModifications(idFolderToTest, descendantsMapData);
             Assert.assertTrue("Delete NOT done for \"" + folderToTest.getFolder().getName() + "\"", checkDelete);
 
-            childrenFolders = geoPlatformService.getChildrenFolders(idUserRootFolderB);
+            childrenFolders = gpWSClient.getChildrenFolders(idUserRootFolderB);
             Assert.assertEquals("After removing new folder - Number of subfolders of root folder B ", 3, childrenFolders.size());
 
             this.checkInitialState("after removing");
@@ -310,14 +310,14 @@ public class WSFolderTest extends ServiceTest {
         descendantsMapData.setDescendantsMap(map);
         try {
             // Move folder 5 between folder 3 and folder 4 (oldPosition < new Position)
-            boolean checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            boolean checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, idUserTestFolder5, super.idUserRootFolderB, 2, descendantsMapData);
             Assert.assertTrue("Folder 5 doesn't moved to position 2", checkDD);
 
             this.checkState(new int[]{7, 6, 5, 4, 3, 1, 2}, new int[]{2, 3}, "after DD I on same parent");
 
             // Move folder 5 after folder 4, in initial position (oldPosition > new Position)
-            checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, idUserTestFolder5, super.idUserRootFolderB, 1, descendantsMapData);
             Assert.assertTrue("Folder 5 doesn't moved to position 1", checkDD);
 
@@ -338,7 +338,7 @@ public class WSFolderTest extends ServiceTest {
             map.put(super.idUserRootFolderA, 3);
             map.put(super.idUserRootFolderB, 2);
             // Move folder 4 between folder 1 and folder 2 (oldPosition < new Position)
-            boolean checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            boolean checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, idUserTestFolder4, super.idUserRootFolderA, 5, descendantsMapData);
             Assert.assertTrue("Folder 4 doesn't moved to position 5", checkDD);
 
@@ -348,7 +348,7 @@ public class WSFolderTest extends ServiceTest {
             map.clear();
             map.put(super.idUserRootFolderA, 2);
             map.put(super.idUserRootFolderB, 3);
-            checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, idUserTestFolder4, super.idUserRootFolderB, 2, descendantsMapData);
             Assert.assertTrue("Folder 4 doesn't moved to position 2", checkDD);
 
@@ -367,14 +367,14 @@ public class WSFolderTest extends ServiceTest {
         descendantsMapData.setDescendantsMap(map);
         try {
             // Move folder B before folder A (oldPosition < new Position)
-            boolean checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            boolean checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, super.idUserRootFolderB, 0, 7, descendantsMapData);
             Assert.assertTrue("Folder B doesn't moved to position 7", checkDD);
 
             this.checkState(new int[]{3, 2, 1, 7, 6, 5, 4}, new int[]{2, 3}, "after DD I on root parent");
 
             // Move folder B after folder A, in initial position (oldPosition > new Position)
-            checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, super.idUserRootFolderB, 0, 4, descendantsMapData);
             Assert.assertTrue("Folder 4 doesn't moved to position 4", checkDD);
 
@@ -394,7 +394,7 @@ public class WSFolderTest extends ServiceTest {
         try {
             map.put(idUserRootFolderA, 6);
             // Move Folder B after Folder 1 (oldPosition < new Position)
-            boolean checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            boolean checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, super.idUserRootFolderB, super.idUserRootFolderA, 6, descendantsMapData);
             Assert.assertTrue("Folder B doesn't moved to position 6", checkDD);
 
@@ -406,7 +406,7 @@ public class WSFolderTest extends ServiceTest {
             map.clear();
             map.put(idUserRootFolderA, 2);
             // Move folder B in initial position (oldPosition > new Position)
-            checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, super.idUserRootFolderB, 0, 4, descendantsMapData);
             Assert.assertTrue("Folder B doesn't moved to position 4", checkDD);
 
@@ -426,7 +426,7 @@ public class WSFolderTest extends ServiceTest {
         try {
             map.put(idUserRootFolderB, 6);
             // Move Folder A after Folder 3 (oldPosition > new Position)
-            boolean checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            boolean checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, super.idUserRootFolderA, super.idUserRootFolderB, 5, descendantsMapData);
             Assert.assertTrue("Folder A doesn't moved to position 5", checkDD);
 
@@ -438,7 +438,7 @@ public class WSFolderTest extends ServiceTest {
             map.clear();
             map.put(idUserRootFolderB, 3);
             // Move folder A in initial position (oldPosition < new Position)
-            checkDD = geoPlatformService.saveDragAndDropFolderAndTreeModifications(
+            checkDD = gpWSClient.saveDragAndDropFolderAndTreeModifications(
                     super.usernameTest, super.idUserRootFolderA, 0, 7, descendantsMapData);
             Assert.assertTrue("Folder B doesn't moved to position 7", checkDD);
 
@@ -452,27 +452,27 @@ public class WSFolderTest extends ServiceTest {
     private void checkInitialState(String info)
             throws ResourceNotFoundFault {
 
-        userTestRootFolderA = geoPlatformService.getUserFolderDetail(idUserRootFolderA);
+        userTestRootFolderA = gpWSClient.getUserFolderDetail(idUserRootFolderA);
         Assert.assertEquals("Position of root folder A - " + info, 7, userTestRootFolderA.getPosition());
         Assert.assertEquals("Number of descendant of root folder A - " + info, 2, userTestRootFolderA.getFolder().getNumberOfDescendants());
 
-        userTestFolder1 = geoPlatformService.getUserFolderDetail(idUserTestFolder1);
+        userTestFolder1 = gpWSClient.getUserFolderDetail(idUserTestFolder1);
         Assert.assertEquals("Position of folder 1 - " + info, 6, userTestFolder1.getPosition());
 
-        userTestFolder2 = geoPlatformService.getUserFolderDetail(idUserTestFolder2);
+        userTestFolder2 = gpWSClient.getUserFolderDetail(idUserTestFolder2);
         Assert.assertEquals("Position of folder 2 - " + info, 5, userTestFolder2.getPosition());
 
-        userTestRootFolderB = geoPlatformService.getUserFolderDetail(idUserRootFolderB);
+        userTestRootFolderB = gpWSClient.getUserFolderDetail(idUserRootFolderB);
         Assert.assertEquals("Position of root folder B - " + info, 4, userTestRootFolderB.getPosition());
         Assert.assertEquals("Number of descendant of root folder B - " + info, 3, userTestRootFolderB.getFolder().getNumberOfDescendants());
 
-        userTestFolder3 = geoPlatformService.getUserFolderDetail(idUserTestFolder3);
+        userTestFolder3 = gpWSClient.getUserFolderDetail(idUserTestFolder3);
         Assert.assertEquals("Position of folder 3 - " + info, 3, userTestFolder3.getPosition());
 
-        userTestFolder4 = geoPlatformService.getUserFolderDetail(idUserTestFolder4);
+        userTestFolder4 = gpWSClient.getUserFolderDetail(idUserTestFolder4);
         Assert.assertEquals("Position of folder 4 - " + info, 2, userTestFolder4.getPosition());
 
-        userTestFolder5 = geoPlatformService.getUserFolderDetail(idUserTestFolder5);
+        userTestFolder5 = gpWSClient.getUserFolderDetail(idUserTestFolder5);
         Assert.assertEquals("Position of folder 5 - " + info, 1, userTestFolder5.getPosition());
     }
 
@@ -481,34 +481,34 @@ public class WSFolderTest extends ServiceTest {
         Assert.assertEquals("Array positions must have exactly 7 elements", 7, positions.length);
         Assert.assertEquals("Array numberOfDescendants must have exactly 2 elements", 2, numberOfDescendants.length);
 
-        userTestRootFolderA = geoPlatformService.getUserFolderDetail(idUserRootFolderA);
+        userTestRootFolderA = gpWSClient.getUserFolderDetail(idUserRootFolderA);
         Assert.assertEquals("Position of root folder A - " + info, positions[0], userTestRootFolderA.getPosition());
         Assert.assertEquals("Number of descendant of root folder A - " + info, numberOfDescendants[0], userTestRootFolderA.getFolder().getNumberOfDescendants());
 
-        userTestFolder1 = geoPlatformService.getUserFolderDetail(idUserTestFolder1);
+        userTestFolder1 = gpWSClient.getUserFolderDetail(idUserTestFolder1);
         Assert.assertEquals("Position of folder 1 - " + info, positions[1], userTestFolder1.getPosition());
 
-        userTestFolder2 = geoPlatformService.getUserFolderDetail(idUserTestFolder2);
+        userTestFolder2 = gpWSClient.getUserFolderDetail(idUserTestFolder2);
         Assert.assertEquals("Position of folder 2 - " + info, positions[2], userTestFolder2.getPosition());
 
-        userTestRootFolderB = geoPlatformService.getUserFolderDetail(idUserRootFolderB);
+        userTestRootFolderB = gpWSClient.getUserFolderDetail(idUserRootFolderB);
         Assert.assertEquals("Position of root folder B - " + info, positions[3], userTestRootFolderB.getPosition());
         Assert.assertEquals("Number of descendant of root folder B - " + info, numberOfDescendants[1], userTestRootFolderB.getFolder().getNumberOfDescendants());
 
-        userTestFolder3 = geoPlatformService.getUserFolderDetail(idUserTestFolder3);
+        userTestFolder3 = gpWSClient.getUserFolderDetail(idUserTestFolder3);
         Assert.assertEquals("Position of folder 3 - " + info, positions[4], userTestFolder3.getPosition());
 
-        userTestFolder4 = geoPlatformService.getUserFolderDetail(idUserTestFolder4);
+        userTestFolder4 = gpWSClient.getUserFolderDetail(idUserTestFolder4);
         Assert.assertEquals("Position of folder 4 - " + info, positions[5], userTestFolder4.getPosition());
 
-        userTestFolder5 = geoPlatformService.getUserFolderDetail(idUserTestFolder5);
+        userTestFolder5 = gpWSClient.getUserFolderDetail(idUserTestFolder5);
         Assert.assertEquals("Position of folder 5 - " + info, positions[6], userTestFolder5.getPosition());
     }
 
     // Check if a UserFolder was eliminated
     private void checkUserFolderDeleted(long idFolder) {
         try {
-            geoPlatformService.getUserFolderDetail(idFolder);
+            gpWSClient.getUserFolderDetail(idFolder);
             Assert.fail("Folder with id \"" + idFolder + "\" was NOT deleted in cascade");
         } catch (Exception e) {
             logger.debug("\n*** Folder with id \"{}\" was deleted in cascade ***", idFolder);

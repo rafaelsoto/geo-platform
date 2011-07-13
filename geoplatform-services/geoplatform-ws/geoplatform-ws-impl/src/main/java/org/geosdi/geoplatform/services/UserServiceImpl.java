@@ -55,7 +55,6 @@ import org.geosdi.geoplatform.request.PaginatedSearchRequest;
 import org.geosdi.geoplatform.request.RequestById;
 import org.geosdi.geoplatform.request.SearchRequest;
 import org.geosdi.geoplatform.responce.UserDTO;
-import org.springframework.security.acls.domain.BasePermission;
 
 /**
  * @author giuseppe
@@ -280,8 +279,7 @@ class UserServiceImpl {
     public GPUser getUserDetailByUsernameAndPassword(String username) {
         Search searchCriteria = new Search(GPUser.class);
 
-        Filter usernameFilter = Filter.equal("username", username);
-        searchCriteria.addFilter(usernameFilter);
+        searchCriteria.addFilterEqual("username", username);
 
         List<GPUser> usersList = userDao.search(searchCriteria);
         if (usersList.isEmpty()) {

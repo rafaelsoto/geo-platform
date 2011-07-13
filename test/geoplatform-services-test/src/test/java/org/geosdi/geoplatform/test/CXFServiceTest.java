@@ -56,10 +56,8 @@ import org.junit.Test;
  * @author Francesco Izzi - CNR IMAA - geoSDI
  * 
  */
-//@TestExecutionListeners(value = {WSListenerServices.class})
 public class CXFServiceTest extends ServiceTest {
 
-//    private GeoPlatformWSClientEncrypted gpWSClientEncrypted;
     private final String serverUrlTest = "http://map.serverNameTest.org";
     private long idServerTest = -1;
     // Servers
@@ -83,14 +81,14 @@ public class CXFServiceTest extends ServiceTest {
         final String serverUrlUpdated = serverUrlTest.replaceAll("org", "com");
         try {
             // Retrieve Server
-            GeoPlatformServer serverTest = geoPlatformService.getServerDetail(idServerTest);
+            GeoPlatformServer serverTest = gpWSClient.getServerDetail(idServerTest);
             logger.debug("\n*** serverTest:\n{}\n***", serverTest);
             // Update Server
             serverTest.setServerUrl(serverUrlUpdated);
-            geoPlatformService.updateServer(serverTest);
+            gpWSClient.updateServer(serverTest);
 
             // Retrieve Server modified
-            GeoPlatformServer serverModified = geoPlatformService.getServerDetail(idServerTest);
+            GeoPlatformServer serverModified = gpWSClient.getServerDetail(idServerTest);
             logger.debug("\n*** serverModified:\n{}\n***", serverModified);
             // Assert on Server modified
             Assert.assertNotNull(serverModified);
@@ -107,7 +105,7 @@ public class CXFServiceTest extends ServiceTest {
         // Get Server from Id
         try {
             // Get GeoPlatformServer from id
-            GeoPlatformServer gpServer = geoPlatformService.getServerDetail(idServerTest);
+            GeoPlatformServer gpServer = gpWSClient.getServerDetail(idServerTest);
             logger.debug("\n*** gpServer:\n{}\n***", gpServer);
             Assert.assertNotNull(gpServer);
             Assert.assertEquals("Id Server NOT match", idServerTest, gpServer.getId());
@@ -119,7 +117,7 @@ public class CXFServiceTest extends ServiceTest {
         // Get Server from serverUrl
         try {
             // Get ServerDTO from serverUrl
-            ServerDTO serverDTO = geoPlatformService.getShortServer(serverUrlTest);
+            ServerDTO serverDTO = gpWSClient.getShortServer(serverUrlTest);
             logger.debug("\n*** serverDTO:\n{}\n***", serverDTO);
             Assert.assertNotNull(serverDTO);
             Assert.assertEquals("Id Server NOT match", idServerTest, serverDTO.getId());
@@ -132,7 +130,7 @@ public class CXFServiceTest extends ServiceTest {
     @Test
     public void testGetAllServer() {
         // Number of Servers
-        Collection<ServerDTO> servers = geoPlatformService.getAllServers();
+        Collection<ServerDTO> servers = gpWSClient.getAllServers();
         Assert.assertNotNull(servers);
         int totalServers = servers.size();
         Assert.assertTrue("Number of Servers stored into database",
@@ -143,24 +141,24 @@ public class CXFServiceTest extends ServiceTest {
 
         // Assert of number of Servers
         Assert.assertEquals("Total numebr of Servers is wrong after inserted new Server",
-                geoPlatformService.getAllServers().size(), totalServers + 1);
+                gpWSClient.getAllServers().size(), totalServers + 1);
 
         // Delete new Server
         this.deleteServer(idNewServer);
 
         // Assert of number of Servers
         Assert.assertEquals("Total numebr of Servers is wrong after deleted new Server",
-                geoPlatformService.getAllServers().size(), totalServers);
+                gpWSClient.getAllServers().size(), totalServers);
     }
 
     @Test
     public void testGetCapabilities() throws ParseException,
             ResourceNotFoundFault {
-        ServerDTO serverDTO = geoPlatformService.getShortServer(serverUrlGeoSDI);
+        ServerDTO serverDTO = gpWSClient.getShortServer(serverUrlGeoSDI);
 
         Assert.assertNotNull(serverDTO);
 
-        serverDTO = geoPlatformService.getCapabilities(new RequestById(serverDTO.getId()));
+        serverDTO = gpWSClient.getCapabilities(new RequestById(serverDTO.getId()));
         logger.debug("\n*** NUMBER OF LAYERS FOR DPC {} ***", serverDTO.getLayerList().size());
     }
 
@@ -168,7 +166,7 @@ public class CXFServiceTest extends ServiceTest {
     public void testSaveServer() throws ResourceNotFoundFault, IllegalParameterFault {
         logger.trace("\n@@@ testSaveServer @@@");
         // Server is into DB
-        ServerDTO serverDTO = geoPlatformService.saveServer(serverUrlGeoSDI);
+        ServerDTO serverDTO = gpWSClient.saveServer(serverUrlGeoSDI);
         Assert.assertNotNull("ServerDTO geoSDI is NULL", serverDTO);
 
         List<ShortLayerDTO> layersList = (List<ShortLayerDTO>) serverDTO.getLayerList();
@@ -176,18 +174,18 @@ public class CXFServiceTest extends ServiceTest {
 
         // Server is NOT into DB
         String serverUrlEx = "http://iws.erdas.com/ecwp/ecw_wms.dll?request=GetCapabilities";
-        serverDTO = geoPlatformService.saveServer(serverUrlEx);
+        serverDTO = gpWSClient.saveServer(serverUrlEx);
         Assert.assertNotNull("ServerDTO EX is NULL", serverDTO);
 
         layersList = (List<ShortLayerDTO>) serverDTO.getLayerList();
         Assert.assertNotNull("Collection of ShortLayerDTO is NULL for server Ex", layersList);
         // Check if the server was insert
-        GeoPlatformServer serverEx = geoPlatformService.getServerDetailByUrl(serverUrlEx);
+        GeoPlatformServer serverEx = gpWSClient.getServerDetailByUrl(serverUrlEx);
         Assert.assertNotNull("Server Ex is NULL for URL", serverEx);
         Assert.assertEquals("Server Ex URL is NOT correct", serverUrlEx, serverEx.getServerUrl());
         Assert.assertEquals("Server Ex ID is NOT correct", serverDTO.getId(), serverEx.getId());
         // Delete server
-        geoPlatformService.deleteServer(serverEx.getId());
+        gpWSClient.deleteServer(serverEx.getId());
     }
 
     /**
@@ -198,7 +196,7 @@ public class CXFServiceTest extends ServiceTest {
     private long createAndInsertServer(String serverUrl, GPCapabilityType serverType) {
         GeoPlatformServer server = this.createServer(serverUrl, serverType);
         logger.debug("\n*** GeoPlatformServer to INSERT:\n{}\n***", server);
-        long idServer = geoPlatformService.insertServer(server);
+        long idServer = gpWSClient.insertServer(server);
         logger.debug("\n*** Id ASSIGNED at the Server in the DB: {} ***", idServer);
         Assert.assertTrue("Id ASSIGNED at the Server in the DB", idServer > 0);
         return idServer;
@@ -225,7 +223,7 @@ public class CXFServiceTest extends ServiceTest {
     // Delete (with assert) a Server
     private void deleteServer(long idServer) {
         try {
-            boolean check = geoPlatformService.deleteServer(idServer);
+            boolean check = gpWSClient.deleteServer(idServer);
             Assert.assertTrue("Server with id = " + idServer + " has not been eliminated", check);
         } catch (Exception e) {
             Assert.fail("Error while deleting Server with Id: " + idServer);

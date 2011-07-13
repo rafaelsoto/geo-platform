@@ -9,8 +9,8 @@
 
     <context:annotation-config />
 
-    <bean id="geoPlatformServiceClient" class="org.geosdi.geoplatform.services.GeoPlatformService"
-		factory-bean="geoPlatformProxyFactory" factory-method="create" />
+    <!--bean id="geoPlatformServiceClient" class="org.geosdi.geoplatform.services.GeoPlatformService"
+		factory-bean="geoPlatformProxyFactory" factory-method="create" /-->
 
     <bean id="geoPlatformProxyFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
         <property name="serviceClass"

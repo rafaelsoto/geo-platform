@@ -61,7 +61,6 @@
             <artifactId>commons-collections</artifactId>
         </dependency>
 
-    
         <dependency>
             <groupId>org.geosdi</groupId>
             <artifactId>geoplatform-model</artifactId>
@@ -71,24 +70,24 @@
                     <artifactId>cglib</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-core</artifactId>
-                    <groupId>org.hibernate</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.hibernate</groupId>
                     <artifactId>hibernate</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-commons-annotations</artifactId>                    
                 </exclusion>
                 <exclusion>
-                    <artifactId>hibernate-commons-annotations</artifactId>
-                    <groupId>org.hibernate</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>hibernate-spatial</artifactId>
                     <groupId>org.hibernatespatial</groupId>
+                    <artifactId>hibernate-spatial</artifactId>                    
                 </exclusion>
                 <exclusion>
-                    <artifactId>hibernate-spatial-postgis</artifactId>
                     <groupId>org.hibernatespatial</groupId>
+                    <artifactId>hibernate-spatial-postgis</artifactId>                    
                 </exclusion>
             </exclusions>
         </dependency>
@@ -159,7 +158,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -178,8 +176,11 @@
             <groupId>javax.xml.ws</groupId>
             <artifactId>jaxws-api</artifactId>
         </dependency>
-		<!-- <dependency> <groupId>org.apache.cxf</groupId> <artifactId>cxf-rt-frontend-jaxrs</artifactId> 
-			</dependency> -->
+        <!-- <dependency> 
+            <groupId>org.apache.cxf</groupId> 
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId> 
+        </dependency> -->
+        
         <dependency>
             <groupId>org.codehaus.jra</groupId>
             <artifactId>jra</artifactId>

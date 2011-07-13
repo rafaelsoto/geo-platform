@@ -38,25 +38,15 @@
 package org.geosdi.geoplatform.test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.xml.ws.Endpoint;
-import org.apache.cxf.Bus;
-import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
-import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.TestExecutionListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,13 +59,8 @@ import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
 import org.geosdi.geoplatform.core.model.GPUserFolders;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
-import org.geosdi.geoplatform.cxf.GeoPlatformWSClient;
 import org.geosdi.geoplatform.request.SearchRequest;
 import org.geosdi.geoplatform.services.GeoPlatformService;
-import org.geosdi.geoplatform.services.ServerKeystorePasswordCallback;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.springframework.test.context.TestExecutionListeners;
 
 /**
  * @author Francesco Izzi - CNR IMAA - geoSDI
@@ -83,22 +68,12 @@ import org.springframework.test.context.TestExecutionListeners;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:applicationContext.xml"})
-//@TestExecutionListeners(value = {WSListenerServices.class})
-public abstract class ServiceTest implements InitializingBean {
+@TestExecutionListeners(value = {WSListenerServices.class})
+public abstract class ServiceTest {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
     //
-    @Autowired
-    protected GeoPlatformWSClient gpWSClient;
-    //
-    @Autowired
-    protected GeoPlatformService geoPlatformService;
-    //
-    protected GeoPlatformService geoplatformServiceClient;
-    //
-    Bus bus = null;
-//    @Autowired
-//    protected Server gpJettyServer;
+    protected GeoPlatformService gpWSClient;
     // User
     protected final String usernameTest = "username_test_ws";
     protected long idUserTest = -1;
@@ -112,50 +87,12 @@ public abstract class ServiceTest implements InitializingBean {
     protected GPUserFolders userTestRootFolderB = null;
     //
     protected List<String> layerInfoKeywords;
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        logger.info("ServiceTest - afterPropertiesSet-------------------------------> " + this.getClass().getName());
 
-//        Assert.assertNotNull("gpJettyServer is NULL", gpJettyServer);
-//        gpJettyServer.start();
-        
-        Assert.assertNotNull("gpWSClient is NULL", gpWSClient);
-//        geoplatformServiceClient = gpWSClient.create();
-        geoplatformServiceClient = gpWSClient.getGeoPlatformService();
-        
-        Object implementor = geoPlatformService;
-        SpringBusFactory bf = new SpringBusFactory();
-        bus = bf.createBus();
-        
-        bus.getInInterceptors().add(new LoggingInInterceptor());
-        bus.getOutInterceptors().add(new LoggingOutInterceptor());
-        
-        Map<String, Object> outProps = new HashMap<String, Object>();
-        outProps.put("action", "Timestamp Signature");
-        outProps.put("user", "serverx509v1");
-        outProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        outProps.put("signaturePropFile", "./Server_Decrypt.properties");
-        bus.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
-        Map<String, Object> inProps = new HashMap<String, Object>();
-        inProps.put("action", "Timestamp Signature");
-        inProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        inProps.put("signaturePropFile", "./Server_SignVerf.properties");
-        bus.getInInterceptors().add(new WSS4JInInterceptor(inProps));
-        
-        bf.setDefaultBus(bus);
-        String address = "http://localhost:8282/geoplatform-service/soap";
-        Endpoint e = Endpoint.publish(address, implementor);
-        
-        logger.debug("Server ready...");
-    }
-    
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() throws Exception {
+    /**
+     * The listener will inject this dependency
+     */
+    public void setGeoplatformServiceClient(GeoPlatformService gpWSClient) {
+        this.gpWSClient = gpWSClient;
     }
 
     @Before
@@ -164,14 +101,14 @@ public abstract class ServiceTest implements InitializingBean {
 
         // Insert User
         idUserTest = this.createAndInsertUser(usernameTest);
-        userTest = geoplatformServiceClient.getUserDetailByName(new SearchRequest(usernameTest));
+        userTest = gpWSClient.getUserDetailByName(new SearchRequest(usernameTest));
 
         // Create root folders for the user
         idUserRootFolderA = this.createAndInsertFolder(userTest, nameRootFolderA, 2, false, null);
-        userTestRootFolderA = geoplatformServiceClient.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderA);
+        userTestRootFolderA = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderA);
 
         idUserRootFolderB = this.createAndInsertFolder(userTest, nameRootFolderB, 1, false, null);
-        userTestRootFolderB = geoplatformServiceClient.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderB);
+        userTestRootFolderB = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderB);
 
         // Set the list of keywords (for raster layer)
         layerInfoKeywords = new ArrayList<String>();
@@ -183,14 +120,13 @@ public abstract class ServiceTest implements InitializingBean {
         logger.trace("\n\t@@@ {}.tearDown @@@", this.getClass().getSimpleName());
         // Delete user
         this.deleteUser(idUserTest);
-//        bus.shutdown(true);
     }
 
     // Create and insert a User
     protected long createAndInsertUser(String username) throws IllegalParameterFault {
         GPUser user = createUser(username);
         logger.debug("\n*** GPUser to INSERT:\n{}\n***", user);
-        long idUser = geoplatformServiceClient.insertUser(user);
+        long idUser = gpWSClient.insertUser(user);
         logger.debug("\n*** Id ASSIGNED at the User in the DB: {} ***", idUser);
         Assert.assertTrue("Id ASSIGNED at the User in the DB", idUser > 0);
         return idUser;
@@ -210,7 +146,7 @@ public abstract class ServiceTest implements InitializingBean {
     // Delete (with assert) a User
     protected void deleteUser(long idUser) {
         try {
-            boolean check = geoplatformServiceClient.deleteUser(idUser);
+            boolean check = gpWSClient.deleteUser(idUser);
             Assert.assertTrue("User with id = " + idUser + " has not been eliminated", check);
         } catch (Exception e) {
             Assert.fail("Error while deleting User with Id: " + idUser);
@@ -220,7 +156,7 @@ public abstract class ServiceTest implements InitializingBean {
     // Delete (with assert) a Folder
     protected void deleteUserFolder(long idFolder) {
         try {
-            boolean check = geoplatformServiceClient.deleteUserFolder(idFolder);
+            boolean check = gpWSClient.deleteUserFolder(idFolder);
             Assert.assertTrue("Folder with id = " + idFolder + " has not been eliminated", check);
         } catch (Exception e) {
             Assert.fail("Error while deleting Folder with Id: " + idFolder);
@@ -232,7 +168,7 @@ public abstract class ServiceTest implements InitializingBean {
 
         GPFolder folder = this.createFolder(folderName, shared);
         GPUserFolders userFolder = this.createBindingUserFolder(owner, folder, position, parent);
-        return geoplatformServiceClient.insertUserFolder(userFolder);
+        return gpWSClient.insertUserFolder(userFolder);
     }
 
     protected GPUserFolders createUserFolder(GPUser owner, String folderName,
@@ -272,7 +208,7 @@ public abstract class ServiceTest implements InitializingBean {
         rasterLayer.setLayerInfo(layerInfo);
 
         rasterLayer.setLayerType(GPLayerType.RASTER);
-        return geoplatformServiceClient.insertLayer(rasterLayer);
+        return gpWSClient.insertLayer(rasterLayer);
     }
 
     protected long createAndInsertVectorLayer(GPUserFolders userFolder, String title, String name,
@@ -282,7 +218,7 @@ public abstract class ServiceTest implements InitializingBean {
         this.createLayer(vectorLayer, userFolder, title, name, abstractText, position, shared, srs, urlServer);
 
         vectorLayer.setLayerType(GPLayerType.POLYGON);
-        return geoplatformServiceClient.insertLayer(vectorLayer);
+        return gpWSClient.insertLayer(vectorLayer);
     }
 
     protected void createLayer(GPLayer gpLayer, GPUserFolders userFolder, String title, String name,

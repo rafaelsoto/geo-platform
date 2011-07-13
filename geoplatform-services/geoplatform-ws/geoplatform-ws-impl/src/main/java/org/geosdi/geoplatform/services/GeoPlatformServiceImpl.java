@@ -307,7 +307,8 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public GPUser getUserDetailByUsernameAndPassword(String username, String password) throws ResourceNotFoundFault, SOAPFaultException {
+    public GPUser getUserDetailByUsernameAndPassword(String username, String password)
+            throws ResourceNotFoundFault, SOAPFaultException {
         GPUser user = null;
         try {
             user = userServiceDelegate.getUserDetailByUsernameAndPassword(username);

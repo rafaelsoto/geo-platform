@@ -53,12 +53,37 @@ public class GeoPlatformWSClient {
 
     private String address;
 
+    /**
+     * @return the address
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * @param address
+     *          the address to set
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public GeoPlatformService create() {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 
-        factory.getInInterceptors().add(new LoggingInInterceptor());
-        factory.getOutInterceptors().add(new LoggingOutInterceptor());
+//        factory.getOutInterceptors().add(new LoggingOutInterceptor());
+//        factory.getInInterceptors().add(new LoggingInInterceptor());
 
+        factory.getOutInterceptors().add(this.createOutInterceptor());
+        factory.getInInterceptors().add(this.createInInterceptor());
+
+        factory.setServiceClass(GeoPlatformService.class);
+        factory.setAddress(this.address);
+
+        return (GeoPlatformService) factory.create();
+    }
+
+    private WSS4JOutInterceptor createOutInterceptor() {
         Map<String, Object> outProps = new HashMap<String, Object>();
 
         // ----------- Only Encryption
@@ -86,9 +111,10 @@ public class GeoPlatformWSClient {
 //        outProps.put("encryptionParts", "{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 //        outProps.put("encryptionParts", "{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 //        outProps.put("encryptionSymAlgorithm", "http://www.w3.org/2001/04/xmlenc#tripledes-cbc");
-        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
-        factory.getOutInterceptors().add(wssOut);
+        return new WSS4JOutInterceptor(outProps);
+    }
 
+    private WSS4JInInterceptor createInInterceptor() {
         Map<String, Object> inProps = new HashMap<String, Object>();
 
         // ----------- Only Encryption
@@ -107,90 +133,21 @@ public class GeoPlatformWSClient {
 
         inProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
 
-        WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
-        factory.getInInterceptors().add(wssIn);
-
-        factory.setServiceClass(GeoPlatformService.class);
-
-        factory.setAddress(this.address);
-
-        return (GeoPlatformService) factory.create();
+        return new WSS4JInInterceptor(inProps);
     }
-
+//
 //    public Greeter create() {
 //        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-//        
-//        factory.getInInterceptors().add(new LoggingInInterceptor());
-//        factory.getOutInterceptors().add(new LoggingOutInterceptor());
-//        
-//        Map<String, Object> outProps = new HashMap<String, Object>();
-//        
-//        // ----------- Only Encryption
-////        outProps.put("action", "Encrypt");
-////        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
-////        outProps.put("encryptionUser", "serverx509v1");
-//        
-//        // ----------- Only signature
-//        outProps.put("action", "Signature");
-//        outProps.put("user", "clientx509v1");
-//        outProps.put("signaturePropFile", "Client_Sign.properties");
-//        
-//        // ----------- Signature and Encryption
-////        outProps.put("action", "Timestamp Signature Encrypt");
-////        outProps.put("user", "client");
-////        outProps.put("signaturePropFile", "/client.properties");
-////        outProps.put("encryptionPropFile", "/server.properties");
-////        outProps.put("encryptionUser", "server");
-//        
-////        outProps.put("signatureKeyIdentifier", "DirectReference");
-//        
-//        outProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
-//        
-////        outProps.put("signatureParts", "{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body");
-////        outProps.put("encryptionParts", "{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
-////        outProps.put("encryptionParts", "{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
-////        outProps.put("encryptionSymAlgorithm", "http://www.w3.org/2001/04/xmlenc#tripledes-cbc");
-//        WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
-//        factory.getOutInterceptors().add(wssOut);
-//        
-//        Map<String, Object> inProps = new HashMap<String, Object>();
-//        
-//        // ----------- Only Encryption
-////        inProps.put("action", "Encrypt");
-////        inProps.put("decryptionPropFile", "Client_Sign.properties");
-//        
-////         ----------- Only signature
-//        inProps.put("action", "Signature");
-//        inProps.put("signaturePropFile", "Client_Encrypt.properties");
-////        
-//        // ----------- Signature and Encryption
-////        Map<String, Object> inProps = new HashMap<String, Object>();
-////        inProps.put("action", "Timestamp Signature Encrypt");
-////        inProps.put("signaturePropFile", "/server.properties");
-////        inProps.put("decryptionPropFile", "/client.properties");
-//        
-//        inProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
-//        
-//        WSS4JInInterceptor wssIn = new WSS4JInInterceptor(inProps);
-//        factory.getInInterceptors().add(wssIn);
-//        
-//        factory.setServiceClass(Greeter.class);
 //
+//        factory.getOutInterceptors().add(new LoggingOutInterceptor());
+//        factory.getInInterceptors().add(new LoggingInInterceptor());
+//
+//        factory.getOutInterceptors().add(this.createOutInterceptor());
+//        factory.getInInterceptors().add(this.createInInterceptor());
+//
+//        factory.setServiceClass(Greeter.class);
 //        factory.setAddress(this.address);
 //
 //        return (Greeter) factory.create();
 //    }
-    /**
-     * @return the address
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * @param address the address to set
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }
