@@ -37,13 +37,10 @@
 //</editor-fold>
 package org.geosdi.geoplatform.services;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import org.geosdi.geoplatform.responce.collection.GuiComponentsPermissionMapData;
 import java.util.List;
 import javax.jws.WebService;
-import javax.xml.ws.soap.SOAPFaultException;
-import org.apache.cxf.binding.soap.SoapFault;
 import org.geosdi.geoplatform.core.acl.dao.AclClassDAO;
 import org.geosdi.geoplatform.core.acl.dao.AclEntryDAO;
 import org.geosdi.geoplatform.core.acl.dao.AclObjectIdentityDAO;
