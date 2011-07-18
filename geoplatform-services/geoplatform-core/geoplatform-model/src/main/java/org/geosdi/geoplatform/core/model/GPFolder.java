@@ -92,6 +92,10 @@ public class GPFolder implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private GPFolder parent = null;
     //
+    @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private GPProject project = null;
+    //
     @Version
     private int version;
 
@@ -196,6 +200,21 @@ public class GPFolder implements Serializable {
      */
     public void setParent(GPFolder parent) {
         this.parent = parent;
+    }
+
+    /**
+     * @return the project
+     */
+    public GPProject getProject() {
+        return project;
+    }
+
+    /**
+     * @param project
+     *            the project to set
+     */
+    public void setProject(GPProject project) {
+        this.project = project;
     }
 
     /**

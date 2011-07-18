@@ -172,7 +172,7 @@ public class AclDAOTest extends BaseDAOTest {
         classDAO.persist(gcClass);
 
         // Owner of all Object Identities
-        AclSid superUser = new AclSid(true, nameSuperUser);
+        AclSid superUser = new AclSid(true, usernameSuperUserTest);
         // Users of interest
         AclSid admin = new AclSid(false, roleAdmin);
         AclSid user = new AclSid(false, roleUser);

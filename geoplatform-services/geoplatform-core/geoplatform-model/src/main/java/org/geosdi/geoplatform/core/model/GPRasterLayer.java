@@ -71,6 +71,10 @@ public class GPRasterLayer extends GPLayer {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "folder_id")
     private GPFolder folder;
+    //
+    @ManyToOne(optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private GPProject project = null;
 
     /**
      * @return the layerInfo
@@ -102,6 +106,21 @@ public class GPRasterLayer extends GPLayer {
     @Override
     public void setFolder(GPFolder folder) {
         this.folder = folder;
+    }
+
+    /**
+     * @return the project
+     */
+    public GPProject getProject() {
+        return project;
+    }
+
+    /**
+     * @param project
+     *            the project to set
+     */
+    public void setProject(GPProject project) {
+        this.project = project;
     }
 
     /*
