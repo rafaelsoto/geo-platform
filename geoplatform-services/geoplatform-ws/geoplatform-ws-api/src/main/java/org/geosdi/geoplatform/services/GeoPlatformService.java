@@ -42,7 +42,6 @@ import java.util.List;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
-import javax.xml.ws.soap.SOAPFaultException;
 import org.codehaus.jra.Delete;
 import org.codehaus.jra.Get;
 import org.codehaus.jra.HttpResource;
@@ -99,8 +98,8 @@ public interface GeoPlatformService {
 
     @Delete
     @HttpResource(location = "/users/{userId}")
-    boolean deleteUser(long userId) throws ResourceNotFoundFault,
-            IllegalParameterFault;
+    boolean deleteUser(@WebParam(name = "userId") long userId)
+            throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Get
     @HttpResource(location = "/users/{id}")

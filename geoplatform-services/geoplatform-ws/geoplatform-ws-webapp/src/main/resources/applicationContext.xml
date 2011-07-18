@@ -6,16 +6,16 @@
 	   xmlns:cxf="http://cxf.apache.org/core" 
 	   xmlns:jaxws="http://cxf.apache.org/jaxws"
 	   xsi:schemaLocation="
-	    	http://www.springframework.org/schema/beans 
-	   		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-			http://www.springframework.org/schema/context
-			http://www.springframework.org/schema/context/spring-context-3.0.xsd
-			http://www.springframework.org/schema/aop 
-			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-			http://cxf.apache.org/core             
-            http://cxf.apache.org/schemas/core.xsd
-            http://cxf.apache.org/jaxws
-            http://cxf.apache.org/schemas/jaxws.xsd"
+                http://www.springframework.org/schema/beans 
+                http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://cxf.apache.org/core             
+                http://cxf.apache.org/schemas/core.xsd
+                http://cxf.apache.org/jaxws
+                http://cxf.apache.org/schemas/jaxws.xsd"
        default-autowire="byName">
 
     <!-- ====================================================================-->
@@ -50,14 +50,14 @@
             </bean>
         </jaxws:serviceFactory>
         
+        <jaxws:inInterceptors>
+            <ref bean="TimestampSignEncrypt_Request"/>
+            <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/>
+        </jaxws:inInterceptors>        
         <jaxws:outInterceptors>
             <bean class="org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor"/>
             <ref bean="TimestampSignEncrypt_Response"/>
         </jaxws:outInterceptors>
-        <jaxws:inInterceptors>
-            <ref bean="TimestampSignEncrypt_Request"/>
-            <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/>
-        </jaxws:inInterceptors>
     </jaxws:endpoint>
 
     <!--<jaxws:endpoint id="greeterSOAP"
@@ -93,8 +93,7 @@
     -->
     <bean 
         id="TimestampSignEncrypt_Request"
-        class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor"
-        >
+        class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
         <constructor-arg>
             <map>
                 <!-- Use this action order for local clients -->
@@ -150,8 +149,7 @@
                 <entry key="signaturePropFile" value="Server_Decrypt.properties"/>
                 <entry key="encryptionPropFile" value="Server_SignVerf.properties"/>
                 <entry key="encryptionUser" value="clientx509v1"/>
-                
-                
+                                
                 <!--<entry key="user" value="server"/>-->
                 <!--<entry key="signaturePropFile" value="/server.properties"/>-->
                 <!--<entry key="encryptionPropFile" value="/client.properties"/>
@@ -173,7 +171,7 @@
         </constructor-arg>
     </bean>
 
-    <!-- ====================================================================-->
+    <!-- ==================================================================== -->
     
     <!--jaxws:endpoint id="geoplatformServiceXML"
     	implementorClass="org.geosdi.geoplatform.services.GeoPlatformServiceImpl"

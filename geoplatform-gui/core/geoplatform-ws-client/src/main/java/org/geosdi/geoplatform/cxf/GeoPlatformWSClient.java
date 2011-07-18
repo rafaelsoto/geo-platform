@@ -37,8 +37,6 @@ package org.geosdi.geoplatform.cxf;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
@@ -91,8 +89,8 @@ public class GeoPlatformWSClient {
 //        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
 //        outProps.put("encryptionUser", "serverx509v1");
 
-        // ----------- Only signature
-//        outProps.put("action", "Timestamp Signature");
+        // ----------- Only Signature
+//        outProps.put("action", "Signature");
 //        outProps.put("user", "clientx509v1");
 //        outProps.put("signaturePropFile", "Client_Sign.properties");
 
@@ -105,7 +103,7 @@ public class GeoPlatformWSClient {
 
 //        outProps.put("signatureKeyIdentifier", "DirectReference");
 
-        outProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
+        outProps.put("passwordCallbackClass", ClientKeystorePasswordCallback.class.getName());
 
 //        outProps.put("signatureParts", "{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body");
 //        outProps.put("encryptionParts", "{Element}{http://www.w3.org/2000/09/xmldsig#}Signature;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body");
@@ -121,8 +119,8 @@ public class GeoPlatformWSClient {
 //        inProps.put("action", "Encrypt");
 //        inProps.put("decryptionPropFile", "Client_Sign.properties");
 
-//         ----------- Only signature
-//        inProps.put("action", "Timestamp Signature");
+//         ----------- Only Signature
+//        inProps.put("action", "Signature");
 //        inProps.put("signaturePropFile", "Client_Encrypt.properties");
 //        
         // ----------- Signature and Encryption
@@ -130,7 +128,7 @@ public class GeoPlatformWSClient {
         inProps.put("signaturePropFile", "Client_Encrypt.properties");
         inProps.put("decryptionPropFile", "Client_Sign.properties");
 
-        inProps.put("passwordCallbackClass", "org.geosdi.geoplatform.cxf.ClientKeystorePasswordCallback");
+        inProps.put("passwordCallbackClass", ClientKeystorePasswordCallback.class.getName());
 
         return new WSS4JInInterceptor(inProps);
     }
