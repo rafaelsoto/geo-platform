@@ -47,7 +47,7 @@ import org.geosdi.geoplatform.core.model.GPLayer;
  * @author Francesco Izzi - geoSDI
  *
  */
-public interface GPLayerDAO<T> {
+public interface GPLayerDAO {
 
     public List<GPLayer> findAll();
 
@@ -63,7 +63,7 @@ public interface GPLayerDAO<T> {
 
     public boolean removeById(Long layerId);
 
-    public List<T> search(ISearch search);
+    public List<GPLayer> search(ISearch search);
 
     public int count(ISearch search);
 

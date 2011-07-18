@@ -63,7 +63,7 @@ public interface GPProjectDAO<T> {
 
     public boolean removeById(Long id);
 
-    public List<T> search(ISearch search);
+    public List<GPProject> search(ISearch search);
 
     public int count(ISearch search);
 
