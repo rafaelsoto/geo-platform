@@ -39,51 +39,45 @@ package org.geosdi.geoplatform.core.dao;
 
 import com.googlecode.genericdao.search.ISearch;
 import java.util.List;
-import org.geosdi.geoplatform.core.model.GPUserFolders;
+import org.geosdi.geoplatform.core.model.GPUserProjects;
 
 /**
  * @author Vincenzo Monteverde
  * @email vincenzo.monteverde@geosdi.org - OpenPGP key ID 0xB25F4B38
  *
  */
-public interface GPUserFoldersDAO {
+public interface GPUserProjectsDAO {
 
-    public List<GPUserFolders> findAll();
+    public List<GPUserProjects> findAll();
 
-    public GPUserFolders find(long userFoldersId);
+    public GPUserProjects find(Long userProjectsId);
 
-    public GPUserFolders[] find(Long[] ids);
+    public GPUserProjects[] find(Long[] ids);
 
-    public void persist(GPUserFolders... usersFolders);
+    public void persist(GPUserProjects... usersProjects);
 
-    public GPUserFolders merge(GPUserFolders userFolders);
+    public GPUserProjects merge(GPUserProjects userProjects);
 
-    public GPUserFolders[] merge(GPUserFolders... usersFolders);
+    public GPUserProjects[] merge(GPUserProjects... usersProjects);
 
-    public boolean remove(GPUserFolders userFolders);
+    public boolean remove(GPUserProjects userProjects);
 
-    public boolean removeById(long userFoldersId);
+    public boolean removeById(Long userProjectsId);
 
     public boolean removeByUserId(long userId);
 
-    public boolean removeByFolderId(long folderId);
+    public boolean removeByProjectId(long projectsId);
 
-    public List<GPUserFolders> search(ISearch search);
+    public List<GPUserProjects> search(ISearch search);
 
     public int count(ISearch search);
 
-    public List<GPUserFolders> findByUserId(long userId);
+    public List<GPUserProjects> findByUserId(long userId);
 
-    public List<GPUserFolders> findByOwnerUserId(long userId);
+    public List<GPUserProjects> findByOwnerUserId(long userId);
 
-    public List<GPUserFolders> findByFolderId(long folderId);
+    public List<GPUserProjects> findByProjectId(long projectId);
 
-    public GPUserFolders find(long userId, long folderId);
+    public GPUserProjects find(long userId, long projectId);
 
-    public boolean updatePositionsLowerBound(int lowerBoundPosition,
-            int deltaValue);
-
-    public boolean persistCheckStatusFolder(long idFolder, boolean checked);
-
-    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders);
 }

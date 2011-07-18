@@ -43,16 +43,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.model.Permission;
 
 /**
  * @author Vincenzo Monteverde
@@ -60,13 +57,13 @@ import org.springframework.security.acls.model.Permission;
  *
  */
 @Entity
-@Table(name = "gp_user_folders", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "folder_id"})})
-public class GPUserFolders implements Serializable {
+@Table(name = "gp_user_projects", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "project_id"})})
+public class GPUserProjects implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GP_USER_FOLDERS_SEQ")
-    @SequenceGenerator(name = "GP_USER_FOLDERS_SEQ", sequenceName = "GP_USER_FOLDERS_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GP_USER_PROJECTS_SEQ")
+    @SequenceGenerator(name = "GP_USER_PROJECTS_SEQ", sequenceName = "GP_USER_PROJECTS_SEQ")
     private long id = -1;
     //
     @ManyToOne(optional = false)
@@ -76,24 +73,14 @@ public class GPUserFolders implements Serializable {
     //
     @ManyToOne(optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-//    @org.hibernate.annotations.Index(name = "FOLDER_INDEX") // TODO Uncomment
-    private GPFolder folder;
-    //
-    @Column(name = "permission_mask", nullable = false)
-    private int permissionMask = BasePermission.ADMINISTRATION.getMask();
-    //    
-    @Column(name = "alias_name")
-    private String aliasName = null;
-    //
-    @Column(name = "position") // TODO ? nullable = false ?
-    private int position = -1;
+//    @org.hibernate.annotations.Index(name = "PROJECT_INDEX") // TODO Uncomment
+    private GPProject project;
     //
     @Column(name = "checked")
     private boolean checked = false;
     //
-    @ManyToOne(optional = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private GPUserFolders parent;
+    @Column(name = "permission_mask", nullable = false)
+    private int permissionMask = BasePermission.ADMINISTRATION.getMask();
 
     /**
      * @return the id
@@ -126,73 +113,29 @@ public class GPUserFolders implements Serializable {
     }
 
     /**
-     * @return the folder
+     * @return the project
      */
-    public GPFolder getFolder() {
-        return folder;
+    public GPProject getProject() {
+        return project;
     }
 
     /**
-     * @param folder
-     *          the folder to set
+     * @param project
+     *          the project to set
      */
-    public void setFolder(GPFolder folder) {
-        this.folder = folder;
+    public void setProject(GPProject project) {
+        this.project = project;
     }
 
     /**
      * @param user
      *          the user to set
-     * @param folder
-     *          the folder to set
+     * @param project
+     *          the project to set
      */
-    public void setUserAndFolder(GPUser user, GPFolder folder) {
+    public void setUserAndProject(GPUser user, GPProject project) {
         this.user = user;
-        this.folder = folder;
-    }
-
-    /**
-     * @return the permissionMask
-     */
-    public int getPermissionMask() {
-        return permissionMask;
-    }
-
-    /**
-     * @param permissionMask
-     *          the permissionMask to set
-     */
-    public void setPermissionMask(int permissionMask) {
-        this.permissionMask = permissionMask;
-    }
-
-    /**
-     * @return the alias
-     */
-    public String getAliasName() {
-        return aliasName;
-    }
-
-    /**
-     * @param aliasName
-     *          the aliasName to set
-     */
-    public void setAliasName(String aliasName) {
-        this.aliasName = aliasName;
-    }
-
-    /**
-     * @return the position
-     */
-    public int getPosition() {
-        return position;
-    }
-
-    /**
-     * @param position the position to set
-     */
-    public void setPosition(int position) {
-        this.position = position;
+        this.project = project;
     }
 
     /**
@@ -211,18 +154,18 @@ public class GPUserFolders implements Serializable {
     }
 
     /**
-     * @return the parent
+     * @return the permissionMask
      */
-    public GPUserFolders getParent() {
-        return parent;
+    public int getPermissionMask() {
+        return permissionMask;
     }
 
     /**
-     * @param parent
-     *            the parent to set
+     * @param permissionMask
+     *          the permissionMask to set
      */
-    public void setParent(GPUserFolders parent) {
-        this.parent = parent;
+    public void setPermissionMask(int permissionMask) {
+        this.permissionMask = permissionMask;
     }
 
     /*
@@ -237,23 +180,16 @@ public class GPUserFolders implements Serializable {
             str.append(" user.username=").append(user.getUsername());
             str.append("(id=").append(user.getId()).append(")");
         } else {
-            str.append(" user=null");
+            str.append(" user=NULL");
         }
-        if (folder != null) {
-            str.append(", folder.name=").append(folder.getName());
-            str.append("(id=").append(folder.getId()).append(")");
+        if (project != null) {
+            str.append(", project.name=").append(project.getName());
+            str.append("(id=").append(project.getId()).append(")");
         } else {
-            str.append(", folder=null");
+            str.append(", project=NULL");
         }
         str.append(", permission=").append(permissionMask);
-        str.append(", aliasName=").append(aliasName);
-        str.append(", position=").append(position);
         str.append(", checked=").append(checked);
-        if (parent != null) {
-            str.append(", parent.id=").append(parent.getId());
-        } else {
-            str.append(", parent=NULL (this is a root folder)");
-        }
         return str.append("}").toString();
     }
 
@@ -270,7 +206,7 @@ public class GPUserFolders implements Serializable {
             return false;
         }
 
-        final GPUserFolders other = (GPUserFolders) obj;
+        final GPUserProjects other = (GPUserProjects) obj;
         if (this.id != other.id) {
             return false;
         }
@@ -286,7 +222,7 @@ public class GPUserFolders implements Serializable {
     public int hashCode() {
         int result;
         result = (user != null ? user.hashCode() : 0);
-        result = 71 * result + (folder != null ? folder.hashCode() : 0);
+        result = 71 * result + (project != null ? project.hashCode() : 0);
         return result;
     }
 }

@@ -208,45 +208,45 @@ public class GPFolderDAOImpl extends BaseDAO<GPFolder, Long> implements
 //        return this.updatePositions(matchingFolders, deltaValue);
 //    }
 //
-//    @Override
-//    public boolean updatePositionsLowerBound(int lowerBoundPosition, int deltaValue) {
-//        assert (deltaValue != 0) : "deltaValue does not be 0";
-//        // Select the folders of interest (position >= lowerBoundP)
-//        Search search = new Search();
-//        search.addFilterGreaterOrEqual("position", lowerBoundPosition);
-//        List<GPFolder> matchingFolders = super.search(search);
-//
-//        logger.debug("\n*** UPDATE Folders with Position from {} *** deltaValue = {} ***",
-//                new Object[]{lowerBoundPosition, deltaValue});
-//        logger.debug("\n*** Matching Folders count: {} ***", matchingFolders.size());
-//
-//        // No updates (select 0 folders)
-//        if (matchingFolders.isEmpty()) {
-//            return true;
-//        }
-//        return this.updatePositions(matchingFolders, deltaValue);
-//    }
-//
-//    private boolean updatePositions(List<GPFolder> matchingFolders, int deltaValue) {
-//        int[] oldPositions = new int[matchingFolders.size()];
-//        for (int ind = matchingFolders.size() - 1; ind >= 0; ind--) {
-//            GPFolder folder = matchingFolders.get(ind);
-//            oldPositions[ind] = folder.getPosition();
-//            folder.setPosition(folder.getPosition() + deltaValue);
-//        }
-//        GPFolder[] foldersUpdated = merge(matchingFolders.toArray(new GPFolder[matchingFolders.size()]));
-//
-//        // Check the update
-//        for (int ind = foldersUpdated.length - 1; ind >= 0; ind--) {
-//            logger.trace("\n*** Position of the UPDATED GPFolder: {} ({} + {}) ***", new Object[]{
-//                        foldersUpdated[ind].getPosition(), oldPositions[ind], deltaValue});
-//            if ((oldPositions[ind] + deltaValue) != foldersUpdated[ind].getPosition()) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
+
+    @Override
+    public boolean updatePositionsLowerBound(int lowerBoundPosition, int deltaValue) {
+        assert (deltaValue != 0) : "deltaValue does not be 0";
+        // Select the folders of interest (position >= lowerBoundP)
+        Search search = new Search();
+        search.addFilterGreaterOrEqual("position", lowerBoundPosition);
+        List<GPFolder> matchingFolders = super.search(search);
+
+        logger.debug("\n*** UPDATE Folders with Position from {} *** deltaValue = {} ***",
+                new Object[]{lowerBoundPosition, deltaValue});
+        logger.debug("\n*** Matching Folders count: {} ***", matchingFolders.size());
+
+        // No updates (select 0 folders)
+        if (matchingFolders.isEmpty()) {
+            return true;
+        }
+        return this.updatePositions(matchingFolders, deltaValue);
+    }
+
+    private boolean updatePositions(List<GPFolder> matchingFolders, int deltaValue) {
+        int[] oldPositions = new int[matchingFolders.size()];
+        for (int ind = matchingFolders.size() - 1; ind >= 0; ind--) {
+            GPFolder folder = matchingFolders.get(ind);
+            oldPositions[ind] = folder.getPosition();
+            folder.setPosition(folder.getPosition() + deltaValue);
+        }
+        GPFolder[] foldersUpdated = merge(matchingFolders.toArray(new GPFolder[matchingFolders.size()]));
+
+        // Check the update
+        for (int ind = foldersUpdated.length - 1; ind >= 0; ind--) {
+            logger.trace("\n*** Position of the UPDATED GPFolder: {} ({} + {}) ***", new Object[]{
+                        foldersUpdated[ind].getPosition(), oldPositions[ind], deltaValue});
+            if ((oldPositions[ind] + deltaValue) != foldersUpdated[ind].getPosition()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public boolean updateAncestorsDescendants(Map<Long, Integer> descendantsMap) {
@@ -287,38 +287,39 @@ public class GPFolderDAOImpl extends BaseDAO<GPFolder, Long> implements
         }
         return true;
     }
-//    @Override
-//    public boolean persistCheckStatusFolder(long idFolder, boolean isChecked) {
-//        // Retrieve the folder
-//        GPFolder folder = this.find(idFolder);
-//        if (folder == null) {
-//            logger.debug("\n*** The Folder with ID \"{}\" is NOT exist into DB ***", idFolder);
-//            return false;
-//        }
-//        logger.trace("\n*** Folder RETRIEVED:\n{}\n*** MOD checked to {} ***", folder, isChecked);
-//
-//        // Merge iff the check status is different
-//        if (folder.isChecked() != isChecked) {
-//            folder.setChecked(isChecked);
-//
-//            GPFolder folderUpdated = this.merge(folder);
-//
-//            if (folderUpdated.isChecked() != isChecked) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders) {
-//        for (Long longIth : idFolders) {
-//            boolean checkSave = this.persistCheckStatusFolder(longIth, isChecked);
-//            if (!checkSave) {
-//                logger.debug("\n*** The Folder with ID \"{}\" is has NOT changed the check***", longIth);
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
+
+    @Override
+    public boolean persistCheckStatusFolder(long idFolder, boolean isChecked) {
+        // Retrieve the folder
+        GPFolder folder = this.find(idFolder);
+        if (folder == null) {
+            logger.debug("\n*** The Folder with ID \"{}\" is NOT exist into DB ***", idFolder);
+            return false;
+        }
+        logger.trace("\n*** Folder RETRIEVED:\n{}\n*** MOD checked to {} ***", folder, isChecked);
+
+        // Merge iff the check status is different
+        if (folder.isChecked() != isChecked) {
+            folder.setChecked(isChecked);
+
+            GPFolder folderUpdated = this.merge(folder);
+
+            if (folderUpdated.isChecked() != isChecked) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders) {
+        for (Long longIth : idFolders) {
+            boolean checkSave = this.persistCheckStatusFolder(longIth, isChecked);
+            if (!checkSave) {
+                logger.debug("\n*** The Folder with ID \"{}\" is has NOT changed the check***", longIth);
+                return false;
+            }
+        }
+        return true;
+    }
 }

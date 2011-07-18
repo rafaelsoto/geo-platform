@@ -111,12 +111,11 @@ public class GPUser implements Serializable, UserDetails {
     //
     @Transient
     private Collection<GPAuthority> gpAuthorities;
-    // Hibernate with this list remove "on delete cascade" on FK of gp_user_folders(user_id)
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id")
-////    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-////    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-////        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-//    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
+    // Hibernate with this list remove "on delete cascade" on FK of gp_user_projects(user_id)
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+//        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+//    private List<GPUserProjects> userProjects = new LinkedList<GPUserProjects>();
 
     /**
      * Default constructor
@@ -258,22 +257,22 @@ public class GPUser implements Serializable, UserDetails {
         // TODO Auto-generated method stub
         return credentialsNonExpired;
     }
-
+//
 //    /**
-//     * @return the userFolders
+//     * @return the userProjects
 //     */
-//    public List<GPUserFolders> getUserFolders() {
-//        return userFolders;
+//    public List<GPUserProjects> getUserProjects() {
+//        return userProjects;
 //    }
 //
 //    /**
-//     * @param userFolders
-//     *          the userFolders to set
+//     * @param userProjects
+//     *          the userProjects to set
 //     */
-//    public void setUserFolders(List<GPUserFolders> userFolders) {
-//        this.userFolders = userFolders;
+//    public void setUserProjects(List<GPUserProjects> userProjects) {
+//        this.userProjects = userProjects;
 //    }
-
+//
     /*
      * (non-Javadoc)
      * @see java.lang.Object#toString()

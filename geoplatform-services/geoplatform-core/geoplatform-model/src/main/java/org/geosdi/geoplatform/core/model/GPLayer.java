@@ -288,9 +288,9 @@ public abstract class GPLayer implements Serializable {
         this.cached = cached;
     }
 
-    public abstract GPUserFolders getUserFolder();
+    public abstract GPFolder getFolder();
 
-    public abstract void setUserFolder(GPUserFolders userFolder);
+    public abstract void setFolder(GPFolder folder);
 
     /*
      * (non-Javadoc)
@@ -348,20 +348,11 @@ public abstract class GPLayer implements Serializable {
         str.append(", shared=").append(shared);
         str.append(", checked=").append(checked);
         str.append(", cached=").append(cached);
-        if (this.getUserFolder() != null) {
-            if (this.getUserFolder().getUser() != null) {
-                str.append(", parent_user.username=").append(this.getUserFolder().getUser().getUsername());
-                str.append("(id=").append(this.getUserFolder().getUser().getId()).append(")");
-            } else {
-                str.append(", parent_user=NULL");
-            }
-            if (this.getUserFolder().getFolder() != null) {
-                str.append(", parent_folder.aliasName=").append(this.getUserFolder().getAliasName());
-                str.append(", parent_folder.name=").append(this.getUserFolder().getFolder().getName());
-                str.append("(id=").append(this.getUserFolder().getFolder().getId()).append(")");
-            } else {
-                str.append(", parent_folder=NULL");
-            }
+        if (this.getFolder() != null) {
+            str.append(", folder.name=").append(this.getFolder().getName());
+            str.append("(id=").append(this.getFolder().getId()).append(")");
+        } else {
+            str.append(", folder=NULL");
         }
         return str.append("}").toString();
     }

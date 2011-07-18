@@ -43,6 +43,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -51,6 +52,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * @author Francesco Izzi - geoSDI
@@ -79,16 +82,15 @@ public class GPFolder implements Serializable {
     @Column(name = "number_of_descendants")
     private int numberOfDescendants = 0;
     //
-    @Column(name = "shared")
-    private boolean shared = false;
+    @Column(name = "position") // TODO ? nullable = false ?
+    private int position = -1;
     //
-//    @XmlElementWrapper(name = "userFolders")
-//    @XmlElement(name = "userFolder")
-//    // Hibernate with this list remove "on delete cascade" on FK of gp_user_folders(folder_id)
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "folder", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
-//        org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-//    private List<GPUserFolders> userFolders = new LinkedList<GPUserFolders>();
+    @Column(name = "checked")
+    private boolean checked = false;
+    //
+    @ManyToOne(optional = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private GPFolder parent = null;
     //
     @Version
     private int version;
@@ -107,21 +109,6 @@ public class GPFolder implements Serializable {
         this.name = name;
     }
 
-    /**
-     * @return the version
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    // The application must not alter the version number set up by Hibernate in any way [Hibernate reference]
-//    /**
-//     * @param version
-//     *          the version to set
-//     */
-//    public void setVersion(int version) {
-//        this.version = version;
-//    }
     /**
      * @return the id
      */
@@ -153,20 +140,6 @@ public class GPFolder implements Serializable {
     }
 
     /**
-     * @return the shared
-     */
-    public boolean isShared() {
-        return shared;
-    }
-
-    /**
-     * @param shared the shared to set
-     */
-    public void setShared(boolean shared) {
-        this.shared = shared;
-    }
-
-    /**
      * @return the numberOfDescendant
      */
     public int getNumberOfDescendants() {
@@ -181,28 +154,66 @@ public class GPFolder implements Serializable {
         this.numberOfDescendants = numberOfDescendants;
     }
 
+    /**
+     * @return the position
+     */
+    public int getPosition() {
+        return position;
+    }
+
+    /**
+     * @param position the position to set
+     */
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    /**
+     * @return the checked
+     */
+    public boolean isChecked() {
+        return checked;
+    }
+
+    /**
+     * @param checked
+     *            the checked to set
+     */
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    /**
+     * @return the parent
+     */
+    public GPFolder getParent() {
+        return parent;
+    }
+
+    /**
+     * @param parent
+     *            the parent to set
+     */
+    public void setParent(GPFolder parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * @return the version
+     */
+    public int getVersion() {
+        return version;
+    }
+
+    // The application must not alter the version number set up by Hibernate in any way [Hibernate reference]
 //    /**
-//     * @return the userFolders
+//     * @param version
+//     *          the version to set
 //     */
-//    public List<GPUserFolders> getUserFolders() {
-//        return userFolders;
+//    public void setVersion(int version) {
+//        this.version = version;
 //    }
-//
-//    /**
-//     * @param userFolders
-//     *          the userFolders to set
-//     */
-//    public void setUserFolders(List<GPUserFolders> userFolders) {
-//        this.userFolders = userFolders;
-//    }
-//
-//    public boolean addUserFolder(GPUserFolders userFolder) {
-//        return this.userFolders.add(userFolder);
-//    }
-//
-//    public boolean removeUserFolder(GPUserFolders userFolder) {
-//        return this.userFolders.remove(userFolder);
-//    }
+//        
 
     /*
      * (non-Javadoc)
@@ -216,7 +227,12 @@ public class GPFolder implements Serializable {
         str.append(", name=").append(name);
         str.append(", version=").append(version);
         str.append(", numberOfDescendants=").append(numberOfDescendants);
-        str.append(", shared=").append(shared);
+        str.append(", position=").append(position);
+        if (parent != null) {
+            str.append(", parent.id=").append(parent.getId());
+        } else {
+            str.append(", parent=NULL (this is a root folder)");
+        }
         return str.append("}").toString();
     }
 

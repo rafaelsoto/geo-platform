@@ -35,55 +35,75 @@
  *
  */
 //</editor-fold>
-package org.geosdi.geoplatform.core.dao;
+package org.geosdi.geoplatform.core.dao.impl;
 
 import com.googlecode.genericdao.search.ISearch;
+import com.googlecode.genericdao.search.Search;
 import java.util.List;
-import java.util.Map;
+import org.geosdi.geoplatform.core.dao.GPProjectDAO;
+import org.geosdi.geoplatform.core.model.GPProject;
 
-import org.geosdi.geoplatform.core.model.GPFolder;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Francesco Izzi - geoSDI
- *
+ * @author Vincenzo Monteverde
+ * @email vincenzo.monteverde@geosdi.org - OpenPGP key ID 0xB25F4B38
+ * 
  */
-public interface GPFolderDAO {
+@Transactional
+public class GPProjectDAOImpl extends BaseDAO<GPProject, Long> implements
+        GPProjectDAO {
 
-    public List<GPFolder> findAll();
+    @Override
+    public List<GPProject> findAll() {
+        return super.findAll();
+    }
 
-    public GPFolder find(Long id);
+    @Override
+    public GPProject find(Long id) {
+        return super.find(id);
+    }
 
-    public GPFolder[] find(Long[] ids);
+    @Override
+    public void persist(GPProject... projects) {
+        super.persist(projects);
+    }
 
-    public void persist(GPFolder... folders);
+    @Override
+    public GPProject merge(GPProject project) {
+        return super.merge(project);
+    }
 
-    public GPFolder merge(GPFolder folder);
+    @Override
+    public GPProject[] merge(GPProject... projects) {
+        return super.merge(projects);
+    }
 
-    public GPFolder[] merge(GPFolder... folder);
+    @Override
+    public boolean remove(GPProject project) {
+        return super.remove(project);
+    }
 
-    public boolean remove(GPFolder folder);
+    @Override
+    public boolean removeById(Long id) {
+        return super.removeById(id);
+    }
 
-    public boolean removeById(Long folderId);
+    @SuppressWarnings("unchecked")
+    @Override
+    public List search(ISearch search) {
+        return super.search(search);
+    }
 
-    public List<GPFolder> search(ISearch search);
+    @Override
+    public int count(ISearch search) {
+        return super.count(search);
+    }
 
-    public int count(ISearch search);
-
-    public GPFolder findByFolderName(String folderName);
-
-//    public boolean updatePositionsRangeInOppositeWay(int beginPositionFirstRange, int endPositionFirstRange,
-//            int beginPositionSecondRange, int endPositionSecondRange,
-//            int deltaValueFirstRange, int deltaValueSecondRange);
-//
-//    public boolean updatePositionsRange(int beginPosition, int endPosition,
-//            int deltaValue);
-//
-    public boolean updatePositionsLowerBound(int lowerBoundPosition,
-            int deltaValue);
-
-    public boolean updateAncestorsDescendants(Map<Long, Integer> descendantsMap);
-
-    public boolean persistCheckStatusFolder(long idFolder, boolean isChecked);
-
-    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders);
+    @Override
+    public GPProject findByProjectName(String projectName) {
+        Search search = new Search();
+        search.addFilterEqual("name", projectName);
+        return searchUnique(search);
+    }
 }

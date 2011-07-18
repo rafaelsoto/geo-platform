@@ -44,7 +44,6 @@ import java.util.List;
 
 import org.geosdi.geoplatform.core.dao.GPLayerDAO;
 import org.geosdi.geoplatform.core.model.GPLayer;
-import org.hibernate.criterion.Projections;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

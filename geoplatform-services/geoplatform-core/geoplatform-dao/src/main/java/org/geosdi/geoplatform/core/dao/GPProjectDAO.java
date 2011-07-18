@@ -39,51 +39,33 @@ package org.geosdi.geoplatform.core.dao;
 
 import com.googlecode.genericdao.search.ISearch;
 import java.util.List;
-import java.util.Map;
 
-import org.geosdi.geoplatform.core.model.GPFolder;
+import org.geosdi.geoplatform.core.model.GPProject;
 
 /**
- * @author Francesco Izzi - geoSDI
+ * @author Vincenzo Monteverde
+ * @email vincenzo.monteverde@geosdi.org - OpenPGP key ID 0xB25F4B38
  *
  */
-public interface GPFolderDAO {
+public interface GPProjectDAO<T> {
 
-    public List<GPFolder> findAll();
+    public List<GPProject> findAll();
 
-    public GPFolder find(Long id);
+    public GPProject find(Long id);
 
-    public GPFolder[] find(Long[] ids);
+    public void persist(GPProject... projects);
 
-    public void persist(GPFolder... folders);
+    public GPProject merge(GPProject project);
 
-    public GPFolder merge(GPFolder folder);
+    public GPProject[] merge(GPProject... projects);
 
-    public GPFolder[] merge(GPFolder... folder);
+    public boolean remove(GPProject project);
 
-    public boolean remove(GPFolder folder);
+    public boolean removeById(Long id);
 
-    public boolean removeById(Long folderId);
-
-    public List<GPFolder> search(ISearch search);
+    public List<T> search(ISearch search);
 
     public int count(ISearch search);
 
-    public GPFolder findByFolderName(String folderName);
-
-//    public boolean updatePositionsRangeInOppositeWay(int beginPositionFirstRange, int endPositionFirstRange,
-//            int beginPositionSecondRange, int endPositionSecondRange,
-//            int deltaValueFirstRange, int deltaValueSecondRange);
-//
-//    public boolean updatePositionsRange(int beginPosition, int endPosition,
-//            int deltaValue);
-//
-    public boolean updatePositionsLowerBound(int lowerBoundPosition,
-            int deltaValue);
-
-    public boolean updateAncestorsDescendants(Map<Long, Integer> descendantsMap);
-
-    public boolean persistCheckStatusFolder(long idFolder, boolean isChecked);
-
-    public boolean persistCheckStatusFolders(boolean isChecked, Long... idFolders);
+    public GPProject findByProjectName(String projectName);
 }
