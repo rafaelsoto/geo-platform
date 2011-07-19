@@ -50,14 +50,14 @@
             </bean>
         </jaxws:serviceFactory>
         
-        <jaxws:inInterceptors>
+        <!--<jaxws:inInterceptors>
             <ref bean="TimestampSignEncrypt_Request"/>
             <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/>
         </jaxws:inInterceptors>        
         <jaxws:outInterceptors>
             <bean class="org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor"/>
             <ref bean="TimestampSignEncrypt_Response"/>
-        </jaxws:outInterceptors>
+        </jaxws:outInterceptors>-->
     </jaxws:endpoint>
 
     <!--<jaxws:endpoint id="greeterSOAP"

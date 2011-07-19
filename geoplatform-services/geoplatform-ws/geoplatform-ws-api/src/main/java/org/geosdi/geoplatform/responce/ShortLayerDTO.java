@@ -51,7 +51,7 @@ import org.geosdi.geoplatform.core.model.GPLayerType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = {"id", "name", "position", "shared", "checked",
+@XmlType(propOrder = {"id", "name", "position", "checked",
     "title", "urlServer", "srs", "abstractText", "layerType", "bbox", "cached"})
 @XmlSeeAlso(value = {RasterLayerDTO.class, VectorLayerDTO.class})
 public class ShortLayerDTO extends AbstractElementDTO {
@@ -77,8 +77,7 @@ public class ShortLayerDTO extends AbstractElementDTO {
      * Constructor with GPLayer as arg
      */
     public ShortLayerDTO(GPLayer layer) {
-        super(layer.getId(), layer.getName(), layer.getPosition(),
-                layer.isShared(), layer.isChecked());
+        super(layer.getId(), layer.getName(), layer.getPosition(), layer.isChecked());
         this.title = layer.getTitle();
         this.urlServer = layer.getUrlServer();
         this.srs = layer.getSrs();

@@ -108,6 +108,14 @@ public abstract class GPLayer implements Serializable {
     @Column(name = "cached")
     private boolean cached = false;
 
+    public abstract GPFolder getFolder();
+
+    public abstract void setFolder(GPFolder folder);
+
+    public abstract GPProject getProject();
+
+    public abstract void setProject(GPProject project);
+
     /**
      * @return the id
      */
@@ -288,10 +296,6 @@ public abstract class GPLayer implements Serializable {
         this.cached = cached;
     }
 
-    public abstract GPFolder getFolder();
-
-    public abstract void setFolder(GPFolder folder);
-
     /*
      * (non-Javadoc)
      *
@@ -353,6 +357,12 @@ public abstract class GPLayer implements Serializable {
             str.append("(id=").append(this.getFolder().getId()).append(")");
         } else {
             str.append(", folder=NULL");
+        }
+        if (this.getProject() != null) {
+            str.append(", project.name=").append(this.getProject().getName());
+            str.append("(id=").append(this.getProject().getId()).append(")");
+        } else {
+            str.append(", project=NULL");
         }
         return str.append("}").toString();
     }

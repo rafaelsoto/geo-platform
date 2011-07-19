@@ -111,6 +111,7 @@ public class GPRasterLayer extends GPLayer {
     /**
      * @return the project
      */
+    @Override
     public GPProject getProject() {
         return project;
     }
@@ -119,6 +120,7 @@ public class GPRasterLayer extends GPLayer {
      * @param project
      *            the project to set
      */
+    @Override
     public void setProject(GPProject project) {
         this.project = project;
     }

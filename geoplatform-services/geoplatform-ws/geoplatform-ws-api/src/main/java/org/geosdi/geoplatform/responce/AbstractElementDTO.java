@@ -53,7 +53,6 @@ public abstract class AbstractElementDTO implements IElementDTO,
     private String name;
     private Integer position = null;    
     private Boolean checked = null;
-    private boolean shared;
 
     //<editor-fold defaultstate="collapsed" desc="Constructor method">
     /**
@@ -69,11 +68,10 @@ public abstract class AbstractElementDTO implements IElementDTO,
      * @param position
      * @param shared
      */
-    public AbstractElementDTO(Long id, String name, Integer position, boolean shared, Boolean checked) {
+    public AbstractElementDTO(Long id, String name, Integer position, Boolean checked) {
         this.id = id;
         this.name = name;
         this.position = position;
-        this.shared = shared;
         this.checked = checked;
     }
     //</editor-fold>
@@ -125,21 +123,6 @@ public abstract class AbstractElementDTO implements IElementDTO,
     }
 
     /**
-     * @return the shared state
-     */
-    public boolean isShared() {
-        return shared;
-    }
-
-    /**
-     * @param shared
-     *            the shared state to set
-     */
-    public void setShared(boolean shared) {
-        this.shared = shared;
-    }
-
-    /**
      * @return the checked
      */
     public boolean isChecked() {
@@ -174,6 +157,6 @@ public abstract class AbstractElementDTO implements IElementDTO,
     @Override
     public String toString() {
         return "id=" + id + ", name=" + name + ", position=" + position
-                + ", shared=" + shared + ", checked=" + checked;
+                + ", checked=" + checked;
     }
 }

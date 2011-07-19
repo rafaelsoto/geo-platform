@@ -38,6 +38,7 @@
 package org.geosdi.geoplatform.test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.junit.After;
@@ -55,9 +56,10 @@ import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPLayer;
 import org.geosdi.geoplatform.core.model.GPLayerInfo;
 import org.geosdi.geoplatform.core.model.GPLayerType;
+import org.geosdi.geoplatform.core.model.GPProject;
 import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
-import org.geosdi.geoplatform.core.model.GPUserFolders;
+import org.geosdi.geoplatform.core.model.GPUserProjects;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
 import org.geosdi.geoplatform.request.SearchRequest;
 import org.geosdi.geoplatform.services.GeoPlatformService;
@@ -78,13 +80,17 @@ public abstract class ServiceTest {
     protected final String usernameTest = "username_test_ws";
     protected long idUserTest = -1;
     protected GPUser userTest = null;
+    // Project
+    protected long idProjectTest = -1;
+    protected GPProject projectTest = null;
     // Folders
+    protected GPFolder rootFolderA = null;
+    protected GPFolder rootFolderB = null;
+    
     protected final String nameRootFolderA = "rootFolderA";
     protected final String nameRootFolderB = "rootFolderB";
-    protected long idUserRootFolderA = -1;
-    protected long idUserRootFolderB = -1;
-    protected GPUserFolders userTestRootFolderA = null;
-    protected GPUserFolders userTestRootFolderB = null;
+    protected long idRootFolderA = -1;
+    protected long idRootFolderB = -1;
     //
     protected List<String> layerInfoKeywords;
 
@@ -102,13 +108,15 @@ public abstract class ServiceTest {
         // Insert User
         idUserTest = this.createAndInsertUser(usernameTest);
         userTest = gpWSClient.getUserDetailByName(new SearchRequest(usernameTest));
-
+        // Insert Project
+        idProjectTest = this.createAndInsertProject("project_test_ws", false, 0, new Date(System.currentTimeMillis()));
+        projectTest = gpWSClient.getProject(idProjectTest);
         // Create root folders for the user
-        idUserRootFolderA = this.createAndInsertFolder(userTest, nameRootFolderA, 2, false, null);
-        userTestRootFolderA = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderA);
+        idRootFolderA = this.createAndInsertFolder(nameRootFolderA, projectTest, 2, null);
+        rootFolderA = gpWSClient.getFolderDetail(idRootFolderA);
 
-        idUserRootFolderB = this.createAndInsertFolder(userTest, nameRootFolderB, 1, false, null);
-        userTestRootFolderB = gpWSClient.getUserFolderByUserAndFolderId(idUserTest, idUserRootFolderB);
+        idRootFolderB = this.createAndInsertFolder(nameRootFolderB, projectTest, 1, null);
+        rootFolderB = gpWSClient.getFolderDetail(idRootFolderB);
 
         // Set the list of keywords (for raster layer)
         layerInfoKeywords = new ArrayList<String>();
@@ -154,53 +162,56 @@ public abstract class ServiceTest {
     }
 
     // Delete (with assert) a Folder
-    protected void deleteUserFolder(long idFolder) {
+    protected void deleteFolder(long idFolder) {
         try {
-            boolean check = gpWSClient.deleteUserFolder(idFolder);
+            boolean check = gpWSClient.deleteFolder(idFolder);
             Assert.assertTrue("Folder with id = " + idFolder + " has not been eliminated", check);
         } catch (Exception e) {
             Assert.fail("Error while deleting Folder with Id: " + idFolder);
         }
     }
 
-    protected long createAndInsertFolder(GPUser owner, String folderName,
-            int position, boolean shared, GPUserFolders parent) throws IllegalParameterFault {
-
-        GPFolder folder = this.createFolder(folderName, shared);
-        GPUserFolders userFolder = this.createBindingUserFolder(owner, folder, position, parent);
-        return gpWSClient.insertUserFolder(userFolder);
+    protected long createAndInsertFolder(String folderName, GPProject project,
+            int position, GPFolder parent) throws IllegalParameterFault {
+        GPFolder folder = this.createFolder(folderName, project, position, parent);
+        return gpWSClient.insertFolder(folder);
+    }
+    
+    protected long createAndInsertProject(String name, boolean isShared, 
+            int numberOfElements, Date creationalDate) throws IllegalParameterFault {
+        GPProject project = this.createProject(name, isShared, numberOfElements, creationalDate);
+        return gpWSClient.insertProject(project);
     }
 
-    protected GPUserFolders createUserFolder(GPUser owner, String folderName,
-            int position, boolean shared, GPUserFolders parent) throws IllegalParameterFault {
-
-        GPFolder folder = this.createFolder(folderName, shared);
-        return this.createBindingUserFolder(owner, folder, position, parent);
-    }
-
-    protected GPFolder createFolder(String folderName, boolean shared) {
+    protected GPFolder createFolder(String folderName, GPProject project,
+            int position, GPFolder parent) {
         GPFolder folder = new GPFolder(folderName);
-        folder.setShared(shared);
+        folder.setProject(project);
+        folder.setPosition(position);
+        folder.setParent(parent);
         return folder;
     }
-
-    protected GPUserFolders createBindingUserFolder(GPUser user, GPFolder folder,
-            int position, GPUserFolders parent) {
-        GPUserFolders userFolder = new GPUserFolders();
-        userFolder.setUserAndFolder(user, folder);
-        userFolder.setPosition(position);
-        userFolder.setParent(parent);
-
-//        folder.addUserFolder(userFolder);
-
-        return userFolder;
+    
+    protected GPProject createProject(String name, boolean isShared, int numberOfElements, Date creationalDate) {
+        GPProject project = new GPProject();
+        project.setName(name);
+        project.setShared(isShared);
+        project.setNumberOfElements(numberOfElements);
+        project.setCreationDate(creationalDate);
+        return project;
     }
 
-    protected long createAndInsertRasterLayer(GPUserFolders userFolder, String title, String name,
+    protected GPUserProjects createBindingUserProject(GPUser user, GPProject project) {
+        GPUserProjects userProject = new GPUserProjects();
+        userProject.setUserAndProject(user, project);
+        return userProject;
+    }
+
+    protected long createAndInsertRasterLayer(GPFolder folder, String title, String name,
             String abstractText, int position, boolean shared, String srs, String urlServer)
             throws IllegalParameterFault {
         GPRasterLayer rasterLayer = new GPRasterLayer();
-        this.createLayer(rasterLayer, userFolder, title, name, abstractText, position, shared, srs, urlServer);
+        this.createLayer(rasterLayer, folder, title, name, abstractText, position, shared, srs, urlServer);
 
         GPLayerInfo layerInfo = new GPLayerInfo();
         layerInfo.setKeywords(layerInfoKeywords);
@@ -211,19 +222,19 @@ public abstract class ServiceTest {
         return gpWSClient.insertLayer(rasterLayer);
     }
 
-    protected long createAndInsertVectorLayer(GPUserFolders userFolder, String title, String name,
+    protected long createAndInsertVectorLayer(GPFolder folder, String title, String name,
             String abstractText, int position, boolean shared, String srs, String urlServer)
             throws IllegalParameterFault {
         GPVectorLayer vectorLayer = new GPVectorLayer();
-        this.createLayer(vectorLayer, userFolder, title, name, abstractText, position, shared, srs, urlServer);
+        this.createLayer(vectorLayer, folder, title, name, abstractText, position, shared, srs, urlServer);
 
         vectorLayer.setLayerType(GPLayerType.POLYGON);
         return gpWSClient.insertLayer(vectorLayer);
     }
 
-    protected void createLayer(GPLayer gpLayer, GPUserFolders userFolder, String title, String name,
+    protected void createLayer(GPLayer gpLayer, GPFolder folder, String title, String name,
             String abstractText, int position, boolean shared, String srs, String urlServer) {
-        gpLayer.setUserFolder(userFolder);
+        gpLayer.setFolder(folder);
 
         gpLayer.setTitle(title);
         gpLayer.setName(name);

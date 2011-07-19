@@ -117,6 +117,7 @@ public class GPVectorLayer extends GPLayer {
     /**
      * @return the project
      */
+    @Override
     public GPProject getProject() {
         return project;
     }
@@ -125,6 +126,7 @@ public class GPVectorLayer extends GPLayer {
      * @param project
      *            the project to set
      */
+    @Override
     public void setProject(GPProject project) {
         this.project = project;
     }

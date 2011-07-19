@@ -85,45 +85,45 @@ public class WSListenerServices implements TestExecutionListener {
         bus.getInInterceptors().add(new LoggingInInterceptor());
         bus.getOutInterceptors().add(new LoggingOutInterceptor());
 
-        Map<String, Object> inProps = new HashMap<String, Object>();
-        
-        // ----------- Only Encryption
-//        inProps.put("action", "Encrypt");
-//        inProps.put("decryptionPropFile", "Server_Decrypt.properties");
-
-        // ----------- Only Signature
-//        inProps.put("action", "Signature");
+//        Map<String, Object> inProps = new HashMap<String, Object>();
+//        
+//        // ----------- Only Encryption
+////        inProps.put("action", "Encrypt");
+////        inProps.put("decryptionPropFile", "Server_Decrypt.properties");
+//
+//        // ----------- Only Signature
+////        inProps.put("action", "Signature");
+////        inProps.put("signaturePropFile", "Server_SignVerf.properties");
+//
+//        // ----------- Signature and Encryption
+//        inProps.put("action", "Timestamp Signature Encrypt");
 //        inProps.put("signaturePropFile", "Server_SignVerf.properties");
-
-        // ----------- Signature and Encryption
-        inProps.put("action", "Timestamp Signature Encrypt");
-        inProps.put("signaturePropFile", "Server_SignVerf.properties");
-        inProps.put("decryptionPropFile", "Server_Decrypt.properties");      
-
-        inProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        bus.getInInterceptors().add(new WSS4JInInterceptor(inProps));
-
-        Map<String, Object> outProps = new HashMap<String, Object>();
-        
-        // ----------- Only Encryption
-//        outProps.put("action", "Encrypt");
-//        outProps.put("encryptionPropFile", "Server_SignVerf.properties");
-//        outProps.put("encryptionUser", "clientx509v1");
-
-        // ----------- Only Signature
-//        outProps.put("action", "Signature");
+//        inProps.put("decryptionPropFile", "Server_Decrypt.properties");      
+//
+//        inProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
+//        bus.getInInterceptors().add(new WSS4JInInterceptor(inProps));
+//
+//        Map<String, Object> outProps = new HashMap<String, Object>();
+//        
+//        // ----------- Only Encryption
+////        outProps.put("action", "Encrypt");
+////        outProps.put("encryptionPropFile", "Server_SignVerf.properties");
+////        outProps.put("encryptionUser", "clientx509v1");
+//
+//        // ----------- Only Signature
+////        outProps.put("action", "Signature");
+////        outProps.put("user", "serverx509v1");
+////        outProps.put("signaturePropFile", "Server_Decrypt.properties");
+//
+//        // ----------- Signature and Encryption
+//        outProps.put("action", "Timestamp Signature Encrypt");
 //        outProps.put("user", "serverx509v1");
 //        outProps.put("signaturePropFile", "Server_Decrypt.properties");
-
-        // ----------- Signature and Encryption
-        outProps.put("action", "Timestamp Signature Encrypt");
-        outProps.put("user", "serverx509v1");
-        outProps.put("signaturePropFile", "Server_Decrypt.properties");
-        outProps.put("encryptionPropFile", "Server_SignVerf.properties");
-        outProps.put("encryptionUser", "clientx509v1");
-
-        outProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
-        bus.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
+//        outProps.put("encryptionPropFile", "Server_SignVerf.properties");
+//        outProps.put("encryptionUser", "clientx509v1");
+//
+//        outProps.put("passwordCallbackClass", ServerKeystorePasswordCallback.class.getName());
+//        bus.getOutInterceptors().add(new WSS4JOutInterceptor(outProps));
 
         bf.setDefaultBus(bus);
         String address = "http://localhost:8282/geoplatform-service/soap";

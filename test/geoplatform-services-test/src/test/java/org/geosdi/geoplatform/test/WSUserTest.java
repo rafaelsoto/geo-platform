@@ -39,9 +39,6 @@ package org.geosdi.geoplatform.test;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.ws.soap.SOAPFaultException;
 import junit.framework.Assert;
 import org.geosdi.geoplatform.core.model.GPUser;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;

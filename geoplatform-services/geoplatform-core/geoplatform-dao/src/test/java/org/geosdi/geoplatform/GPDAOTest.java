@@ -88,7 +88,7 @@ public class GPDAOTest extends BaseDAOTest {
 
         endPosition = beginPosition + 930;
 
-        userPositionTestProject = super.createProject("user_project", false, 0, new Date(System.currentTimeMillis()));
+        userPositionTestProject = super.createProject("user_project", false, 5, new Date(System.currentTimeMillis()));
         projectDAO.persist(userPositionTestProject);
         //
         super.insertBindingUserProject(userPositionTest, userPositionTestProject, BasePermission.ADMINISTRATION.getMask());
@@ -97,7 +97,7 @@ public class GPDAOTest extends BaseDAOTest {
         rootFolder.setNumberOfDescendants(13);
         rootFolder.setChecked(false);
         //
-        folderDAO.persist(rootFolder);        
+        folderDAO.persist(rootFolder);
 
         folderA = super.createFolder("folder_position_test_A", userPositionTestProject, rootFolder, beginPosition + 600); // 333630     
         folderB = super.createFolder("folder_position_test_B", userPositionTestProject, rootFolder, beginPosition + 300); // 333330               
@@ -118,8 +118,6 @@ public class GPDAOTest extends BaseDAOTest {
         layerDAO.persist(rasterLayer, vectorLayer);
     }
 
-    
-    
     @After
     public void tearDown() {
         logger.trace("\n\t@@@ " + getClass().getSimpleName() + ".tearDown @@@");
@@ -188,7 +186,7 @@ public class GPDAOTest extends BaseDAOTest {
         GPLayer newVectorLayer3 = layerDAO.findByLayerName(titleVectorLayer3);
         Assert.assertNull("rectorLayer3 must be null", newVectorLayer3);
     }
-//    
+
 //    //<editor-fold defaultstate="collapsed" desc="Test of updatePositionsRange">
 //    /**
 //     * Test of updatePositionsRange method for Folders

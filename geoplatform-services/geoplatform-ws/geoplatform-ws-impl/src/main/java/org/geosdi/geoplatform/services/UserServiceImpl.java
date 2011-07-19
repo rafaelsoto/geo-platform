@@ -41,16 +41,14 @@ import com.googlecode.genericdao.search.Search;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.ws.soap.SOAPFaultException;
-import org.apache.cxf.binding.soap.SoapFault;
-import org.geosdi.geoplatform.core.dao.GPFolderDAO;
+import org.geosdi.geoplatform.core.dao.GPProjectDAO;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import org.geosdi.geoplatform.core.dao.GPUserDAO;
-import org.geosdi.geoplatform.core.dao.GPUserFoldersDAO;
+import org.geosdi.geoplatform.core.dao.GPUserProjectsDAO;
 import org.geosdi.geoplatform.core.model.GPUser;
-import org.geosdi.geoplatform.core.model.GPUserFolders;
+import org.geosdi.geoplatform.core.model.GPUserProjects;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.request.PaginatedSearchRequest;
@@ -67,8 +65,8 @@ class UserServiceImpl {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     // DAO
     private GPUserDAO userDao;
-    private GPUserFoldersDAO userFoldersDao;
-    private GPFolderDAO folderDao;
+    private GPUserProjectsDAO userProjectsDao;
+    private GPProjectDAO projectDao;
 
     //<editor-fold defaultstate="collapsed" desc="Setter methods">
     /**
@@ -80,19 +78,19 @@ class UserServiceImpl {
     }
 
     /**
-     * @param userFoldersDao
-     *          the userFoldersDao to set
+     * @param userProjecsDao
+     *          the userProjecsDao to set
      */
-    public void setUserFoldersDao(GPUserFoldersDAO userFoldersDao) {
-        this.userFoldersDao = userFoldersDao;
+    public void setUserProjectsDao(GPUserProjectsDAO userProjecsDao) {
+        this.userProjectsDao = userProjecsDao;
     }
 
     /**
-     * @param folderDao
-     *          the folderDao to set
+     * @param projectDao
+     *          the projectDao to set
      */
-    public void setFolderDao(GPFolderDAO folderDao) {
-        this.folderDao = folderDao;
+    public void setProjectDao(GPProjectDAO projectDao) {
+        this.projectDao = projectDao;
     }
     //</editor-fold>
 
@@ -155,16 +153,16 @@ class UserServiceImpl {
             throw new ResourceNotFoundFault("User not found", userId);
         }
 
-        List<GPUserFolders> userFoldersList = userFoldersDao.findByOwnerUserId(userId);
-        for (GPUserFolders userFolder : userFoldersList) {
-            // Remove all UserFolders that reference (also of other users) by cascading
-            if (!folderDao.remove(userFolder.getFolder())) {
+        List<GPUserProjects> foldersList = userProjectsDao.findByOwnerUserId(userId);
+        for (GPUserProjects userFolder : foldersList) {
+            // Remove all UserProjects that reference (also of other users) by cascading
+            if (!projectDao.remove(userFolder.getProject())) {
                 return false;
             }
         }
 
-        // Remove all UserFolders that reference by cascading
-        // Only that reference to shared folders
+        // Remove all UserProjects that reference by cascading
+        // Only that reference to shared projects
         return userDao.remove(user);
     }
 

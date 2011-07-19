@@ -69,11 +69,11 @@ public class GeoPlatformWSClient {
     public GeoPlatformService create() {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
 
-//        factory.getOutInterceptors().add(new LoggingOutInterceptor());
-//        factory.getInInterceptors().add(new LoggingInInterceptor());
-
-        factory.getOutInterceptors().add(this.createOutInterceptor());
-        factory.getInInterceptors().add(this.createInInterceptor());
+////        factory.getOutInterceptors().add(new LoggingOutInterceptor());
+////        factory.getInInterceptors().add(new LoggingInInterceptor());
+//
+//        factory.getOutInterceptors().add(this.createOutInterceptor());
+//        factory.getInInterceptors().add(this.createInInterceptor());
 
         factory.setServiceClass(GeoPlatformService.class);
         factory.setAddress(this.address);
