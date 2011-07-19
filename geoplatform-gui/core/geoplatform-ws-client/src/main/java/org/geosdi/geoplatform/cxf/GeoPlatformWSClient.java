@@ -85,9 +85,9 @@ public class GeoPlatformWSClient {
         Map<String, Object> outProps = new HashMap<String, Object>();
 
         // ----------- Only Encryption
-//        outProps.put("action", "Encrypt");
-//        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
-//        outProps.put("encryptionUser", "serverx509v1");
+        outProps.put("action", "Encrypt");
+        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
+        outProps.put("encryptionUser", "serverx509v1");
 
         // ----------- Only Signature
 //        outProps.put("action", "Signature");
@@ -95,11 +95,11 @@ public class GeoPlatformWSClient {
 //        outProps.put("signaturePropFile", "Client_Sign.properties");
 
         // ----------- Signature and Encryption
-        outProps.put("action", "Timestamp Signature Encrypt");
-        outProps.put("user", "clientx509v1");
-        outProps.put("signaturePropFile", "Client_Sign.properties");
-        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
-        outProps.put("encryptionUser", "serverx509v1");
+//        outProps.put("action", "Timestamp Signature Encrypt");
+//        outProps.put("user", "clientx509v1");
+//        outProps.put("signaturePropFile", "Client_Sign.properties");
+//        outProps.put("encryptionPropFile", "Client_Encrypt.properties");
+//        outProps.put("encryptionUser", "serverx509v1");
 
 //        outProps.put("signatureKeyIdentifier", "DirectReference");
 
@@ -116,17 +116,17 @@ public class GeoPlatformWSClient {
         Map<String, Object> inProps = new HashMap<String, Object>();
 
         // ----------- Only Encryption
-//        inProps.put("action", "Encrypt");
-//        inProps.put("decryptionPropFile", "Client_Sign.properties");
+        inProps.put("action", "Encrypt");
+        inProps.put("decryptionPropFile", "Client_Sign.properties");
 
 //         ----------- Only Signature
 //        inProps.put("action", "Signature");
 //        inProps.put("signaturePropFile", "Client_Encrypt.properties");
 //        
         // ----------- Signature and Encryption
-        inProps.put("action", "Timestamp Signature Encrypt");
-        inProps.put("signaturePropFile", "Client_Encrypt.properties");
-        inProps.put("decryptionPropFile", "Client_Sign.properties");
+//        inProps.put("action", "Timestamp Signature Encrypt");
+//        inProps.put("signaturePropFile", "Client_Encrypt.properties");
+//        inProps.put("decryptionPropFile", "Client_Sign.properties");
 
         inProps.put("passwordCallbackClass", ClientKeystorePasswordCallback.class.getName());
 

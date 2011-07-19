@@ -319,7 +319,7 @@ public abstract class BaseDAOTest {
         layerDAO.persist(layers.toArray(new GPRasterLayer[]{}));
     }
 
-    private GPFolder createFolder(String name, GPProject project, GPFolder parent, int position) {
+    protected GPFolder createFolder(String name, GPProject project, GPFolder parent, int position) {
         GPFolder folder = new GPFolder(name);
         folder.setProject(project);
         folder.setParent(parent);
@@ -327,7 +327,7 @@ public abstract class BaseDAOTest {
         return folder;
     }
 
-    private GPProject createProject(String name, boolean isShared, int numberOfElements, Date creationalDate) {
+    protected GPProject createProject(String name, boolean isShared, int numberOfElements, Date creationalDate) {
         GPProject project = new GPProject();
         project.setName(name);
         project.setShared(isShared);

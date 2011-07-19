@@ -53,7 +53,6 @@ import org.geosdi.geoplatform.core.acl.dao.AclEntryDAO;
 import org.geosdi.geoplatform.core.acl.dao.AclObjectIdentityDAO;
 import org.geosdi.geoplatform.core.acl.dao.AclSidDAO;
 import org.geosdi.geoplatform.core.acl.dao.GuiComponentDAO;
-import org.geosdi.geoplatform.core.model.GPAuthority;
 
 /**
  * @author Vincenzo Monteverde
