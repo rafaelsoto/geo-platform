@@ -40,12 +40,17 @@ package org.geosdi.geoplatform.services;
 import com.googlecode.genericdao.search.Search;
 import java.util.List;
 import org.geosdi.geoplatform.core.dao.GPFolderDAO;
+import org.geosdi.geoplatform.core.model.GPUserProjects;
+import org.geosdi.geoplatform.request.RequestByUserProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.geosdi.geoplatform.core.dao.GPProjectDAO;
+import org.geosdi.geoplatform.core.dao.GPUserDAO;
+import org.geosdi.geoplatform.core.dao.GPUserProjectsDAO;
 import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPProject;
+import org.geosdi.geoplatform.core.model.GPUser;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.responce.FolderDTO;
@@ -60,6 +65,8 @@ class ProjectServiceImpl {
     final private static Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
     // DAO
     private GPProjectDAO projectDao;
+    private GPUserDAO userDao;
+    private GPUserProjectsDAO userProjectsDao;
     private GPFolderDAO folderDao;
 
     //<editor-fold defaultstate="collapsed" desc="Setter methods">
@@ -69,6 +76,22 @@ class ProjectServiceImpl {
      */
     public void setProjectDao(GPProjectDAO projectDao) {
         this.projectDao = projectDao;
+    }
+
+    /**
+     * @param userDao
+     *            the userDao to set
+     */
+    public void setUserDao(GPUserDAO userDao) {
+        this.userDao = userDao;
+    }
+
+    /**
+     * @param userProjectsDao
+     *          the userProjectsDao to set
+     */
+    public void setUserProjectsDao(GPUserProjectsDAO userProjectsDao) {
+        this.userProjectsDao = userProjectsDao;
     }
 
     /**
@@ -83,8 +106,7 @@ class ProjectServiceImpl {
     //<editor-fold defaultstate="collapsed" desc="Project">
     // ==========================================================================
     // === Project
-    // ==========================================================================
-    //</editor-fold>
+    // ==========================================================================    
     public long insertProject(GPProject project) throws IllegalParameterFault {
         logger.trace("\n\t@@@ insertProject @@@");
         this.checkProject(project);
@@ -263,6 +285,62 @@ class ProjectServiceImpl {
 //        return userProjectsDao.count(searchCriteria);
 //    }
 
+    public void setProjectShared(long projectId) throws ResourceNotFoundFault {
+        GPProject project = projectDao.find(projectId);
+        if (project == null) {
+            throw new ResourceNotFoundFault("Project not found", projectId);
+        }
+
+        project.setShared(true);
+
+        projectDao.merge(project);
+    }
+
+    public boolean setProjectOwner(RequestByUserProject request, boolean force)
+            throws ResourceNotFoundFault {
+        GPProject project = projectDao.find(request.getProjectId());
+        if (project == null) {
+            throw new ResourceNotFoundFault("Project not found", request.getProjectId());
+        }
+
+        GPUser user = userDao.find(request.getUserId());
+        if (user == null) {
+            throw new ResourceNotFoundFault("User not found", request.getUserId());
+        }
+
+        // TODO: implement the logic described in this method's javadoc
+
+        project.setShared(false);
+
+        projectDao.merge(project);
+
+        return true;
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="UserProjects">
+    // ==========================================================================
+    // === UserProjects
+    // ==========================================================================
+    public GPUserProjects getUserProject(long userProjectId)
+            throws ResourceNotFoundFault {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public GPUserProjects getUserProjectByUserAndProjectId(long userId, long projectId)
+            throws ResourceNotFoundFault {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public List<GPUserProjects> getUserProjectsByUserId(long userId) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public List<GPUserProjects> getUserProjectsByProjectId(long projectId) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    //</editor-fold>
+
     // TODO assert
     private void checkProject(GPProject project) throws IllegalParameterFault {
         if (project == null) {
@@ -281,7 +359,7 @@ class ProjectServiceImpl {
         try {
             this.checkProject(project);
         } catch (IllegalParameterFault ex) {
-            logger.error(ex.getMessage());
+            logger.error("\n--- " + ex.getMessage() + " ---");
         }
     }
 }

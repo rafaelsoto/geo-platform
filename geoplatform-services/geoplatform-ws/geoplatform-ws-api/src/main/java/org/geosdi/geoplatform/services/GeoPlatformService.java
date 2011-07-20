@@ -56,13 +56,14 @@ import org.geosdi.geoplatform.core.model.GPLayerType;
 import org.geosdi.geoplatform.core.model.GPProject;
 import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
+import org.geosdi.geoplatform.core.model.GPUserProjects;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
 import org.geosdi.geoplatform.core.model.GeoPlatformServer;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.request.PaginatedSearchRequest;
 import org.geosdi.geoplatform.request.RequestById;
-import org.geosdi.geoplatform.request.RequestByUserFolder;
+import org.geosdi.geoplatform.request.RequestByUserProject;
 import org.geosdi.geoplatform.request.SearchRequest;
 import org.geosdi.geoplatform.responce.FolderDTO;
 import org.geosdi.geoplatform.responce.ServerDTO;
@@ -141,6 +142,76 @@ public interface GeoPlatformService {
     @HttpResource(location = "/users/count/{nameLike}")
     @WebResult(name = "count")
     long getUsersCount(SearchRequest searchRequest);
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="UserProjects">
+    // ==========================================================================
+    // === UserProjects
+    // ==========================================================================
+    @Get
+    @HttpResource(location = "/user-projects/{userProjectId}")
+    @WebResult(name = "UserProject")
+    GPUserProjects getUserProject(@WebParam(name = "userProjectId") long userProjectId)
+            throws ResourceNotFoundFault;
+
+    @Get
+    @HttpResource(location = "/user/{userId}/projects/{projectId}")
+    @WebResult(name = "UserProject")
+    GPUserProjects getUserProjectByUserAndProjectId(
+            @WebParam(name = "userId") long userId,
+            @WebParam(name = "projectId") long projectId)
+            throws ResourceNotFoundFault;
+
+    @Get
+    @HttpResource(location = "/user/{userId}")
+    @WebResult(name = "UserProject")
+    List<GPUserProjects> getUserProjectsByUserId(@WebParam(name = "userId") long userId);
+
+    @Get
+    @HttpResource(location = "/projects/{projectId}")
+    @WebResult(name = "UserProject")
+    List<GPUserProjects> getUserProjectsByProjectId(@WebParam(name = "projectId") long projectId);
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Project">
+    // ==========================================================================
+    // === Project
+    // ==========================================================================
+    @Put
+    @HttpResource(location = "/project")
+    long insertProject(@WebParam(name = "Project") GPProject project)
+            throws IllegalParameterFault;
+
+    @Post
+    @HttpResource(location = "/project")
+    long updateProject(@WebParam(name = "Project") GPProject project)
+            throws ResourceNotFoundFault, IllegalParameterFault;
+
+    @Delete
+    @HttpResource(location = "/projects/{projectId}")
+    boolean deleteProject(@WebParam(name = "projectId") long projectId)
+            throws ResourceNotFoundFault;
+
+    @Get
+    @HttpResource(location = "/projects/{projectId}")
+    @WebResult(name = "Project")
+    GPProject getProjectDetail(@WebParam(name = "projectId") long projectId)
+            throws ResourceNotFoundFault;
+
+    @Post
+    @HttpResource(location = "/project/{projectId}/shared")
+    void setProjectShared(@WebParam(name = "projectId") long projectId)
+            throws ResourceNotFoundFault;
+
+    @Post
+    @HttpResource(location = "/project/{projectId}/owner/{userId}")
+    boolean setProjectOwner(RequestByUserProject request)
+            throws ResourceNotFoundFault;
+
+    @Post
+    @HttpResource(location = "/project/{projectId}/forceowner/{userId}")
+    void forceProjectOwner(RequestByUserProject request)
+            throws ResourceNotFoundFault;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Folder">
@@ -247,96 +318,13 @@ public interface GeoPlatformService {
     TreeFolderElements getChildrenElements(@WebParam(name = "folderId") long folderId);
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Folder / User">
-    // ==========================================================================
-    // === Folder / User
-    // ==========================================================================
-//    @Post
-//    @HttpResource(location = "/folder/{id}/shared")
-//    void setFolderShared(RequestById request) throws ResourceNotFoundFault;
-//    @Post
-//    @HttpResource(location = "/folder/{folderId}/owner/{userId}")
-//    boolean setFolderOwner(RequestByUserFolder request)
-//            throws ResourceNotFoundFault;
-//
-//    @Post
-//    @HttpResource(location = "/folder/{folderId}/forceowner/{userId}")
-//    void forceFolderOwner(RequestByUserFolder request)
-//            throws ResourceNotFoundFault;
-//
-//    @Get
-//    @HttpResource(location = "/users/{id}/folder/{num}/{page}")
-//    @WebResult(name = "Folder")
-//    List<FolderDTO> getUserFoldersByRequest(RequestById request);
-//
-//    @Get
-//    @HttpResource(location = "/users/{userId}/folder")
-//    @WebResult(name = "Folder")
-//    List<FolderDTO> getUserFoldersByUserId(@WebParam(name = "userId") long userId);
-//
-//    /**
-//     * @return Owned and shared Folders visible to a given user.
-//     */
-//    @Get
-//    //@HttpResource(location = "/users/{userId}/folder/{num}/{page}")
-//    @WebResult(name = "Folder")
-//    List<FolderDTO> getAllUserFolders(RequestById request);
-    //</editor-fold>
-//    
+    //<editor-fold defaultstate="collapsed" desc="Folder / Project">
     @Get
     //@HttpResource(location = "/projects/{projectId}")
     @WebResult(name = "Project")
     List<FolderDTO> getRootFoldersByProjectId(@WebParam(name = "projectId") long projectId);
-
-    //<editor-fold defaultstate="collapsed" desc="UserProjects">
-    // ==========================================================================
-    // === Projects and UserProjects
-    // ==========================================================================
-    @Put
-    @HttpResource(location = "/project")
-    long insertProject(@WebParam(name = "Project") GPProject project)
-            throws IllegalParameterFault;
-
-    @Post
-    @HttpResource(location = "/project")
-    long updateProject(@WebParam(name = "Project") GPProject project)
-            throws ResourceNotFoundFault, IllegalParameterFault;
-
-    @Delete
-    @HttpResource(location = "/projects/{projectId}")
-    boolean deleteProject(@WebParam(name = "projectId") long projectId)
-            throws ResourceNotFoundFault;
-
-    @Get
-    @HttpResource(location = "/projects/{projectId}")
-    @WebResult(name = "Project")
-    GPProject getProjectDetail(@WebParam(name = "projectId") long projectId)
-            throws ResourceNotFoundFault;
-
-//    @Get
-//    @HttpResource(location = "/user-projects/{userProjectId}")
-//    @WebResult(name = "UserProject")
-//    GPUserProjects getUserProjects(@WebParam(name = "userProjectId") long userProjectId)
-//            throws ResourceNotFoundFault;
-//
-//    @Get
-//    @HttpResource(location = "/user/{userId}/projects/{projectId}")
-//    @WebResult(name = "UserProject")
-//    GPUserProjects getUserProjectByUserAndProjectId(
-//            @WebParam(name = "userId") long userId,
-//            @WebParam(name = "projectId") long projectId)
-//            throws ResourceNotFoundFault;
-//
-//    @Get
-//    @HttpResource(location = "/user/{userId}")
-//    @WebResult(name = "UserProject")
-//    List<GPUserProjects> getUserProjectByUserId(@WebParam(name = "userId") long userId);
-//
-//    @Get
-//    @HttpResource(location = "/projects/{projectId}")
-//    @WebResult(name = "UserProject")
-//    List<GPUserProjects> getUserProjectByFolderId(@WebParam(name = "projectId") long projectId);
     //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Layer / Style">
     // ==========================================================================
     // === Layer / Style

@@ -53,6 +53,7 @@ import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPLayer;
 import org.geosdi.geoplatform.core.model.GPLayerInfo;
 import org.geosdi.geoplatform.core.model.GPLayerType;
+import org.geosdi.geoplatform.core.model.GPProject;
 import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPStyle;
 import org.geosdi.geoplatform.core.model.GPUser;
@@ -557,13 +558,16 @@ class LayerServiceImpl {
         return true;
     }
 
-    // TODO assert
-    private void checkLayerLog(GPLayer layer) {
-        try {
-            this.checkLayer(layer);
-        } catch (IllegalParameterFault ex) {
-            logger.error(ex.getMessage());
+    // TODO ...
+    private void updateNumberOfElements(GPLayer layer, int delta) throws ResourceNotFoundFault {
+        long projectId = layer.getProject().getId();
+        GPProject project = projectDao.find(projectId);
+        if (project == null) {
+            throw new ResourceNotFoundFault("Project not found", projectId);
         }
+
+        project.deltaToNumberOfElements(delta);
+        projectDao.merge(project);
     }
 
     // TODO assert
@@ -580,11 +584,11 @@ class LayerServiceImpl {
     }
 
     // TODO assert
-    private void checkFolderLog(GPFolder userFolder) {
+    private void checkLayerLog(GPLayer layer) {
         try {
-            this.checkFolder(userFolder);
+            this.checkLayer(layer);
         } catch (IllegalParameterFault ex) {
-            logger.error(ex.getMessage());
+            logger.error("\n--- " + ex.getMessage() + " ---");
         }
     }
 
@@ -601,6 +605,15 @@ class LayerServiceImpl {
         }
         if (folder.getProject() == null) {
             throw new IllegalParameterFault("Folder \"project\" must be NOT NULL");
+        }
+    }
+
+    // TODO assert
+    private void checkFolderLog(GPFolder userFolder) {
+        try {
+            this.checkFolder(userFolder);
+        } catch (IllegalParameterFault ex) {
+            logger.error("\n--- " + ex.getMessage() + " ---");
         }
     }
 }

@@ -38,35 +38,29 @@ package org.geosdi.geoplatform.request;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author Francesco Izzi - CNR IMAA geoSDI Group
+ * @author Vincenzo Monteverde
+ * @email vincenzo.monteverde@geosdi.org - OpenPGP key ID 0xB25F4B38
  *
+ * A request for calls involving a single User and a single Project.
  */
-/**
- * A request for calls involving a single User and a single Folder.
- */
-// TODO ? DEL Request ? (now - with project - there isn't a directly relation user-folder)
-@XmlRootElement(name = "RequestByUserFolder")
-public class RequestByUserFolder {
+@XmlRootElement(name = "RequestByUserProject")
+public class RequestByUserProject {
 
     private long userId;
-    private long folderId;
+    private long projectId;
 
-    /**
-     * 
-     */
-    public RequestByUserFolder() {
-        super();
-        // TODO Auto-generated constructor stub
+
+    public RequestByUserProject() {
     }
 
     /**
      * @param userId
-     * @param folderId
+     * @param projectId
      */
-    public RequestByUserFolder(long userId, long folderId) {
+    public RequestByUserProject(long userId, long projectId) {
         super();
         this.userId = userId;
-        this.folderId = folderId;
+        this.projectId = projectId;
     }
 
     public long getUserId() {
@@ -77,11 +71,11 @@ public class RequestByUserFolder {
         this.userId = userId;
     }
 
-    public long getFolderId() {
-        return folderId;
+    public long getProjectId() {
+        return projectId;
     }
 
-    public void setFolderId(long folderId) {
-        this.folderId = folderId;
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
     }
 }

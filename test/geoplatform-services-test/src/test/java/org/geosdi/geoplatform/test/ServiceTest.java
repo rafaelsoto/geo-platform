@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
+import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -86,7 +87,6 @@ public abstract class ServiceTest {
     // Folders
     protected GPFolder rootFolderA = null;
     protected GPFolder rootFolderB = null;
-    
     protected final String nameRootFolderA = "rootFolderA";
     protected final String nameRootFolderB = "rootFolderB";
     protected long idRootFolderA = -1;
@@ -172,12 +172,13 @@ public abstract class ServiceTest {
     }
 
     protected long createAndInsertFolder(String folderName, GPProject project,
-            int position, GPFolder parent) throws IllegalParameterFault {
+            int position, GPFolder parent)
+            throws ResourceNotFoundFault, IllegalParameterFault {
         GPFolder folder = this.createFolder(folderName, project, position, parent);
         return gpWSClient.insertFolder(folder);
     }
-    
-    protected long createAndInsertProject(String name, boolean isShared, 
+
+    protected long createAndInsertProject(String name, boolean isShared,
             int numberOfElements, Date creationalDate) throws IllegalParameterFault {
         GPProject project = this.createProject(name, isShared, numberOfElements, creationalDate);
         return gpWSClient.insertProject(project);
@@ -191,7 +192,7 @@ public abstract class ServiceTest {
         folder.setParent(parent);
         return folder;
     }
-    
+
     protected GPProject createProject(String name, boolean isShared, int numberOfElements, Date creationalDate) {
         GPProject project = new GPProject();
         project.setName(name);

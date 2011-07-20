@@ -68,10 +68,8 @@ class FolderServiceImpl {
     final private static Logger logger = LoggerFactory.getLogger(FolderServiceImpl.class);
     // DAO
     private GPFolderDAO folderDao;
-    private GPProjectDAO projectDao;
-    private GPUserProjectsDAO userProjectsDao;
-    private GPUserDAO userDao;
     private GPLayerDAO layerDao;
+    private GPProjectDAO projectDao;
 
     //<editor-fold defaultstate="collapsed" desc="Setter methods">
     /**
@@ -83,35 +81,19 @@ class FolderServiceImpl {
     }
 
     /**
-     * @param projectDao
-     *            the projectDao to set
-     */
-    public void setProjectDao(GPProjectDAO projectDao) {
-        this.projectDao = projectDao;
-    }
-
-    /**
-     * @param userProjectsDao
-     *          the userProjectsDao to set
-     */
-    public void setUserProjectsDao(GPUserProjectsDAO userProjectsDao) {
-        this.userProjectsDao = userProjectsDao;
-    }
-
-    /**
-     * @param userDao
-     *            the userDao to set
-     */
-    public void setUserDao(GPUserDAO userDao) {
-        this.userDao = userDao;
-    }
-
-    /**
      * @param layerDao
      *            the layerDao to set
      */
     public void setLayerDao(GPLayerDAO layerDao) {
         this.layerDao = layerDao;
+    }
+
+    /**
+     * @param projectDao
+     *            the projectDao to set
+     */
+    public void setProjectDao(GPProjectDAO projectDao) {
+        this.projectDao = projectDao;
     }
     //</editor-fold>
 
@@ -125,8 +107,6 @@ class FolderServiceImpl {
         this.checkFolder(folder); // TODO assert
 
         folderDao.persist(folder);
-
-        this.updateNumberOfElements(folder, 1);
 
         return folder.getId();
     }
@@ -163,11 +143,7 @@ class FolderServiceImpl {
         }
         this.checkFolderLog(folder); // TODO assert
 
-        boolean result = folderDao.remove(folder);
-
-        this.updateNumberOfElements(folder, -(folder.getNumberOfDescendants() + 1));
-        
-        return result;
+        return folderDao.remove(folder);
     }
 
     public long saveAddedFolderAndTreeModifications(GPFolder folder, GPWebServiceMapData descendantsMapData)
@@ -430,187 +406,18 @@ class FolderServiceImpl {
     }
     //</editor-fold>
 
-//    //<editor-fold defaultstate="collapsed" desc="Folder / User">
-//    // ==========================================================================
-//    // === Folder / User
-//    // ==========================================================================
-//    public GPUserFolders getUserFolder(long userFolderId)
-//            throws ResourceNotFoundFault {
-//        GPUserFolders userFolder = userProjectsDao.find(userFolderId);
-//        if (userFolder == null) {
-//            throw new ResourceNotFoundFault("UserFolder not found", userFolderId);
-//        }
-//
-//        return userFolder;
-//    }
-//
-//    public GPUserFolders getUserFolderByUserAndFolderId(long userId, long folderId)
-//            throws ResourceNotFoundFault {
-//        GPUserFolders userFolder = userProjectsDao.find(userId, folderId);
-//        if (userFolder == null) {
-//            throw new ResourceNotFoundFault("UserFolder not found (userId="
-//                    + userId + " - folderId=" + folderId + ")");
-//        }
-//
-//        return userFolder;
-//    }
-//
-//    public List<GPUserFolders> getUserFolderByUserId(long userId) {
-//        return userProjectsDao.findByUserId(userId);
-//    }
-//
-//    public List<GPUserFolders> getUserFolderByFolderId(long folderId) {
-//        return userProjectsDao.findByFolderId(folderId);
-//    }
-//
-//    public void setFolderShared(RequestById request)
-//            throws ResourceNotFoundFault {
-//        GPFolder folder = folderDao.find(request.getId());
-//        if (folder == null) {
-//            throw new ResourceNotFoundFault("Folder not found", request.getId());
-//        }
-//
-//        folder.setShared(true);
-////        folder.setOwner(null);
-//        folderDao.merge(folder);
-//    }
-//
-//    public boolean setFolderOwner(RequestByUserFolder request, boolean force)
-//            throws ResourceNotFoundFault {
-//        GPFolder folder = folderDao.find(request.getFolderId());
-//        if (folder == null) {
-//            throw new ResourceNotFoundFault("Folder not found",
-//                    request.getFolderId());
-//        }
-//
-//        GPUser user = userDao.find(request.getUserId());
-//        if (user == null) {
-//            throw new ResourceNotFoundFault("User not found",
-//                    request.getUserId());
-//        }
-//
-//        // TODO: implement the logic described in this method's javadoc
-//
-//        folder.setShared(false);
-////        folder.setOwner(user);
-//        folderDao.merge(folder);
-//
-//        return true;
-//    }
-//
-//    /**
-//     * 
-//     * @param request
-//     * @return only root folders owned by user
-//     */
-//    public List<FolderDTO> getFoldersByRequest(RequestById request) {
-//        Search searchCriteria = new Search(GPFolder.class);
-//
-//        searchCriteria.setMaxResults(request.getNum());
-//        searchCriteria.setPage(request.getPage());
-//        searchCriteria.addSortAsc("position");
-//        searchCriteria.addFilterEqual("user.id", request.getId());
-//        searchCriteria.addFilterEqual("permissionMask", BasePermission.ADMINISTRATION.getMask());
-//        searchCriteria.addFilterNull("parent.id");
-//
-//        List<GPFolder> foundUserFolders = folderDao.search(searchCriteria);
-//        return convertToFolderList(foundUserFolders);
-//    }
-//
-//    /**
-//     * 
-//     * @param userId
-//     * @return only root folders owned by user
-//     */
-//    public List<FolderDTO> getFoldersByUserId(long userId) {
-//        Search searchCriteria = new Search(GPUserFolders.class);
-//
-//        searchCriteria.addSortAsc("position");
-//        searchCriteria.addFilterEqual("user.id", userId);
-//        searchCriteria.addFilterEqual("permissionMask", BasePermission.ADMINISTRATION.getMask());
-//        searchCriteria.addFilterNull("parent.id");
-//
-//        List<GPUserFolders> foundUserFolders = userProjectsDao.search(searchCriteria);
-//        return convertToUserFolderList(foundUserFolders);
-//    }
-//
-//    /**
-//     * 
-//     * @param request
-//     * @return count only root folders owned by user
-//     */
-//    public long getUserFoldersCount(long userId) {
-//        Search searchCriteria = new Search(GPUserFolders.class);
-//
-//        searchCriteria.addFilterEqual("user.id", userId);
-//        searchCriteria.addFilterEqual("permissionMask", BasePermission.ADMINISTRATION.getMask());
-//        searchCriteria.addFilterNull("parent.id");
-//
-//        return userProjectsDao.count(searchCriteria);
-//    }
-//
-//    // TODO Check
-//    /**
-//     * 
-//     * @param request
-//     * @return folders owned by user and shared with his
-//     */
-//    public List<FolderDTO> getAllUserFolders(RequestById request) {
-//        Search searchCriteria = new Search(GPUserFolders.class);
-//
-//        searchCriteria.setMaxResults(request.getNum());
-//        searchCriteria.setPage(request.getPage());
-////        searchCriteria.addSortAsc("folder.name");
-//        searchCriteria.addFilterEqual("user.id", request.getId());
-//        searchCriteria.addFilterNull("parent.id");
-//
-//        List<GPUserFolders> foundUserFolders = userProjectsDao.search(searchCriteria);
-//        return convertToUserFolderList(foundUserFolders);
-//    }
-//
-//    // TODO Check
-//    /**
-//     * 
-//     * @param userId
-//     * @return folders owned by user and shared with his
-//     */
-//    public List<FolderDTO> getAllUserFoldersByUserId(long userId) {
-//        Search searchCriteria = new Search(GPUserFolders.class);
-//
-////        searchCriteria.addSortAsc("folder.name");
-//        searchCriteria.addFilterEqual("user.id", userId);
-//        searchCriteria.addFilterNull("parent.id");
-//
-//        List<GPUserFolders> foundUserFolders = userProjectsDao.search(searchCriteria);
-//        return convertToUserFolderList(foundUserFolders);
-//    }
-//
-//    // TODO Check
-//    /**
-//     * 
-//     * @param userId
-//     * @return count all folders and sub-folders owned by user and shared with his
-//     */
-//    public int getAllUserFoldersCount(long userId) {
-//        Search searchCriteria = new Search(GPUserFolders.class);
-//
-//        searchCriteria.addFilterEqual("user.id", userId);
-////        searchCriteria.addFilterNull("parent.id");
-//
-//        return userProjectsDao.count(searchCriteria);
-//    }
-    //</editor-fold>
-    
+    // TODO ...
     private void updateNumberOfElements(GPFolder folder, int delta) throws ResourceNotFoundFault {
-        GPProject project = projectDao.find(folder.getProject().getId());
+        long projectId = folder.getProject().getId();
+        GPProject project = projectDao.find(projectId);
         if (project == null) {
-            throw new ResourceNotFoundFault("Project not found",folder.getProject().getId());
+            throw new ResourceNotFoundFault("Project not found", projectId);
         }
-        
+
         project.deltaToNumberOfElements(delta);
         projectDao.merge(project);
     }
-    
+
     // TODO assert
     private void checkFolder(GPFolder folder) throws IllegalParameterFault {
         if (folder == null) {
@@ -632,7 +439,7 @@ class FolderServiceImpl {
         try {
             this.checkFolder(folder);
         } catch (IllegalParameterFault ex) {
-            logger.error(ex.getMessage());
+            logger.error("\n--- " + ex.getMessage() + " ---");
         }
     }
 }
