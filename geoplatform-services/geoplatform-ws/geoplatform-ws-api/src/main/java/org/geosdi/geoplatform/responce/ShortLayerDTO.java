@@ -37,6 +37,8 @@
 //</editor-fold>
 package org.geosdi.geoplatform.responce;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -205,8 +207,18 @@ public class ShortLayerDTO extends AbstractElementDTO {
                 + ", srs=" + srs
                 + ", abstractText=" + abstractText
                 + ", layerType=" + layerType
-                + ", " + bbox                
+                + ", " + bbox
                 + ", cached=" + cached;
         return s;
+    }
+
+    public static List<ShortLayerDTO> convertToShortLayerDTOList(List<GPLayer> layers) {
+        List<ShortLayerDTO> layersDTO = new ArrayList<ShortLayerDTO>(layers.size());
+
+        for (GPLayer layer : layers) {
+            layersDTO.add(new ShortLayerDTO(layer));
+        }
+
+        return layersDTO;
     }
 }

@@ -135,7 +135,7 @@ class LayerServiceImpl {
         searchCriteria.addFilterEqual("layer.id", layerId);
 
         List<GPStyle> foundStyle = styleDao.search(searchCriteria);
-        return convertToStyleList(foundStyle);
+        return StyleDTO.convertToStyleDTOList(foundStyle);
     }
 
     public long insertLayer(GPLayer layer) throws IllegalParameterFault {
@@ -180,12 +180,12 @@ class LayerServiceImpl {
     }
 
     public boolean deleteLayer(long layerId)
-            throws ResourceNotFoundFault, IllegalParameterFault {
+            throws ResourceNotFoundFault {
         GPLayer layer = layerDao.find(layerId);
         if (layer == null) {
             throw new ResourceNotFoundFault("Layer not found", layerId);
         }
-        this.checkLayer(layer); // TODO assert
+        this.checkLayerLog(layer); // TODO assert
 
         // data on ancillary tables should be deleted by cascading
         return layerDao.remove(layer);
@@ -268,12 +268,12 @@ class LayerServiceImpl {
     }
 
     public boolean saveDeletedLayerAndTreeModifications(long layerId, GPWebServiceMapData descendantsMapData)
-            throws ResourceNotFoundFault, IllegalParameterFault {
+            throws ResourceNotFoundFault {
         GPLayer layer = layerDao.find(layerId);
         if (layer == null) {
             throw new ResourceNotFoundFault("Layer not found", layerId);
         }
-        this.checkLayer(layer); // TODO assert
+        this.checkLayerLog(layer); // TODO assert
 
         int oldPosition = layer.getPosition();
         boolean result = layerDao.remove(layer);
@@ -353,7 +353,6 @@ class LayerServiceImpl {
             throw new ResourceNotFoundFault("Layer with id " + idLayerMoved + " not found");
         }
         this.checkLayerLog(layerMoved); // TODO assert
-        System.out.println("@@@@1 " + layerMoved);
 
         if (idNewParent == 0L) {
             throw new ResourceNotFoundFault("UserFolder parent with id " + idNewParent + " not found");
@@ -406,7 +405,6 @@ class LayerServiceImpl {
         for (GPLayer layer : elements) {
             this.checkLayerLog(layer); // TODO assert
             layer.setPosition(layer.getPosition() + value);
-            System.out.println("New position assignet to: " + layer.getName() + " posiz: " + layer.getPosition());
         }
     }
 
@@ -452,7 +450,7 @@ class LayerServiceImpl {
         for (GPLayer layer : found) {
             this.checkLayerLog(layer); // TODO assert
         }
-        return convertToLayerList(found);
+        return ShortLayerDTO.convertToShortLayerDTOList(found);
     }
 
     public GPBBox getBBox(long layerId) throws ResourceNotFoundFault {
@@ -518,26 +516,6 @@ class LayerServiceImpl {
         layerToUpdate.setUrlServer(layer.getUrlServer());
     }
 
-    private List<StyleDTO> convertToStyleList(List<GPStyle> foundStyle) {
-        List<StyleDTO> stylesDTO = new ArrayList<StyleDTO>(foundStyle.size());
-
-        for (GPStyle style : foundStyle) {
-            stylesDTO.add(new StyleDTO(style));
-        }
-
-        return stylesDTO;
-    }
-
-    private List<ShortLayerDTO> convertToLayerList(List<GPLayer> layerList) {
-        List<ShortLayerDTO> layersDTO = new ArrayList<ShortLayerDTO>(layerList.size());
-
-        for (GPLayer layer : layerList) {
-            layersDTO.add(new ShortLayerDTO(layer));
-        }
-
-        return layersDTO;
-    }
-
     /**
      * @return UserFolder argument and his ancestor folders
      */
@@ -590,10 +568,13 @@ class LayerServiceImpl {
 
     // TODO assert
     private void checkLayer(GPLayer layer) throws IllegalParameterFault {
-        if (layer.getTitle() == null) { // TODO assert
+        if (layer == null) {
+            throw new IllegalParameterFault("Layer must be NOT NULL");
+        }
+        if (layer.getTitle() == null) {
             throw new IllegalParameterFault("GPLayer: \"title\" must be NOT NULL");
         }
-//        if (layer.getLayerType() == null) { // TODO assert
+//        if (layer.getLayerType() == null) {
 //            throw new IllegalParameterFault("GPLayer: \"layerType\" must be NOT NULL");
 //        }
     }
@@ -609,13 +590,16 @@ class LayerServiceImpl {
 
     // TODO assert
     private void checkFolder(GPFolder folder) throws IllegalParameterFault {
-        if (folder.getName() == null) { // TODO assert
+        if (folder == null) {
+            throw new IllegalParameterFault("Folder must be NOT NULL");
+        }
+        if (folder.getName() == null) {
             throw new IllegalParameterFault("Folder \"name\" must be NOT NULL");
         }
-        if (folder.getNumberOfDescendants() < 0) { // TODO assert
+        if (folder.getNumberOfDescendants() < 0) {
             throw new IllegalParameterFault("Folder \"numberOfDescendants\" must be greater or equal 0");
         }
-        if (folder.getProject() == null) { // TODO assert
+        if (folder.getProject() == null) {
             throw new IllegalParameterFault("Folder \"project\" must be NOT NULL");
         }
     }

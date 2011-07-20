@@ -42,7 +42,6 @@ import com.googlecode.genericdao.search.Search;
 import java.util.List;
 import org.geosdi.geoplatform.core.dao.GPProjectDAO;
 import org.geosdi.geoplatform.core.model.GPProject;
-
 import org.springframework.transaction.annotation.Transactional;
 
 /**

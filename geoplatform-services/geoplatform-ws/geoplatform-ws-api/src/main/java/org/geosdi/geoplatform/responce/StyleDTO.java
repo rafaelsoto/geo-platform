@@ -37,6 +37,8 @@
 //</editor-fold>
 package org.geosdi.geoplatform.responce;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -182,5 +184,15 @@ public class StyleDTO {
     public String toString() {
         return "StyleDTO [" + "id=" + id + ", name=" + name + ", title=" + title
                 + ", abstractText=" + abstractText + ", legendURL=" + legendURL + ']';
+    }
+
+    public static List<StyleDTO> convertToStyleDTOList(List<GPStyle> styles) {
+        List<StyleDTO> stylesDTO = new ArrayList<StyleDTO>(styles.size());
+
+        for (GPStyle style : styles) {
+            stylesDTO.add(new StyleDTO(style));
+        }
+
+        return stylesDTO;
     }
 }

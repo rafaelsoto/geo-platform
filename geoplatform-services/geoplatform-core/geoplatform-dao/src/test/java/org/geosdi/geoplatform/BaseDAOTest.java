@@ -123,13 +123,13 @@ public abstract class BaseDAOTest {
     protected final String usernameUserTest = "user_test";
     protected GPUser adminTest = null;
     protected GPUser userTest = null;
+    protected GPProject adminProject = null;
+    protected GPProject userProject = null;
     // ACL
     protected final String usernameSuperUserTest = "super_user_test_acl";
     protected final String roleAdmin = "ROLE_ADMIN";
     protected final String roleUser = "ROLE_USER";
     protected final String roleViewer = "ROLE_VIEWER"; // Can only zoom
-    protected GPProject adminProject = null;
-    protected GPProject userProject = null;
 
     //<editor-fold defaultstate="collapsed" desc="Remove all data">
     protected void removeAll() {
@@ -183,9 +183,9 @@ public abstract class BaseDAOTest {
 
     private void removeAllUserProjects() {
         List<GPUserProjects> userProjects = userProjectsDAO.findAll();
-        for (GPUserProjects userProject : userProjects) {
-            logger.trace("\n*** UserProjects to REMOVE:\n{}\n***", userProject);
-            boolean removed = userProjectsDAO.remove(userProject);
+        for (GPUserProjects up : userProjects) {
+            logger.trace("\n*** UserProject to REMOVE:\n{}\n***", up);
+            boolean removed = userProjectsDAO.remove(up);
             Assert.assertTrue("Old UserProjects NOT removed", removed);
         }
     }
@@ -286,9 +286,9 @@ public abstract class BaseDAOTest {
         //
         projectDAO.persist(adminProject, userProject);
         //
-        insertBindingUserProject(adminTest, adminProject, BasePermission.ADMINISTRATION.getMask());
-        insertBindingUserProject(userTest, adminProject, BasePermission.READ.getMask());
-        insertBindingUserProject(userTest, userProject, BasePermission.ADMINISTRATION.getMask());
+        this.insertBindingUserProject(adminTest, adminProject, BasePermission.ADMINISTRATION.getMask());
+        this.insertBindingUserProject(userTest, adminProject, BasePermission.READ.getMask());
+        this.insertBindingUserProject(userTest, userProject, BasePermission.ADMINISTRATION.getMask());
 
         // Project of admin -> root folders: "only folders, layers"
         GPFolder onlyFolders = this.createFolder("only folders", adminProject, null, 6);

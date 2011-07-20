@@ -37,11 +37,18 @@
 //</editor-fold>
 package org.geosdi.geoplatform.services;
 
+import com.googlecode.genericdao.search.Search;
+import java.util.List;
+import org.geosdi.geoplatform.core.dao.GPFolderDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.geosdi.geoplatform.core.dao.GPProjectDAO;
+import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPProject;
+import org.geosdi.geoplatform.exception.IllegalParameterFault;
+import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
+import org.geosdi.geoplatform.responce.FolderDTO;
 
 /**
  * @author Michele Santomauro
@@ -53,6 +60,7 @@ class ProjectServiceImpl {
     final private static Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
     // DAO
     private GPProjectDAO projectDao;
+    private GPFolderDAO folderDao;
 
     //<editor-fold defaultstate="collapsed" desc="Setter methods">
     /**
@@ -62,31 +70,74 @@ class ProjectServiceImpl {
     public void setProjectDao(GPProjectDAO projectDao) {
         this.projectDao = projectDao;
     }
+
+    /**
+     * @param folderDao 
+     *            the folderDao to set
+     */
+    public void setFolderDao(GPFolderDAO folderDao) {
+        this.folderDao = folderDao;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Project">
     // ==========================================================================
     // === Project
     // ==========================================================================
-    
     //</editor-fold>
+    public long insertProject(GPProject project) throws IllegalParameterFault {
+        logger.trace("\n\t@@@ insertProject @@@");
+        this.checkProject(project);
 
-    long insertProject(GPProject project) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        projectDao.persist(project);
+        return project.getId();
     }
 
-    long updateProject(GPProject project) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public long updateProject(GPProject project)
+            throws ResourceNotFoundFault, IllegalParameterFault {
+        logger.trace("\n\t@@@ updateProject @@@");
+        this.checkProject(project); // TODO assert
+
+        GPProject origProject = projectDao.find(project.getId());
+        if (origProject == null) {
+            throw new ResourceNotFoundFault("Project not found", project.getId());
+        }
+        this.checkProject(origProject); // TODO assert
+
+        // Update all properties (except the creationDate)
+        origProject.setName(project.getName());
+        origProject.setNumberOfElements(project.getNumberOfElements());
+        origProject.setShared(project.isShared());
+
+        projectDao.merge(origProject);
+
+        return origProject.getId();
     }
 
-    boolean deleteProject(long projectId) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public boolean deleteProject(long projectId) throws ResourceNotFoundFault {
+        logger.trace("\n\t@@@ deleteProject @@@");
+
+        GPProject project = projectDao.find(projectId);
+        if (project == null) {
+            throw new ResourceNotFoundFault("Project not found", projectId);
+        }
+        this.checkProjectLog(project); // TODO assert
+
+        return projectDao.removeById(projectId);
     }
 
-    public GPProject getUserProject(long userProjectId) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public GPProject getProjectDetail(long projectId) throws ResourceNotFoundFault {
+        logger.trace("\n\t@@@ getProjectDetail @@@");
+
+        GPProject project = projectDao.find(projectId);
+        if (project == null) {
+            throw new ResourceNotFoundFault("Project not found", projectId);
+        }
+        this.checkProjectLog(project); // TODO assert
+
+        return project;
     }
-    
+
     // TODO refactoring
 //    public boolean setProjectOwner(RequestByUserFolder request, boolean force)
 //            throws ResourceNotFoundFault {
@@ -182,21 +233,20 @@ class ProjectServiceImpl {
 //    }
 //
 //    // TODO Check
-//    /**
-//     * 
-//     * @param userId
-//     * @return folders owned by user and shared with his
-//     */
-//    public List<FolderDTO> getAllUserFoldersByUserId(long userId) {
-//        Search searchCriteria = new Search(GPUserFolders.class);
-//
-////        searchCriteria.addSortAsc("folder.name");
-//        searchCriteria.addFilterEqual("user.id", userId);
-//        searchCriteria.addFilterNull("parent.id");
-//
-//        List<GPUserFolders> foundUserFolders = userProjectsDao.search(searchCriteria);
-//        return convertToUserFolderList(foundUserFolders);
-//    }
+    /**
+     * 
+     * @param projectId
+     * @return root folders of a project
+     */
+    public List<FolderDTO> getRootFoldersByProjectId(long projectId) {
+        Search searchCriteria = new Search(GPFolder.class);
+
+        searchCriteria.addFilterEqual("project.id", projectId);
+        searchCriteria.addFilterNull("parent.id");
+
+        List<GPFolder> foundUserFolders = folderDao.search(searchCriteria);
+        return FolderDTO.convertToFolderDTOList(foundUserFolders);
+    }
 //
 //    // TODO Check
 //    /**
@@ -213,4 +263,25 @@ class ProjectServiceImpl {
 //        return userProjectsDao.count(searchCriteria);
 //    }
 
+    // TODO assert
+    private void checkProject(GPProject project) throws IllegalParameterFault {
+        if (project == null) {
+            throw new IllegalParameterFault("Project must be NOT NULL");
+        }
+        if (project.getName() == null) {
+            throw new IllegalParameterFault("Project \"name\" must be NOT NULL");
+        }
+        if (project.getNumberOfElements() < 0) {
+            throw new IllegalParameterFault("Project \"numberOfElements\" must be greater or equal 0");
+        }
+    }
+
+    // TODO assert
+    private void checkProjectLog(GPProject project) {
+        try {
+            this.checkProject(project);
+        } catch (IllegalParameterFault ex) {
+            logger.error(ex.getMessage());
+        }
+    }
 }

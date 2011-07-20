@@ -37,6 +37,8 @@
 //</editor-fold>
 package org.geosdi.geoplatform.responce;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -91,5 +93,16 @@ public class FolderDTO extends AbstractElementDTO {
     public String toString() {
         return "FolderDTO [" + super.toString()
                 + ", numberOfDescendants=" + numberOfDescendants + "]";
+    }
+    
+    public static List<FolderDTO> convertToFolderDTOList(List<GPFolder> folders) {
+        List<FolderDTO> foldersDTO = new ArrayList<FolderDTO>(folders.size());
+        
+        for (GPFolder folder : folders) {
+            FolderDTO folderDTO = new FolderDTO(folder);
+            foldersDTO.add(folderDTO);
+        }
+
+        return foldersDTO;
     }
 }

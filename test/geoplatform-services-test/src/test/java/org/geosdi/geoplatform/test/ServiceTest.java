@@ -109,8 +109,8 @@ public abstract class ServiceTest {
         idUserTest = this.createAndInsertUser(usernameTest);
         userTest = gpWSClient.getUserDetailByName(new SearchRequest(usernameTest));
         // Insert Project
-        idProjectTest = this.createAndInsertProject("project_test_ws", false, 0, new Date(System.currentTimeMillis()));
-        projectTest = gpWSClient.getProject(idProjectTest);
+        idProjectTest = this.createAndInsertProject("project_test_ws", false, 2, new Date(System.currentTimeMillis()));
+        projectTest = gpWSClient.getProjectDetail(idProjectTest);
         // Create root folders for the user
         idRootFolderA = this.createAndInsertFolder(nameRootFolderA, projectTest, 2, null);
         rootFolderA = gpWSClient.getFolderDetail(idRootFolderA);

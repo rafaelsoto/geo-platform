@@ -147,7 +147,7 @@ class UserServiceImpl {
      * @throws ResourceNotFoundFault
      */
     public boolean deleteUser(long userId)
-            throws ResourceNotFoundFault, IllegalParameterFault {
+            throws ResourceNotFoundFault {
         GPUser user = userDao.find(userId);
         if (user == null) {
             throw new ResourceNotFoundFault("User not found", userId);
