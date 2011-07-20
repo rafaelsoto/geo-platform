@@ -163,6 +163,14 @@ public class GPProject implements Serializable {
         this.creationDate = creationDate;
     }
 
+    /**
+     * @param delta
+     *          the delta to set
+     */
+    public void deltaToNumberOfElements(int delta) {
+        this.numberOfElements += delta;
+    }
+
     /*
      * (non-Javadoc)
      * @see java.lang.Object#toString()

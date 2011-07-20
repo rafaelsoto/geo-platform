@@ -150,7 +150,7 @@ public interface GeoPlatformService {
     @Put
     @HttpResource(location = "/folder")
     long insertFolder(@WebParam(name = "Folder") GPFolder folder)
-            throws IllegalParameterFault;
+            throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Post
     @HttpResource(location = "/folder")

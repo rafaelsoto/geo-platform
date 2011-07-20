@@ -159,6 +159,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
         this.projectServiceDelegate.setProjectDao(projectDao);
         this.userServiceDelegate.setProjectDao(projectDao);
         this.layerServiceDelegate.setProjectDao(projectDao);
+        this.folderServiceDelegate.setProjectDao(projectDao);
     }
 
     /**
@@ -334,7 +335,8 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     // === Folder
     // ==========================================================================
     @Override
-    public long insertFolder(GPFolder folder) throws IllegalParameterFault {
+    public long insertFolder(GPFolder folder)
+            throws ResourceNotFoundFault, IllegalParameterFault {
         return this.folderServiceDelegate.insertFolder(folder);
     }
 
