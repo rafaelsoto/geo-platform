@@ -161,6 +161,14 @@ class ProjectServiceImpl {
         return project;
     }
 
+    public int getNumberOfElementsProject(long projectId) throws ResourceNotFoundFault {
+        logger.trace("\n\t@@@ getNumberOfElementsProject @@@");
+
+        GPProject project = this.getProjectDetail(projectId);
+
+        return project.getNumberOfElements();
+    }
+
 //    
 //    /**
 //     * 
@@ -340,7 +348,7 @@ class ProjectServiceImpl {
 
         return projectDao.removeById(userProjectId);
     }
-    
+
     public GPUserProjects getUserProject(long userProjectId)
             throws ResourceNotFoundFault {
         GPUserProjects userProject = userProjectsDao.find(userProjectId);
@@ -348,7 +356,7 @@ class ProjectServiceImpl {
             throw new ResourceNotFoundFault("UserProject not found", userProjectId);
         }
         this.checkUserProjectLog(userProject); // TODO assert
-        
+
         return userProject;
     }
 
@@ -356,7 +364,7 @@ class ProjectServiceImpl {
         List<GPUserProjects> userProjectsList = userProjectsDao.findByUserId(userId);
 
         this.checkUserProjectListLog(userProjectsList); // TODO assert
-        
+
         return userProjectsList;
     }
 
@@ -364,7 +372,7 @@ class ProjectServiceImpl {
         List<GPUserProjects> userProjectsList = userProjectsDao.findByProjectId(projectId);
 
         this.checkUserProjectListLog(userProjectsList); // TODO assert
-        
+
         return userProjectsList;
     }
 
@@ -375,7 +383,7 @@ class ProjectServiceImpl {
             throw new ResourceNotFoundFault("UserProjects not found for with id:\"" + userId + "\" and project with id:\"" + projectId + "\"");
         }
         this.checkUserProjectLog(userProject); // TODO assert
-        
+
         return userProject;
     }
     //</editor-fold>
@@ -404,8 +412,8 @@ class ProjectServiceImpl {
         if (userProject.getUser() == null) {
             throw new IllegalParameterFault("User must be NOT NULL");
         }
-        if ((userProject.getPermissionMask() < BasePermission.READ.getMask()) || 
-                (userProject.getPermissionMask() > BasePermission.ADMINISTRATION.getMask())) {
+        if ((userProject.getPermissionMask() < BasePermission.READ.getMask())
+                || (userProject.getPermissionMask() > BasePermission.ADMINISTRATION.getMask())) {
             throw new IllegalParameterFault("PermissionMask NOT allowed");
         }
     }
@@ -427,7 +435,7 @@ class ProjectServiceImpl {
             logger.error("\n--- " + ex.getMessage() + " ---");
         }
     }
-    
+
     // TODO assert
     private void checkUserProjectListLog(List<GPUserProjects> userProjects) {
         for (GPUserProjects up : userProjects) {

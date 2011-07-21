@@ -162,7 +162,7 @@ public interface GeoPlatformService {
     @HttpResource(location = "/projects/{userProjectId}")
     boolean deleteUserProject(@WebParam(name = "userProjectId") long userProjectId)
             throws ResourceNotFoundFault;
-    
+
     @Get
     @HttpResource(location = "/user-projects/{userProjectId}")
     @WebResult(name = "UserProject")
@@ -211,6 +211,12 @@ public interface GeoPlatformService {
     @HttpResource(location = "/projects/{projectId}")
     @WebResult(name = "Project")
     GPProject getProjectDetail(@WebParam(name = "projectId") long projectId)
+            throws ResourceNotFoundFault;
+
+    @Get
+    @HttpResource(location = "/projects/{projectId}")
+    @WebResult(name = "Project")
+    int getNumberOfElementsProject(@WebParam(name = "projectId") long projectId)
             throws ResourceNotFoundFault;
 
     @Post
@@ -374,7 +380,6 @@ public interface GeoPlatformService {
     @Put
     @HttpResource(location = "/layers/{descendantsMap}")
     ArrayList<Long> saveAddedLayersAndTreeModifications(
-            @WebParam(name = "username") String username,
             @WebParam(name = "layers") List<GPLayer> layers,
             @WebParam(name = "descendantsMapData") GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault;

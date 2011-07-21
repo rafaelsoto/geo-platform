@@ -336,23 +336,22 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     // ==========================================================================
     // === UserProjects
     // ==========================================================================
-    
     @Override
     public long insertUserProject(GPUserProjects userProject) throws IllegalParameterFault {
         return projectServiceDelegate.insertUserProject(userProject);
     }
-    
+
     @Override
     public long updateUserProject(GPUserProjects userProject)
             throws ResourceNotFoundFault, IllegalParameterFault {
         return projectServiceDelegate.updateUserProject(userProject);
     }
-    
+
     @Override
     public boolean deleteUserProject(long userProjectId) throws ResourceNotFoundFault {
         return projectServiceDelegate.deleteUserProject(userProjectId);
     }
-    
+
     @Override
     public GPUserProjects getUserProject(long userProjectId) throws ResourceNotFoundFault {
         return projectServiceDelegate.getUserProject(userProjectId);
@@ -400,6 +399,12 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     public GPProject getProjectDetail(long projectId)
             throws ResourceNotFoundFault {
         return projectServiceDelegate.getProjectDetail(projectId);
+    }
+
+    @Override
+    public int getNumberOfElementsProject(long projectId)
+            throws ResourceNotFoundFault {
+        return projectServiceDelegate.getNumberOfElementsProject(projectId);
     }
 
     @Override
@@ -547,9 +552,9 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public ArrayList<Long> saveAddedLayersAndTreeModifications(String username, List<GPLayer> layers, GPWebServiceMapData descendantsMapData)
+    public ArrayList<Long> saveAddedLayersAndTreeModifications(List<GPLayer> layers, GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        return layerServiceDelegate.saveAddedLayersAndTreeModifications(username, layers, descendantsMapData);
+        return layerServiceDelegate.saveAddedLayersAndTreeModifications(layers, descendantsMapData);
     }
 
     @Override

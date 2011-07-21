@@ -118,6 +118,9 @@ public class WSLayerTest extends ServiceTest {
         rootFolderB.setPosition(3);
         rootFolderB.setNumberOfDescendants(2);
         gpWSClient.updateFolder(rootFolderB);
+
+        super.projectTest.setNumberOfElements(projectTest.getNumberOfElements() + 4);
+        gpWSClient.updateProject(projectTest);
     }
 
     @Test
@@ -247,6 +250,10 @@ public class WSLayerTest extends ServiceTest {
         GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
         descendantsMapData.setDescendantsMap(map);
         try {
+            int totalElementsOfProject = gpWSClient.getNumberOfElementsProject(idProjectTest);
+            Assert.assertEquals("Initial totalElementsOfProject",
+                    6, totalElementsOfProject);  // SetUp() added 2 folders + 4 layers
+
             String titleLayerToTest = "layerToTest";
             layerToTest = new GPRasterLayer();
             super.createLayer(layerToTest, rootFolderB, titleLayerToTest, "name_" + titleLayerToTest,
@@ -264,12 +271,18 @@ public class WSLayerTest extends ServiceTest {
             long idLayerToTest = gpWSClient.saveAddedLayerAndTreeModifications(
                     layerToTest, descendantsMapData);
 
+            Assert.assertEquals("totalElementsOfProject after added",
+                    totalElementsOfProject + 1, gpWSClient.getNumberOfElementsProject(idProjectTest));
+
             this.checkState(new int[]{7, 6, 5, 4, 2, 1}, new int[]{2, 3}, "before removing");
 
             // Removing layer from user's root
             map.clear();
             map.put(idRootFolderB, 2);
             gpWSClient.saveDeletedLayerAndTreeModifications(idLayerToTest, descendantsMapData);
+
+            Assert.assertEquals("totalElementsOfProject after deleted",
+                    totalElementsOfProject, gpWSClient.getNumberOfElementsProject(idProjectTest));
 
             this.checkInitialState("after removing");
 
@@ -349,7 +362,6 @@ public class WSLayerTest extends ServiceTest {
         GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
         descendantsMapData.setDescendantsMap(map);
         map.put(idRootFolderA, 3);
-
         try {
             GPRasterLayer raster = new GPRasterLayer();
             super.createLayer(raster, rootFolderA, null, "", "",
@@ -357,8 +369,26 @@ public class WSLayerTest extends ServiceTest {
             gpWSClient.saveAddedLayerAndTreeModifications(raster, descendantsMapData);
             Assert.fail("Add layer must fail because title value is null");
         } catch (Exception e) {
-            checkInitialState("transaction test");
+            this.checkInitialState("transaction test");
         }
+    }
+    
+    @Test
+    public void testCorrectnessOnAddLayers() throws ResourceNotFoundFault {
+        logger.trace("\n\t@@@ testCorrectnessOnAddLayers @@@");
+        Map<Long, Integer> map = new HashMap<Long, Integer>();
+        GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
+        descendantsMapData.setDescendantsMap(map);
+
+        ArrayList<GPLayer> arrayList = new ArrayList<GPLayer>();
+        try {
+            List<Long> longList = gpWSClient.saveAddedLayersAndTreeModifications(
+                    arrayList, descendantsMapData);
+            Assert.fail("Test must fail because list of layers is empty");
+        } catch (IllegalParameterFault ex) {
+            this.checkInitialState("correctess on AddLayers");
+        }
+
     }
 
     @Test
@@ -420,7 +450,7 @@ public class WSLayerTest extends ServiceTest {
         descendantsMapData.setDescendantsMap(map);
 
         return gpWSClient.saveAddedLayersAndTreeModifications(
-                super.usernameTest, arrayList, descendantsMapData);
+                arrayList, descendantsMapData);
     }
 
     private void checkInitialState(String info)

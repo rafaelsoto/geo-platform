@@ -168,7 +168,9 @@ class FolderServiceImpl {
         layerDao.updatePositionsLowerBound(newPosition, increment);
 
         folderDao.persist(folder);
+        
         folderDao.updateAncestorsDescendants(descendantsMapData.getDescendantsMap());
+        this.updateNumberOfElements(folder, increment);
 
         return folder.getId();
     }
@@ -182,15 +184,16 @@ class FolderServiceImpl {
         this.checkFolderLog(folder); // TODO assert
 
         int oldPosition = folder.getPosition();
-        int decrement = folder.getNumberOfDescendants() + 1;
+        int decrement = -(folder.getNumberOfDescendants() + 1);
 
         boolean result = folderDao.remove(folder);
 
         // Shift positions (shift must be done only after removing folder)
-        folderDao.updatePositionsLowerBound(oldPosition, -decrement);
-        layerDao.updatePositionsLowerBound(oldPosition, -decrement);
+        folderDao.updatePositionsLowerBound(oldPosition, decrement);
+        layerDao.updatePositionsLowerBound(oldPosition, decrement);
 
         folderDao.updateAncestorsDescendants(descendantsMapData.getDescendantsMap());
+        this.updateNumberOfElements(folder, decrement);
 
         return result;
     }
@@ -404,8 +407,8 @@ class FolderServiceImpl {
     }
     //</editor-fold>
 
-    // TODO ...
-    private void updateNumberOfElements(GPFolder folder, int delta) throws ResourceNotFoundFault {
+    private void updateNumberOfElements(GPFolder folder, int delta)
+            throws ResourceNotFoundFault {
         long projectId = folder.getProject().getId();
         GPProject project = projectDao.find(projectId);
         if (project == null) {

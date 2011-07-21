@@ -166,7 +166,7 @@ public class WSFolderTest extends ServiceTest {
     public void testDeleteFolder() {
         try {
             // Assert number of folders of UserTest before delete
-            int totalFolders = gpWSClient.getProjectDetail(idProjectTest).getNumberOfElements();
+            int totalFolders = gpWSClient.getNumberOfElementsProject(idProjectTest);
             Assert.assertEquals("Number of all folders of UserTest before deleted",
                     7, totalFolders); // SetUp() added 2+5 folders
             //
@@ -188,7 +188,7 @@ public class WSFolderTest extends ServiceTest {
                     1, folderList.size());
             // TODO FIX manage of folder/layer wrt ancestors folder and project, and uncomment
 //            Assert.assertEquals("Number of all folders of UserTest after deleted",
-//                    totalFolders - 4, gpWSClient.getProjectDetail(idProjectTest).getNumberOfElements());
+//                    totalFolders - 4, gpWSClient.getNumberOfElementsProject(idProjectTest);
 
             // Assert on the structure of project's folders
             // Assert on "rootFolderA"
@@ -234,20 +234,27 @@ public class WSFolderTest extends ServiceTest {
         GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
         descendantsMapData.setDescendantsMap(map); // Set an empty map
         try {
-            List<FolderDTO> childrenFolders = gpWSClient.getChildrenFolders(idRootFolderB);
-            Assert.assertEquals("Before adding new folder - Number of subfolders of root folder B", 3, childrenFolders.size());
+            int totalElementsOfProject = gpWSClient.getNumberOfElementsProject(idProjectTest);
+            Assert.assertEquals("Initial totalElementsOfProject",
+                    7, totalElementsOfProject);  // SetUp() added 2+5 folders
 
             String nameFolderToTest = "folderToTest";
             folderToTest = super.createFolder(nameFolderToTest, projectTest, 1, null);
 
-            // Adding new folder to user's root            
+            // Adding new folder to project's root            
             long idFolderToTest = gpWSClient.saveAddedFolderAndTreeModifications(folderToTest, descendantsMapData);
+
+            Assert.assertEquals("totalElementsOfProject after added",
+                    totalElementsOfProject + 1, gpWSClient.getNumberOfElementsProject(idProjectTest));
 
             this.checkState(new int[]{8, 7, 6, 5, 4, 3, 2}, new int[]{2, 3}, "before removing");
 
             // Removing folder from user's root
             boolean checkDelete = gpWSClient.saveDeletedFolderAndTreeModifications(idFolderToTest, descendantsMapData);
             Assert.assertTrue("Delete NOT done for \"" + nameFolderToTest + "\"", checkDelete);
+
+            Assert.assertEquals("totalElementsOfProject after deleted",
+                    totalElementsOfProject, gpWSClient.getNumberOfElementsProject(idProjectTest));
 
             this.checkInitialState("after removing");
 
@@ -265,6 +272,10 @@ public class WSFolderTest extends ServiceTest {
         GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
         descendantsMapData.setDescendantsMap(map);
         try {
+            int totalElementsOfProject = gpWSClient.getNumberOfElementsProject(idProjectTest);
+            Assert.assertEquals("Initial totalElementsOfProject",
+                    7, totalElementsOfProject);  // SetUp() added 2+5 folders
+
             List<FolderDTO> childrenFolders = gpWSClient.getChildrenFolders(idRootFolderB);
             Assert.assertEquals("Before adding new folder - Number of subfolders of root folder B ", 3, childrenFolders.size());
 
@@ -275,8 +286,8 @@ public class WSFolderTest extends ServiceTest {
             map.put(idRootFolderB, 4);
             long idFolderToTest = gpWSClient.saveAddedFolderAndTreeModifications(folderToTest, descendantsMapData);
 
-            childrenFolders = gpWSClient.getChildrenFolders(idRootFolderB);
-            Assert.assertEquals("After adding new folder - Number of subfolders of root folder B ", 4, childrenFolders.size());
+            Assert.assertEquals("totalElementsOfProject after added",
+                    totalElementsOfProject + 1, gpWSClient.getNumberOfElementsProject(idProjectTest));
 
             this.checkState(new int[]{8, 7, 6, 5, 4, 2, 1}, new int[]{2, 4}, "before removing");
 
@@ -286,8 +297,8 @@ public class WSFolderTest extends ServiceTest {
             boolean checkDelete = gpWSClient.saveDeletedFolderAndTreeModifications(idFolderToTest, descendantsMapData);
             Assert.assertTrue("Delete NOT done for \"" + nameFolderToTest + "\"", checkDelete);
 
-            childrenFolders = gpWSClient.getChildrenFolders(idRootFolderB);
-            Assert.assertEquals("After removing new folder - Number of subfolders of root folder B ", 3, childrenFolders.size());
+            Assert.assertEquals("totalElementsOfProject after deleted",
+                    totalElementsOfProject, gpWSClient.getNumberOfElementsProject(idProjectTest));
 
             this.checkInitialState("after removing");
 

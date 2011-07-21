@@ -220,14 +220,17 @@ class LayerServiceImpl {
         layerDao.persist(layer);
 
         folderDao.updateAncestorsDescendants(descendantsMapData.getDescendantsMap());
+        this.updateNumberOfElements(layer, increment);
+
         return layer.getId();
     }
 
-    public ArrayList<Long> saveAddedLayersAndTreeModifications(String username, List<GPLayer> layers, GPWebServiceMapData descendantsMapData)
+    public ArrayList<Long> saveAddedLayersAndTreeModifications(List<GPLayer> layers,
+            GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        GPUser owner = userDao.findByUsername(username);
-        if (owner == null) {
-            throw new ResourceNotFoundFault("Owner with username \"" + username + "\" not found");
+        logger.trace("\n\t@@@ saveAddedLayersAndTreeModifications @@@");
+        if (layers == null) {
+            throw new IllegalParameterFault("List of layers is NULL");
         }
 
         GPLayer[] layersArray = layers.toArray(new GPLayer[layers.size()]);
@@ -262,10 +265,13 @@ class LayerServiceImpl {
         }
 
         folderDao.updateAncestorsDescendants(descendantsMapData.getDescendantsMap());
+        this.updateNumberOfElements(layers.get(0), increment);
+
         return arrayList;
     }
 
-    public boolean saveDeletedLayerAndTreeModifications(long layerId, GPWebServiceMapData descendantsMapData)
+    public boolean saveDeletedLayerAndTreeModifications(long layerId,
+            GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault {
         GPLayer layer = layerDao.find(layerId);
         if (layer == null) {
@@ -276,12 +282,13 @@ class LayerServiceImpl {
         int oldPosition = layer.getPosition();
         boolean result = layerDao.remove(layer);
 
-        int decrement = 1;
+        int decrement = -1;
         // Shift positions
-        layerDao.updatePositionsLowerBound(oldPosition, -decrement);
-        folderDao.updatePositionsLowerBound(oldPosition, -decrement);
+        layerDao.updatePositionsLowerBound(oldPosition, decrement);
+        folderDao.updatePositionsLowerBound(oldPosition, decrement);
 
         folderDao.updateAncestorsDescendants(descendantsMapData.getDescendantsMap());
+        this.updateNumberOfElements(layer, decrement);
 
         return result;
     }
@@ -496,7 +503,7 @@ class LayerServiceImpl {
 
     public ArrayList<String> getLayersDataSourceByProjectId(long projectId)
             throws ResourceNotFoundFault {
-         GPProject project = projectDao.find(projectId);
+        GPProject project = projectDao.find(projectId);
         if (project == null) {
             throw new ResourceNotFoundFault("Project not found", projectId);
         }
@@ -561,8 +568,8 @@ class LayerServiceImpl {
         return true;
     }
 
-    // TODO ...
-    private void updateNumberOfElements(GPLayer layer, int delta) throws ResourceNotFoundFault {
+    private void updateNumberOfElements(GPLayer layer, int delta)
+            throws ResourceNotFoundFault {
         long projectId = layer.getProject().getId();
         GPProject project = projectDao.find(projectId);
         if (project == null) {
