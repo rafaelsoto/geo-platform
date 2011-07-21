@@ -111,17 +111,7 @@ public class LayerService implements ILayerService {
     // TODO FIX
     @Override
     public long saveFolderForUser(String folderName, int position,
-            int numberOfDescendants, boolean isChecked) throws GeoPlatformException {
-        GPUser user = null;
-        try {
-            user = geoPlatformServiceClient.getUserDetailByName(new SearchRequest(
-                    "user_test_0"));
-        } catch (ResourceNotFoundFault ex) {
-            logger.error("LayerService",
-                    "Unable to find user with username : user_test_0");
-            throw new GeoPlatformException(ex);
-        }
-
+            int numberOfDescendants, boolean isChecked) throws GeoPlatformException {        
         GPFolder folder = new GPFolder();
         folder.setName(folderName);
         folder.setPosition(position);
@@ -287,6 +277,10 @@ public class LayerService implements ILayerService {
             result = this.geoPlatformServiceClient.saveDragAndDropLayerAndTreeModifications(
                     memento.getIdBaseElement(), memento.getIdNewParent(),
                     memento.getNewZIndex(), map);
+        } catch (IllegalParameterFault ex) {
+            this.logger.error(
+                    "Failed to save layer drag&drop on LayerService: " + ex);
+            throw new GeoPlatformException(ex);            
         } catch (ResourceNotFoundFault ex) {
             this.logger.error(
                     "Failed to save layer drag&drop on LayerService: " + ex);

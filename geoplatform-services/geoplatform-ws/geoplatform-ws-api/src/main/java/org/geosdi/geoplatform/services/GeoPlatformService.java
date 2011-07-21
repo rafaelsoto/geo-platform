@@ -331,17 +331,17 @@ public interface GeoPlatformService {
     // ==========================================================================
     @Put
     @HttpResource(location = "/layer")
-    long insertLayer(@WebParam(name = "Layer") GPLayer layer)
+    long insertLayer(@WebParam(name = "layer") GPLayer layer)
             throws IllegalParameterFault;
 
     @Post
     @HttpResource(location = "/layer")
-    long updateRasterLayer(@WebParam(name = "Layer") GPRasterLayer layer)
+    long updateRasterLayer(@WebParam(name = "layer") GPRasterLayer layer)
             throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Post
     @HttpResource(location = "/layer")
-    long updateVectorLayer(@WebParam(name = "Layer") GPVectorLayer layer)
+    long updateVectorLayer(@WebParam(name = "layer") GPVectorLayer layer)
             throws ResourceNotFoundFault, IllegalParameterFault;
 
     @Delete
@@ -352,7 +352,6 @@ public interface GeoPlatformService {
     @Put
     @HttpResource(location = "/layer/{descendantsMap}")
     long saveAddedLayerAndTreeModifications(
-            @WebParam(name = "username") String username,
             @WebParam(name = "layer") GPLayer layer,
             @WebParam(name = "descendantsMapData") GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault;
@@ -394,54 +393,56 @@ public interface GeoPlatformService {
             @WebParam(name = "idNewParent") long idNewParent,
             @WebParam(name = "newPosition") int newPosition,
             @WebParam(name = "descendantsMapData") GPWebServiceMapData descendantsMapData)
-            throws ResourceNotFoundFault;
+            throws ResourceNotFoundFault, IllegalParameterFault;
 
     /**
      * @return a raster layer.
      */
     @Get
     @WebResult(name = "RasterLayer")
-    GPRasterLayer getRasterLayer(@WebParam(name = "GPRasterLayer") long layerId) throws ResourceNotFoundFault;
+    GPRasterLayer getRasterLayer(@WebParam(name = "layerId") long layerId)
+            throws ResourceNotFoundFault;
 
     /**
      * @return a vector layer.
      */
     @Get
     @WebResult(name = "VectorLayer")
-    GPVectorLayer getVectorLayer(@WebParam(name = "GPVectorLayer") long layerId) throws ResourceNotFoundFault;
+    GPVectorLayer getVectorLayer(@WebParam(name = "layerId") long layerId)
+            throws ResourceNotFoundFault;
 
     @Get
     @HttpResource(location = "/layers")
     @WebResult(name = "Layer")
-    List<ShortLayerDTO> getLayers();
+    List<ShortLayerDTO> getLayers(@WebParam(name = "projectId") long projectId);
 
     /**
      * @return Styles of a layer.
      */
     @Get
     @WebResult(name = "LayerStyles")
-    List<StyleDTO> getLayerStyles(@WebParam(name = "LayerId") long layerId);
+    List<StyleDTO> getLayerStyles(@WebParam(name = "layerId") long layerId);
 
     /**
      * @return a short layer.
      */
     @Get
     @WebResult(name = "ShortLayerDTO")
-    ShortLayerDTO getShortLayer(@WebParam(name = "GPLayerId") long layerId) throws ResourceNotFoundFault;
+    ShortLayerDTO getShortLayer(@WebParam(name = "layerId") long layerId) throws ResourceNotFoundFault;
 
     /**
      * @return BBox of a layer.
      */
     @Get
     @WebResult(name = "BBox")
-    GPBBox getBBox(@WebParam(name = "LayerId") long layerId) throws ResourceNotFoundFault;
+    GPBBox getBBox(@WebParam(name = "layerId") long layerId) throws ResourceNotFoundFault;
 
     /**
      * @return LayerInfo of a raster layer.
      */
     @Get
     @WebResult(name = "LayerInfo")
-    GPLayerInfo getLayerInfo(@WebParam(name = "LayerId") long layerId) throws ResourceNotFoundFault;
+    GPLayerInfo getLayerInfo(@WebParam(name = "layerId") long layerId) throws ResourceNotFoundFault;
 
 //    /**
 //     * @return Geometry of a vector layer.
@@ -454,15 +455,15 @@ public interface GeoPlatformService {
      */
     @Get
     @WebResult(name = "LayerType")
-    GPLayerType getLayerType(@WebParam(name = "LayerId") long layerId) throws ResourceNotFoundFault;
+    GPLayerType getLayerType(@WebParam(name = "layerId") long layerId) throws ResourceNotFoundFault;
 
     /**
      * @return layer data source of given owner.
      */
     @Get
     @WebResult(name = "LayerDataSources")
-    ArrayList<String> getLayersDataSourceByOwner(
-            @WebParam(name = "userName") String userName)
+    ArrayList<String> getLayersDataSourceByProjectId(
+            @WebParam(name = "projectId") long projectId)
             throws ResourceNotFoundFault;
     //</editor-fold>
 

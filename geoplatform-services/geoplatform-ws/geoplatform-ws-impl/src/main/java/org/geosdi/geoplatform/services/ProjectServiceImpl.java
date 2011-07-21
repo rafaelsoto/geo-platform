@@ -160,29 +160,6 @@ class ProjectServiceImpl {
         return project;
     }
 
-    // TODO refactoring
-//    public boolean setProjectOwner(RequestByUserFolder request, boolean force)
-//            throws ResourceNotFoundFault {
-//        GPFolder folder = folderDao.find(request.getFolderId());
-//        if (folder == null) {
-//            throw new ResourceNotFoundFault("Folder not found",
-//                    request.getFolderId());
-//        }
-//
-//        GPUser user = userDao.find(request.getUserId());
-//        if (user == null) {
-//            throw new ResourceNotFoundFault("User not found",
-//                    request.getUserId());
-//        }
-//
-//        // TODO: implement the logic described in this method's javadoc
-//
-//        folder.setShared(false);
-////        folder.setOwner(user);
-//        folderDao.merge(folder);
-//
-//        return true;
-//    }
 //    
 //    /**
 //     * 

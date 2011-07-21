@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 import org.geosdi.geoplatform.core.dao.GPFolderDAO;
 import org.geosdi.geoplatform.core.dao.GPLayerDAO;
 import org.geosdi.geoplatform.core.dao.GPProjectDAO;
-import org.geosdi.geoplatform.core.dao.GPUserDAO;
-import org.geosdi.geoplatform.core.dao.GPUserProjectsDAO;
 import org.geosdi.geoplatform.core.model.GPFolder;
 import org.geosdi.geoplatform.core.model.GPLayer;
 import org.geosdi.geoplatform.core.model.GPProject;
@@ -127,7 +125,7 @@ class FolderServiceImpl {
         origFolder.setPosition(folder.getPosition());
         origFolder.setNumberOfDescendants(folder.getNumberOfDescendants());
         origFolder.setChecked(folder.isChecked());
-        origFolder.setParent(folder.getParent());
+        origFolder.setParent(folder.getParent()); // TODO ? DEL ?
 
         folderDao.merge(origFolder);
 

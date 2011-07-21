@@ -69,7 +69,7 @@ public interface GPLayerDAO {
 
     public GPLayer findByLayerName(String layerName);
 
-    public ArrayList<String> findDistinctDataSourceByUserId(long userId);
+    public ArrayList<String> findDistinctDataSourceByProjectId(long projectId);
 
     public boolean updatePositionsRangeInOppositeWay(int beginPositionFirstRange, int endPositionFirstRange,
             int beginPositionSecondRange, int endPositionSecondRange,

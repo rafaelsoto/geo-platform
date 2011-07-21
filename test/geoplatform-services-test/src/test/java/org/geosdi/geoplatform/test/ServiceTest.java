@@ -209,10 +209,10 @@ public abstract class ServiceTest {
     }
 
     protected long createAndInsertRasterLayer(GPFolder folder, String title, String name,
-            String abstractText, int position, boolean shared, String srs, String urlServer)
+            String abstractText, int position, String srs, String urlServer)
             throws IllegalParameterFault {
         GPRasterLayer rasterLayer = new GPRasterLayer();
-        this.createLayer(rasterLayer, folder, title, name, abstractText, position, shared, srs, urlServer);
+        this.createLayer(rasterLayer, folder, title, name, abstractText, position, srs, urlServer);
 
         GPLayerInfo layerInfo = new GPLayerInfo();
         layerInfo.setKeywords(layerInfoKeywords);
@@ -224,28 +224,28 @@ public abstract class ServiceTest {
     }
 
     protected long createAndInsertVectorLayer(GPFolder folder, String title, String name,
-            String abstractText, int position, boolean shared, String srs, String urlServer)
+            String abstractText, int position, String srs, String urlServer)
             throws IllegalParameterFault {
         GPVectorLayer vectorLayer = new GPVectorLayer();
-        this.createLayer(vectorLayer, folder, title, name, abstractText, position, shared, srs, urlServer);
+        this.createLayer(vectorLayer, folder, title, name, abstractText, position, srs, urlServer);
 
         vectorLayer.setLayerType(GPLayerType.POLYGON);
         return gpWSClient.insertLayer(vectorLayer);
     }
 
-    protected void createLayer(GPLayer gpLayer, GPFolder folder, String title, String name,
-            String abstractText, int position, boolean shared, String srs, String urlServer) {
-        gpLayer.setFolder(folder);
+    protected void createLayer(GPLayer layer, GPFolder folder, String title, String name,
+            String abstractText, int position, String srs, String urlServer) {
+        layer.setFolder(folder);
+        layer.setProject(folder.getProject());
 
-        gpLayer.setTitle(title);
-        gpLayer.setName(name);
-        gpLayer.setAbstractText(abstractText);
-        gpLayer.setPosition(position);
-        gpLayer.setShared(shared);
-        gpLayer.setSrs(srs);
-        gpLayer.setUrlServer(urlServer);
+        layer.setTitle(title);
+        layer.setName(name);
+        layer.setAbstractText(abstractText);
+        layer.setPosition(position);
+        layer.setSrs(srs);
+        layer.setUrlServer(urlServer);
 
         GPBBox bBox = new GPBBox(10, 10, 20, 20);
-        gpLayer.setBbox(bBox);
+        layer.setBbox(bBox);
     }
 }

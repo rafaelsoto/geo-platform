@@ -192,13 +192,10 @@ class LayerServiceImpl {
         return layerDao.remove(layer);
     }
 
-    public long saveAddedLayerAndTreeModifications(String username, GPLayer layer, GPWebServiceMapData descendantsMapData)
+    public long saveAddedLayerAndTreeModifications(GPLayer layer,
+            GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        GPUser owner = userDao.findByUsername(username);
-        if (owner == null) {
-            throw new ResourceNotFoundFault("Owner with username \"" + username + "\" not found");
-        }
-
+        logger.trace("\n\t@@@ saveAddedLayerAndTreeModifications @@@");
         this.checkLayer(layer); // TODO assert
 
         GPFolder parent = layer.getFolder();
@@ -348,15 +345,15 @@ class LayerServiceImpl {
 
     public boolean saveDragAndDropLayerModifications(long idLayerMoved,
             long idNewParent, int newPosition, GPWebServiceMapData descendantsMapData)
-            throws ResourceNotFoundFault {
+            throws ResourceNotFoundFault, IllegalParameterFault {
         GPLayer layerMoved = layerDao.find(idLayerMoved);
         if (layerMoved == null) {
             throw new ResourceNotFoundFault("Layer with id " + idLayerMoved + " not found");
         }
         this.checkLayerLog(layerMoved); // TODO assert
 
-        if (idNewParent == 0L) {
-            throw new ResourceNotFoundFault("UserFolder parent with id " + idNewParent + " not found");
+        if (idNewParent == 0) {
+            throw new IllegalParameterFault("New folder parent NOT declared");
         }
 
         GPFolder folderParent = folderDao.find(idNewParent);
@@ -446,12 +443,17 @@ class LayerServiceImpl {
         return new ShortLayerDTO(layer);
     }
 
-    public List<ShortLayerDTO> getLayers() {
-        List<GPLayer> found = layerDao.findAll();
-        for (GPLayer layer : found) {
-            this.checkLayerLog(layer); // TODO assert
-        }
-        return ShortLayerDTO.convertToShortLayerDTOList(found);
+    public List<ShortLayerDTO> getLayers(long projectId) {
+        Search searchCriteria = new Search(GPLayer.class);
+
+        searchCriteria.addSortAsc("title");
+        searchCriteria.addFilterEqual("project.id", projectId);
+
+        List<GPLayer> foundLayer = layerDao.search(searchCriteria);
+
+        this.checkLayerListLog(foundLayer); // TODO assert
+
+        return ShortLayerDTO.convertToShortLayerDTOList(foundLayer);
     }
 
     public GPBBox getBBox(long layerId) throws ResourceNotFoundFault {
@@ -492,13 +494,14 @@ class LayerServiceImpl {
         return layer.getLayerType();
     }
 
-    public ArrayList<String> getLayersDataSourceByOwner(String userName) throws ResourceNotFoundFault {
-        GPUser user = userDao.findByUsername(userName);
-        if (user == null) {
-            throw new ResourceNotFoundFault("User with username \"" + userName + "\" not found");
+    public ArrayList<String> getLayersDataSourceByProjectId(long projectId)
+            throws ResourceNotFoundFault {
+         GPProject project = projectDao.find(projectId);
+        if (project == null) {
+            throw new ResourceNotFoundFault("Project not found", projectId);
         }
 
-        return layerDao.findDistinctDataSourceByUserId(user.getId());
+        return layerDao.findDistinctDataSourceByProjectId(projectId);
     }
 
     /**
@@ -581,6 +584,16 @@ class LayerServiceImpl {
 //        if (layer.getLayerType() == null) {
 //            throw new IllegalParameterFault("GPLayer: \"layerType\" must be NOT NULL");
 //        }
+        if (layer.getFolder() == null) {
+            throw new IllegalParameterFault("Layer must have a folder");
+        }
+    }
+
+    // TODO assert
+    private void checkLayerListLog(List<GPLayer> layers) {
+        for (GPLayer layer : layers) {
+            this.checkLayerLog(layer);
+        }
     }
 
     // TODO assert

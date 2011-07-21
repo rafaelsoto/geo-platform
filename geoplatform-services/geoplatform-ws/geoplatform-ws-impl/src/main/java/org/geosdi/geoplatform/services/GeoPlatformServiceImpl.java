@@ -147,7 +147,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     @Autowired
     public void setUserProjectsDao(GPUserProjectsDAO userProjectsDao) {
         this.userProjectsDao = userProjectsDao;
-        this.userServiceDelegate.setUserProjectsDao(userProjectsDao);   
+        this.userServiceDelegate.setUserProjectsDao(userProjectsDao);
         this.projectServiceDelegate.setUserProjectsDao(userProjectsDao);
     }
 
@@ -157,7 +157,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
      */
     @Autowired
     public void setProjectDao(GPProjectDAO projectDao) {
-        this.projectDao = projectDao;        
+        this.projectDao = projectDao;
         this.userServiceDelegate.setProjectDao(projectDao);
         this.projectServiceDelegate.setProjectDao(projectDao);
         this.folderServiceDelegate.setProjectDao(projectDao);
@@ -524,9 +524,9 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public long saveAddedLayerAndTreeModifications(String username, GPLayer layer, GPWebServiceMapData descendantsMapData)
+    public long saveAddedLayerAndTreeModifications(GPLayer layer, GPWebServiceMapData descendantsMapData)
             throws ResourceNotFoundFault, IllegalParameterFault {
-        return layerServiceDelegate.saveAddedLayerAndTreeModifications(username, layer, descendantsMapData);
+        return layerServiceDelegate.saveAddedLayerAndTreeModifications(layer, descendantsMapData);
     }
 
     @Override
@@ -555,7 +555,7 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
 
     @Override
     public boolean saveDragAndDropLayerAndTreeModifications(long idElementMoved, long idNewParent, int newPosition,
-            GPWebServiceMapData descendantsMapData) throws ResourceNotFoundFault {
+            GPWebServiceMapData descendantsMapData) throws ResourceNotFoundFault, IllegalParameterFault {
         return layerServiceDelegate.saveDragAndDropLayerModifications(idElementMoved, idNewParent, newPosition, descendantsMapData);
     }
 
@@ -570,8 +570,8 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public List<ShortLayerDTO> getLayers() {
-        return layerServiceDelegate.getLayers();
+    public List<ShortLayerDTO> getLayers(long projectId) {
+        return layerServiceDelegate.getLayers(projectId);
     }
 
     @Override
@@ -604,8 +604,9 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     }
 
     @Override
-    public ArrayList<String> getLayersDataSourceByOwner(String userName) throws ResourceNotFoundFault {
-        return layerServiceDelegate.getLayersDataSourceByOwner(userName);
+    public ArrayList<String> getLayersDataSourceByProjectId(long projectId)
+            throws ResourceNotFoundFault {
+        return layerServiceDelegate.getLayersDataSourceByProjectId(projectId);
     }
     //</editor-fold>
 
