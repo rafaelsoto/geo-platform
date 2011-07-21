@@ -54,6 +54,7 @@ import org.geosdi.geoplatform.core.model.GPUser;
 import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.responce.FolderDTO;
+import org.springframework.security.acls.domain.BasePermission;
 
 /**
  * @author Michele Santomauro
@@ -106,7 +107,7 @@ class ProjectServiceImpl {
     //<editor-fold defaultstate="collapsed" desc="Project">
     // ==========================================================================
     // === Project
-    // ==========================================================================    
+    // ==========================================================================
     public long insertProject(GPProject project) throws IllegalParameterFault {
         logger.trace("\n\t@@@ insertProject @@@");
         this.checkProject(project);
@@ -299,22 +300,83 @@ class ProjectServiceImpl {
     // ==========================================================================
     // === UserProjects
     // ==========================================================================
+    public long insertUserProject(GPUserProjects userProject) throws IllegalParameterFault {
+        logger.trace("\n\t@@@ insertUserProject @@@");
+        this.checkUserProject(userProject);
+
+        userProjectsDao.persist(userProject);
+        return userProject.getId();
+    }
+
+    public long updateUserProject(GPUserProjects userProject)
+            throws ResourceNotFoundFault, IllegalParameterFault {
+        logger.trace("\n\t@@@ updateUserProject @@@");
+        this.checkUserProject(userProject); // TODO assert
+
+        GPUserProjects origUserProject = userProjectsDao.find(userProject.getId());
+        if (origUserProject == null) {
+            throw new ResourceNotFoundFault("UserProject not found", userProject.getId());
+        }
+        this.checkUserProject(origUserProject); // TODO assert
+
+        // Update all properties (except the user and project reference)
+        origUserProject.setChecked(userProject.isChecked());
+        origUserProject.setPermissionMask(userProject.getPermissionMask());
+
+        userProjectsDao.merge(origUserProject);
+
+        return origUserProject.getId();
+    }
+
+    public boolean deleteUserProject(long userProjectId)
+            throws ResourceNotFoundFault {
+        logger.trace("\n\t@@@ deleteUserProject @@@");
+
+        GPUserProjects userProject = userProjectsDao.find(userProjectId);
+        if (userProject == null) {
+            throw new ResourceNotFoundFault("UserProject not found", userProjectId);
+        }
+        this.checkUserProjectLog(userProject); // TODO assert
+
+        return projectDao.removeById(userProjectId);
+    }
+    
     public GPUserProjects getUserProject(long userProjectId)
             throws ResourceNotFoundFault {
-        throw new UnsupportedOperationException("Not yet implemented");
+        GPUserProjects userProject = userProjectsDao.find(userProjectId);
+        if (userProject == null) {
+            throw new ResourceNotFoundFault("UserProject not found", userProjectId);
+        }
+        this.checkUserProjectLog(userProject); // TODO assert
+        
+        return userProject;
+    }
+
+    public List<GPUserProjects> getUserProjectsByUserId(long userId) {
+        List<GPUserProjects> userProjectsList = userProjectsDao.findByUserId(userId);
+
+        this.checkUserProjectListLog(userProjectsList); // TODO assert
+        
+        return userProjectsList;
+    }
+
+    public List<GPUserProjects> getUserProjectsByProjectId(long projectId) {
+        List<GPUserProjects> userProjectsList = userProjectsDao.findByProjectId(projectId);
+
+        this.checkUserProjectListLog(userProjectsList); // TODO assert
+        
+        return userProjectsList;
     }
 
     public GPUserProjects getUserProjectByUserAndProjectId(long userId, long projectId)
             throws ResourceNotFoundFault {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public List<GPUserProjects> getUserProjectsByUserId(long userId) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public List<GPUserProjects> getUserProjectsByProjectId(long projectId) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        GPUserProjects userProject = userProjectsDao.find(userId, projectId);
+        if (userProject == null) {
+            throw new ResourceNotFoundFault("UserProjects not found for with id:\"" + userId + "\" and project with id:\"" + projectId + "\"");
+        }
+        this.checkUserProjectLog(userProject); // TODO assert
+        
+        return userProject;
     }
     //</editor-fold>
 
@@ -332,11 +394,44 @@ class ProjectServiceImpl {
     }
 
     // TODO assert
+    private void checkUserProject(GPUserProjects userProject) throws IllegalParameterFault {
+        if (userProject == null) {
+            throw new IllegalParameterFault("UserProject must be NOT NULL");
+        }
+        if (userProject.getProject() == null) {
+            throw new IllegalParameterFault("Project must be NOT NULL");
+        }
+        if (userProject.getUser() == null) {
+            throw new IllegalParameterFault("User must be NOT NULL");
+        }
+        if ((userProject.getPermissionMask() < BasePermission.READ.getMask()) || 
+                (userProject.getPermissionMask() > BasePermission.ADMINISTRATION.getMask())) {
+            throw new IllegalParameterFault("PermissionMask NOT allowed");
+        }
+    }
+
+    // TODO assert
     private void checkProjectLog(GPProject project) {
         try {
             this.checkProject(project);
         } catch (IllegalParameterFault ex) {
             logger.error("\n--- " + ex.getMessage() + " ---");
+        }
+    }
+
+    // TODO assert
+    private void checkUserProjectLog(GPUserProjects userProject) {
+        try {
+            this.checkUserProject(userProject);
+        } catch (IllegalParameterFault ex) {
+            logger.error("\n--- " + ex.getMessage() + " ---");
+        }
+    }
+    
+    // TODO assert
+    private void checkUserProjectListLog(List<GPUserProjects> userProjects) {
+        for (GPUserProjects up : userProjects) {
+            this.checkUserProjectLog(up);
         }
     }
 }

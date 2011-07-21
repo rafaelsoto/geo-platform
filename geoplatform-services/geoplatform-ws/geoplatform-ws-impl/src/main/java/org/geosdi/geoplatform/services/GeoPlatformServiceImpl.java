@@ -336,15 +336,26 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     // ==========================================================================
     // === UserProjects
     // ==========================================================================
+    
+    @Override
+    public long insertUserProject(GPUserProjects userProject) throws IllegalParameterFault {
+        return projectServiceDelegate.insertUserProject(userProject);
+    }
+    
+    @Override
+    public long updateUserProject(GPUserProjects userProject)
+            throws ResourceNotFoundFault, IllegalParameterFault {
+        return projectServiceDelegate.updateUserProject(userProject);
+    }
+    
+    @Override
+    public boolean deleteUserProject(long userProjectId) throws ResourceNotFoundFault {
+        return projectServiceDelegate.deleteUserProject(userProjectId);
+    }
+    
     @Override
     public GPUserProjects getUserProject(long userProjectId) throws ResourceNotFoundFault {
         return projectServiceDelegate.getUserProject(userProjectId);
-    }
-
-    @Override
-    public GPUserProjects getUserProjectByUserAndProjectId(long userId, long projectId)
-            throws ResourceNotFoundFault {
-        return projectServiceDelegate.getUserProjectByUserAndProjectId(userId, projectId);
     }
 
     @Override
@@ -355,6 +366,12 @@ public class GeoPlatformServiceImpl implements GeoPlatformService {
     @Override
     public List<GPUserProjects> getUserProjectsByProjectId(long projectId) {
         return projectServiceDelegate.getUserProjectsByProjectId(projectId);
+    }
+
+    @Override
+    public GPUserProjects getUserProjectByUserAndProjectId(long userId, long projectId)
+            throws ResourceNotFoundFault {
+        return projectServiceDelegate.getUserProjectByUserAndProjectId(userId, projectId);
     }
     //</editor-fold>
 

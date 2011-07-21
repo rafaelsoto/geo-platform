@@ -481,7 +481,6 @@ public class WSFolderTest extends ServiceTest {
 
         rootFolderA = gpWSClient.getFolderDetail(idRootFolderA);
         Assert.assertEquals("Position of root folder A - " + info, positions[0], rootFolderA.getPosition());
-        Assert.assertNull("Parent of root folder A - " + info, rootFolderA.getParent());
         Assert.assertEquals("Number of descendant of root folder A - " + info, numberOfDescendants[0], rootFolderA.getNumberOfDescendants());
 
         folder1 = gpWSClient.getFolderDetail(idFolder1);
@@ -492,7 +491,6 @@ public class WSFolderTest extends ServiceTest {
 
         rootFolderB = gpWSClient.getFolderDetail(idRootFolderB);
         Assert.assertEquals("Position of root folder B - " + info, positions[3], rootFolderB.getPosition());
-        Assert.assertNull("Parent of root folder B - " + info, rootFolderB.getParent());
         Assert.assertEquals("Number of descendant of root folder B - " + info, numberOfDescendants[1], rootFolderB.getNumberOfDescendants());
 
         folder3 = gpWSClient.getFolderDetail(idFolder3);

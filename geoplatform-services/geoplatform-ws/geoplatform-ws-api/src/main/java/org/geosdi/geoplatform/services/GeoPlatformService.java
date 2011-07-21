@@ -148,18 +148,25 @@ public interface GeoPlatformService {
     // ==========================================================================
     // === UserProjects
     // ==========================================================================
+    @Put
+    @HttpResource(location = "/userProject")
+    long insertUserProject(@WebParam(name = "userProject") GPUserProjects userProject)
+            throws IllegalParameterFault;
+
+    @Post
+    @HttpResource(location = "/userProject")
+    long updateUserProject(@WebParam(name = "userProject") GPUserProjects userProject)
+            throws ResourceNotFoundFault, IllegalParameterFault;
+
+    @Delete
+    @HttpResource(location = "/projects/{userProjectId}")
+    boolean deleteUserProject(@WebParam(name = "userProjectId") long userProjectId)
+            throws ResourceNotFoundFault;
+    
     @Get
     @HttpResource(location = "/user-projects/{userProjectId}")
     @WebResult(name = "UserProject")
     GPUserProjects getUserProject(@WebParam(name = "userProjectId") long userProjectId)
-            throws ResourceNotFoundFault;
-
-    @Get
-    @HttpResource(location = "/user/{userId}/projects/{projectId}")
-    @WebResult(name = "UserProject")
-    GPUserProjects getUserProjectByUserAndProjectId(
-            @WebParam(name = "userId") long userId,
-            @WebParam(name = "projectId") long projectId)
             throws ResourceNotFoundFault;
 
     @Get
@@ -171,6 +178,14 @@ public interface GeoPlatformService {
     @HttpResource(location = "/projects/{projectId}")
     @WebResult(name = "UserProject")
     List<GPUserProjects> getUserProjectsByProjectId(@WebParam(name = "projectId") long projectId);
+
+    @Get
+    @HttpResource(location = "/user/{userId}/projects/{projectId}")
+    @WebResult(name = "UserProject")
+    GPUserProjects getUserProjectByUserAndProjectId(
+            @WebParam(name = "userId") long userId,
+            @WebParam(name = "projectId") long projectId)
+            throws ResourceNotFoundFault;
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Project">

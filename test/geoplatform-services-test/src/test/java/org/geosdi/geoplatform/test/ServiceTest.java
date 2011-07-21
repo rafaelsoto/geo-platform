@@ -62,6 +62,7 @@ import org.geosdi.geoplatform.core.model.GPRasterLayer;
 import org.geosdi.geoplatform.core.model.GPUser;
 import org.geosdi.geoplatform.core.model.GPUserProjects;
 import org.geosdi.geoplatform.core.model.GPVectorLayer;
+import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.request.SearchRequest;
 import org.geosdi.geoplatform.services.GeoPlatformService;
 
@@ -172,8 +173,7 @@ public abstract class ServiceTest {
     }
 
     protected long createAndInsertFolder(String folderName, GPProject project,
-            int position, GPFolder parent)
-            throws ResourceNotFoundFault, IllegalParameterFault {
+            int position, GPFolder parent) throws ResourceNotFoundFault, IllegalParameterFault {
         GPFolder folder = this.createFolder(folderName, project, position, parent);
         return gpWSClient.insertFolder(folder);
     }
