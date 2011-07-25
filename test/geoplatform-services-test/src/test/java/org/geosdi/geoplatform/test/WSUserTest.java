@@ -45,9 +45,8 @@ import org.geosdi.geoplatform.exception.IllegalParameterFault;
 import org.geosdi.geoplatform.exception.ResourceNotFoundFault;
 import org.geosdi.geoplatform.request.RequestById;
 import org.geosdi.geoplatform.request.SearchRequest;
-import org.junit.Test;
-
 import org.geosdi.geoplatform.responce.UserDTO;
+import org.junit.Test;
 
 /**
  *

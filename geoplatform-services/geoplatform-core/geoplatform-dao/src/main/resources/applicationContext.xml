@@ -41,7 +41,6 @@
                 factory-method="getInstanceForEntityManagerFactory">
         <constructor-arg ref="entityManagerFactory" />
     </bean>
-
 	
     <!--=====================================================================-->
     <!-- DAOs -->
