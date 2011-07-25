@@ -121,9 +121,10 @@ public class OGCService implements IOGCService {
 
     @Override
     public ArrayList<String> findDistinctLayersDataSource() throws GeoPlatformException {
+        long projectId = -1; // TODO DEL
         ArrayList<String> dataSources = null;
         try {
-            dataSources = this.geoPlatformServiceClient.getLayersDataSourceByOwner("user_test_0");
+            dataSources = this.geoPlatformServiceClient.getLayersDataSourceByProjectId(projectId);
         } catch (Exception e) {
         }
         return dataSources;
