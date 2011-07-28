@@ -374,6 +374,31 @@ public class WSLayerTest extends ServiceTest {
     }
     
     @Test
+    public void testTransactionOnRemoveAndAddLayer() throws IllegalParameterFault, ResourceNotFoundFault {
+        logger.trace("\n\t@@@ testTransactionOnRemoveAndAddLayer @@@");
+        Map<Long, Integer> map = new HashMap<Long, Integer>();
+        GPWebServiceMapData descendantsMapData = new GPWebServiceMapData();
+        descendantsMapData.setDescendantsMap(map);
+        map.put(idRootFolderA, 3);
+        try {
+            // Delete "rasterLayer1" from "rootFolderA"
+            boolean erased = gpWSClient.deleteLayer(idRaster1);
+            Assert.assertTrue("Deletion of the layer rasterLayer1", erased);
+
+            GPRasterLayer raster = new GPRasterLayer();
+            super.createLayer(raster, rootFolderA, null, "", "",
+                    5, spatialReferenceSystem, urlServer); // Title must be NOT NULL
+            gpWSClient.saveAddedLayerAndTreeModifications(raster, descendantsMapData);
+            Assert.fail("Add layer must fail because title value is null");
+        } catch (IllegalParameterFault e) {
+            try {
+                raster1 = gpWSClient.getRasterLayer(idRaster1);
+                Assert.fail("rasterLayer1 must not exist");
+            } catch (ResourceNotFoundFault rnf) {}
+        }
+    }
+
+    @Test
     public void testCorrectnessOnAddLayers() throws ResourceNotFoundFault {
         logger.trace("\n\t@@@ testCorrectnessOnAddLayers @@@");
         Map<Long, Integer> map = new HashMap<Long, Integer>();
@@ -425,7 +450,7 @@ public class WSLayerTest extends ServiceTest {
             Assert.fail("User with username \"" + usernameTest + "\" was NOT found");
         }
     }
-
+    
     private List<Long> addLayer3() throws IllegalParameterFault, ResourceNotFoundFault {
         // "rootFolderA" ---> "rasterLayer3"
         GPRasterLayer rasterLayer3 = new GPRasterLayer();
